@@ -1,0 +1,15 @@
+{
+  "editor": "notepad.exe",
+  "webPortals": [
+    { "name": "Admin Console", "url": "https://admin.google.com", "profile": "Profile 1" },
+    { "name": "Dashboard", "url": "https://dashboard.example.com", "profile": "Profile 1" }
+  ],
+  "rdpServers": [
+    { "name": "C39-FS", "host": "C39-FS" },
+    { "name": "C39-AP", "host": "C39-AP" }
+  ],
+  "adminTools": [
+    { "name": "PuTTY", "exe": "putty.exe", "args": "", "elevated": true },
+    { "name": "PowerShell (Admin)", "exe": "powershell.exe", "args": "-NoExit", "elevated": true }
+  ]
+}

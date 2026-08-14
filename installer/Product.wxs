@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+	 xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="AdminTrayTool" Language="1033" Version="1.0.0.0" Manufacturer="YourOrg" UpgradeCode="PUT-GUID-HERE">
+	<Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine"/>
+
+	<MediaTemplate/>
+
+	<MajorUpgrade AllowDowngrades="no" DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+	<Directory Id="TARGETDIR" Name="SourceDir">
+	  <Directory Id="ProgramFilesFolder">
+		<Directory Id="INSTALLFOLDER" Name="AdminTrayTool">
+		  <!-- Application files go under ProgramFiles -->
+		  <Component Id="AppExeComponent" Guid="*">
+			<File Id="AppExe" Source="$(var.SourceDir)\AdminTrayTool.exe" KeyPath="yes" />
+		  </Component>
+
+		  <Component Id="DesktopShortcutComponent" Guid="*">
+			<Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="AdminTrayTool" WorkingDirectory="INSTALLFOLDER" Target="[INSTALLFOLDER]AdminTrayTool.exe" />
+			<RegistryValue Root="HKCU" Key="Software\AdminTrayTool" Name="desktop" Type="integer" Value="1" KeyPath="yes" />
+		  </Component>
+		</Directory>
+	  </Directory>
+
+	  <Directory Id="ProgramMenuFolder">
+		<Directory Id="ProgramMenuDir" Name="AdminTrayTool" />
+	  </Directory>
+
+	  <!-- ProgramData config location -->
+	  <Directory Id="CommonAppDataFolder">
+		<Directory Id="AdminTrayToolData" Name="AdminTrayTool">
+		  <Component Id="ConfigFolderComponent" Guid="*">
+			<CreateFolder />
+			<!-- Grant Users Modify on the folder so non-admins can update config.json -->
+			<util:PermissionEx User="Users" GenericAll="no" Read="yes" Write="yes" Execute="no" CreateChild="yes" Delete="yes" />
+		  </Component>
+
+		  <Component Id="ConfigFileComponent" Guid="*">
+			<File Id="ConfigJson" Source="$(var.SourceDir)\config.json" KeyPath="yes" />
+		  </Component>
+		</Directory>
+	  </Directory>
+	</Directory>
+
+	<Feature Id="ProductFeature" Title="AdminTrayTool" Level="1">
+	  <ComponentRef Id="AppExeComponent" />
+	  <ComponentRef Id="ConfigFolderComponent" />
+	  <ComponentRef Id="ConfigFileComponent" />
+	  <!-- Component group harvested from publish directory -->
+	  <ComponentGroupRef Id="AppFiles" />
+	  <ComponentRef Id="ProgramMenuShortcutComponent" />
+	  <ComponentRef Id="DesktopShortcutComponent" />
+	</Feature>
+
+  </Product>
+</Wix>
