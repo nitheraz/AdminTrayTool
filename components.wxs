@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="INSTALLFOLDER">
+            <Directory Id="dirCC45706F08BD6C1812518A0F2DC690EA" Name="publish">
+                <Component Id="cmp309F6A9C8E31C1B0E058A8A9C70D036B" Guid="{724818BF-9E46-4000-8E31-D22BD82D4D61}">
+                    <File Id="fil2C1C29AC3E8B054F5DEED715745CC556" KeyPath="yes" Source="SourceDir\AdminTrayTool.deps.json" />
+                </Component>
+                <Component Id="cmpAF8BEBFF9A268266D8EAE94589BD0AAA" Guid="{2D5F4B1D-F720-4549-8F1D-97504AE5E4C9}">
+                    <File Id="fil57BDA32F63BA91F2FDD3C40B858CFD81" KeyPath="yes" Source="SourceDir\AdminTrayTool.dll" />
+                </Component>
+                <Component Id="cmpBE37B835C5EFDB50F0110B591F4BFCED" Guid="{2154C5FC-0C16-4F64-8AB6-867215914BF0}">
+                    <File Id="fil8F5534AA773C87251FD2845E98659533" KeyPath="yes" Source="SourceDir\AdminTrayTool.exe" />
+                </Component>
+                <Component Id="cmp542E93DAEC4E8B5B10D7594FC45C98F6" Guid="{8AC97C6D-CA89-437F-9DD3-63BD6D6CD9B7}">
+                    <File Id="fil7D4553FFBE7D9A3710D43DBE89C75733" KeyPath="yes" Source="SourceDir\AdminTrayTool.pdb" />
+                </Component>
+                <Component Id="cmpFE6EEB4773AC7669572BF34DA0DF9961" Guid="{60F4D7DB-43CE-4F80-888C-8AE81D760586}">
+                    <File Id="filCBDFB8FBF3DA87129AF74F1241CB813B" KeyPath="yes" Source="SourceDir\AdminTrayTool.runtimeconfig.json" />
+                </Component>
+                <Component Id="cmpDB660639916956FB1F3623BB08108BA0" Guid="{033EEEF1-B04B-46AE-B98F-69883A90D389}">
+                    <File Id="fil4AE56830606CAAFDEDE10B8EDF4C1AC9" KeyPath="yes" Source="SourceDir\config.json" />
+                </Component>
+            </Directory>
+        </DirectoryRef>
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="AppFiles">
+            <ComponentRef Id="cmp309F6A9C8E31C1B0E058A8A9C70D036B" />
+            <ComponentRef Id="cmpAF8BEBFF9A268266D8EAE94589BD0AAA" />
+            <ComponentRef Id="cmpBE37B835C5EFDB50F0110B591F4BFCED" />
+            <ComponentRef Id="cmp542E93DAEC4E8B5B10D7594FC45C98F6" />
+            <ComponentRef Id="cmpFE6EEB4773AC7669572BF34DA0DF9961" />
+            <ComponentRef Id="cmpDB660639916956FB1F3623BB08108BA0" />
+        </ComponentGroup>
+    </Fragment>
+</Wix>

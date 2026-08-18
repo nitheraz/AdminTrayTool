@@ -44,12 +44,24 @@ namespace AdminTrayTool
             trayIcon = new NotifyIcon
             {
                 Text = "IT Admin Quick Tools",
-                Icon = SystemIcons.Shield,
+                Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "adminTray.ico")),
                 ContextMenuStrip = trayMenu,
                 Visible = true
             };
 
             Application.Run();
+        }
+        static Icon LoadTrayIcon()
+        {
+            var assembly = typeof(Program).Assembly;
+
+            using Stream? stream = assembly.GetManifestResourceStream(
+                "AdminTrayTool.adminTool.ico");
+
+            if (stream == null)
+                return SystemIcons.Application;
+
+            return new Icon(stream);
         }
 
         class AppConfig

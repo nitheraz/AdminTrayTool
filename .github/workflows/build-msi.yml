@@ -79,7 +79,7 @@ jobs:
         & "$wix\light.exe" -ext WixUtilExtension -out "installer-output\AdminTrayTool.msi" "installer-output\Product.wixobj"
 
     - name: Sign MSI (optional)
-      if: ${{ secrets.CERT_PFX && secrets.CERT_PASSWORD }}
+      if: ${{ env.CERT_PFX != '' && env.CERT_PASSWORD != '' }}
       shell: powershell
       env:
         CERT_PFX: ${{ secrets.CERT_PFX }}

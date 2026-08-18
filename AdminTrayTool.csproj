@@ -6,12 +6,28 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+
     <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Application / EXE icon -->
+    <ApplicationIcon>adminTray.ico</ApplicationIcon>
   </PropertyGroup>
 
+
+  <!-- Application files -->
   <ItemGroup>
+
     <None Include=".github\workflows\build-msi.yml" />
+
+    <None Include="config.json"
+          CopyToOutputDirectory="Always" />
+
+    <!-- Copy tray icon to the application output folder -->
+    <None Update="adminTray.ico"
+          CopyToOutputDirectory="PreserveNewest" />
+
   </ItemGroup>
+
 
   <ItemGroup>
     <Folder Include="installer\assets\" />
