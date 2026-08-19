@@ -284,6 +284,7 @@ jobs:
 
         & "$wix\light.exe" `
           -ext WixUtilExtension `
+          -ext WixUIExtension `
           -out "$outputDir\AdminTrayTool.msi" `
           "$productObj" `
           "$componentsObj"
