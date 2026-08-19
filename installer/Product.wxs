@@ -34,7 +34,7 @@
 			DowngradeErrorMessage="A newer version of AdminTrayTool is already installed." />
 
 		<!-- Embed files inside MSI -->
-		<MediaTemplate />
+		<MediaTemplate EmbedCab="yes" />
 
 
 		<!-- ========================================================= -->
