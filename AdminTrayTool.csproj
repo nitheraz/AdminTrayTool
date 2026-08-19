@@ -22,9 +22,10 @@
     <None Include="config.json"
           CopyToOutputDirectory="Always" />
 
-    <!-- Copy tray icon to the application output folder -->
+    <!-- Copy tray icon to output and publish folders -->
     <None Update="adminTray.ico"
-          CopyToOutputDirectory="PreserveNewest" />
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="Always" />
 
   </ItemGroup>
 
