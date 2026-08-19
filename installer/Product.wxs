@@ -9,7 +9,7 @@
 		Id="*"
 		Name="AdminTrayTool"
 		Language="1033"
-		Version="1.0.0.0"
+		Version="$(var.ProductVersion)"
 		Manufacturer="Nitheraz"
 		UpgradeCode="244eca79-078b-40c5-8c1c-2b7fc36ba934">
 
