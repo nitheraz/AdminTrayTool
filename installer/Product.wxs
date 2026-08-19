@@ -41,6 +41,9 @@
 		<!-- ========================================================= -->
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+		<WixVariable
+			Id="WixUILicenseRtf"
+			Value="installer\License.rtf" />
 		<UIRef Id="WixUI_InstallDir" />
 
 		<!-- ========================================================= -->
