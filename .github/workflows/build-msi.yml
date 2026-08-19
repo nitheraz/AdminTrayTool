@@ -309,3 +309,17 @@ jobs:
       with:
         name: AdminTrayTool-publish
         path: publish
+
+    # ========================================
+    # Create GitHub Release
+    # ========================================
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          installer-output/AdminTrayTool.msi
+          installer-output/AdminTrayTool-portable.zip
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
