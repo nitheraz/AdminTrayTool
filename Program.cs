@@ -74,7 +74,14 @@ namespace AdminTrayTool
 
         class WebPortal { public string Name { get; set; } = string.Empty; public string Url { get; set; } = string.Empty; public string Profile { get; set; } = string.Empty; }
         class RdpEntry { public string Name { get; set; } = string.Empty; public string Host { get; set; } = string.Empty; }
-        class AdminTool { public string Name { get; set; } = string.Empty; public string Exe { get; set; } = string.Empty; public string Args { get; set; } = string.Empty; public bool Elevated { get; set; } }
+        class AdminTool
+        {
+            public string Name { get; set; } = string.Empty;
+            public string Exe { get; set; } = string.Empty;
+            public string Args { get; set; } = string.Empty;
+            public string Category { get; set; } = "Other";
+            public bool Elevated { get; set; }
+        }
 
         static AppConfig LoadConfig(string path)
         {
@@ -92,7 +99,14 @@ namespace AdminTrayTool
                 // append defaults to empty sections
                 AppendDefaultEntries(def);
 
-                var json = JsonSerializer.Serialize(def, new JsonSerializerOptions { WriteIndented = true });
+                var json = JsonSerializer.Serialize(
+                    def,
+                    new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
                 File.WriteAllText(path, json);
                 return def;
             }
@@ -126,8 +140,8 @@ namespace AdminTrayTool
 
             var defaultRdp = new List<RdpEntry>
             {
-                new RdpEntry { Name = "C39-FS", Host = "C39-FS" },
-                new RdpEntry { Name = "C39-AP", Host = "C39-AP" }
+                new RdpEntry { Name = "Server 1", Host = "Server 1" },
+                new RdpEntry { Name = "Server 2", Host = "Server 2" }
             };
 
             var defaultTools = new List<AdminTool>
