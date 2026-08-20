@@ -1,12 +1,12 @@
 {
   "editor": "notepad.exe",
   "webPortals": [
-    { "name": "Admin Console", "url": "https://admin.google.com", "profile": "Profile 1" },
+    { "name": "Website", "url": "https://website.example.com", "profile": "Profile 1" },
     { "name": "Dashboard", "url": "https://dashboard.example.com", "profile": "Profile 1" }
   ],
   "rdpServers": [
-    { "name": "C39-FS", "host": "C39-FS" },
-    { "name": "C39-AP", "host": "C39-AP" }
+    { "name": "Server 1", "host": "Server 1" },
+    { "name": "Server 2", "host": "Server 2" }
   ],
   "adminTools": [
     { "name": "PuTTY", "exe": "putty.exe", "args": "", "elevated": true },
