@@ -1088,8 +1088,8 @@ namespace AdminTrayTool
             // Insert example rows into each grid. Not called automatically.
             _dgvWeb.Rows.Add("Admin Console", "https://admin.google.com", "Profile 1");
             _dgvWeb.Rows.Add("Dashboard", "https://dashboard.example.com", "Profile 1");
-            _dgvRdp.Rows.Add("C39-FS", "C39-FS");
-            _dgvRdp.Rows.Add("C39-AP", "C39-AP");
+            _dgvRdp.Rows.Add("Server 1", "Server 1");
+            _dgvRdp.Rows.Add("Server 2", "Server 2");
             _dgvTools.Rows.Add("PuTTY", "putty.exe", "", false);
             _dgvTools.Rows.Add("PowerShell (Admin)", "powershell.exe", "-NoExit", true);
         }
@@ -1114,8 +1114,8 @@ namespace AdminTrayTool
             }
             else if (dgv == _dgvRdp)
             {
-                var r1 = _dgvRdp.Rows.Add("C39-FS", "C39-FS");
-                var r2 = _dgvRdp.Rows.Add("C39-AP", "C39-AP");
+                var r1 = _dgvRdp.Rows.Add("Server 1", "Server 1");
+                var r2 = _dgvRdp.Rows.Add("Server 2", "Server 2");
                 ClearPlaceholderTags(_dgvRdp.Rows[r1]);
                 ClearPlaceholderTags(_dgvRdp.Rows[r2]);
             }
