@@ -413,14 +413,107 @@ jobs:
         Write-Host "========================================"
 
         if (-not (Test-Path "$gamPath\gam.exe")) {
-
           Write-Host "ERROR: GAM7\gam.exe was not found."
           exit 1
+        }
+
+        # Create a temporary GAM7 harvest directory.
+        #
+        # We exclude directories that contain files which
+        # cause WiX ICE30 duplicate-component problems.
+        $gamHarvestPath = "$PWD\GAM7Harvest"
+
+        if (Test-Path $gamHarvestPath) {
+          Remove-Item `
+            -Path $gamHarvestPath `
+            -Recurse `
+            -Force
+        }
+
+        New-Item `
+          -ItemType Directory `
+          -Path $gamHarvestPath `
+          -Force |
+          Out-Null
+
+        Write-Host "Copying GAM7 files for harvesting..."
+
+        # Copy GAM7 while excluding problematic directories.
+        Get-ChildItem `
+          -Path $gamPath `
+          -Force |
+          Where-Object {
+            $_.Name -notin @(
+              "__pycache__"
+            )
+          } |
+          ForEach-Object {
+
+            Copy-Item `
+              -Path $_.FullName `
+              -Destination $gamHarvestPath `
+              -Recurse `
+              -Force
+
+          }
+
+        # Remove problematic package/license files.
+        #
+        # These are not required for GAM execution and can
+        # generate duplicate component references in WiX.
+        Get-ChildItem `
+          -Path $gamHarvestPath `
+          -Recurse `
+          -File `
+          -ErrorAction SilentlyContinue |
+          Where-Object {
+            $_.Name -in @(
+              "COPYING",
+              "copying",
+              "COPYING.txt",
+              "LICENSE",
+              "license"
+            )
+          } |
+          ForEach-Object {
+
+            Write-Host "Removing license file: $($_.FullName)"
+
+            Remove-Item `
+              -Path $_.FullName `
+              -Force
+
+          }
+
+        # Remove timezone database.
+        $tzdataPath = Get-ChildItem `
+          -Path $gamHarvestPath `
+          -Directory `
+          -Recurse `
+          -ErrorAction SilentlyContinue |
+          Where-Object {
+            $_.Name -eq "tzdata"
+          }
+
+        foreach ($folder in $tzdataPath) {
+
+          Write-Host "Removing tzdata directory: $($folder.FullName)"
+
+          Remove-Item `
+            -Path $folder.FullName `
+            -Recurse `
+            -Force
 
         }
 
+        Write-Host ""
+        Write-Host "GAM7 harvest source prepared."
+
+        Write-Host ""
+        Write-Host "Running Heat..."
+
         & "$wix\heat.exe" `
-          dir "$gamPath" `
+          dir "$gamHarvestPath" `
           -cg GAM7Files `
           -dr GAM7Folder `
           -gg `
@@ -431,66 +524,17 @@ jobs:
           -out "$PWD\installer\GAM7Components.wxs"
 
         if ($LASTEXITCODE -ne 0) {
-
           Write-Host "ERROR: GAM7 Heat failed."
           exit $LASTEXITCODE
-
         }
 
         if (-not (Test-Path "$PWD\installer\GAM7Components.wxs")) {
-
           Write-Host "ERROR: GAM7Components.wxs was not created."
           exit 1
-
         }
 
-        Write-Host "GAM7Components.wxs created."
-
-
-    # ========================================
-    # Remove problematic duplicate GAM7 files
-    #
-    # GAM7 contains package license files and
-    # timezone files which can cause WiX ICE30
-    # duplicate-component errors.
-    #
-    # These files are not required for GAM
-    # execution.
-    # ========================================
-    - name: Clean GAM7 harvested WiX
-      shell: powershell
-      run: |
-
-        $file = "$PWD\installer\GAM7Components.wxs"
-
-        Write-Host "========================================"
-        Write-Host "Cleaning GAM7 WiX harvest"
-        Write-Host "========================================"
-
-        if (-not (Test-Path $file)) {
-
-          Write-Host "ERROR: GAM7Components.wxs does not exist."
-          exit 1
-
-        }
-
-        $content = Get-Content `
-          -Path $file `
-          -Raw
-
-        # Remove duplicate/problematic license files.
-        $content = $content -replace '(?ms)\s*<Component[^>]*>\s*<File[^>]*Source="[^"]*\\COPYING"[^>]*/>\s*</Component>', ''
-
-        # Remove timezone database files.
-        $content = $content -replace '(?ms)\s*<Component[^>]*>\s*<File[^>]*Source="[^"]*\\tzdata\\[^"]*"[^>]*/>\s*</Component>', ''
-
-        Set-Content `
-          -Path $file `
-          -Value $content `
-          -Encoding UTF8
-
-        Write-Host "GAM7 WiX harvest cleaned."
-
+        Write-Host ""
+        Write-Host "GAM7Components.wxs created successfully."
 
     # ========================================
     # Verify harvested WiX files
@@ -605,7 +649,7 @@ jobs:
 
         & "$wix\candle.exe" `
           -dSourceDir="$PWD\AppSourceDir" `
-          -dGAM7SourceDir="$PWD\GAM7" `
+          -dGAM7SourceDir="$PWD\GAM7Harvest"
           -dAdminTrayToolOutputDir="$PWD\publish" `
           -dProductVersion="$env:MSI_VERSION" `
           -out "$outputDir\" `
