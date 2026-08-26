@@ -1,37 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
 
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 
-    <!-- Application / EXE icon -->
-    <ApplicationIcon>adminTray.ico</ApplicationIcon>
-  </PropertyGroup>
-
-
-  <!-- Application files -->
-  <ItemGroup>
-
-    <None Include=".github\workflows\build-msi.yml" />
-
-    <None Include="config.json"
-          CopyToOutputDirectory="Always" />
-
-    <!-- Copy tray icon to output and publish folders -->
-    <None Update="adminTray.ico"
-          CopyToOutputDirectory="PreserveNewest"
-          CopyToPublishDirectory="Always" />
-
-  </ItemGroup>
+		<!-- Application / EXE icon -->
+		<ApplicationIcon>adminTray.ico</ApplicationIcon>
+	</PropertyGroup>
 
 
-  <ItemGroup>
-    <Folder Include="installer\assets\" />
-  </ItemGroup>
+	<!-- Application files -->
+	<ItemGroup>
+
+		<None Include=".github\workflows\build-msi.yml" />
+
+		<None Include="config.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
+
+		<!-- Copy tray icon to output and publish folders -->
+		<None Update="adminTray.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
+
+		<!-- Bundled GAM7 runtime -->
+		<Content Include="Gam7\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
+
+	</ItemGroup>
 
 </Project>

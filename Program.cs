@@ -229,6 +229,30 @@ namespace AdminTrayTool
             menu.Items.Add(tools);
             menu.Items.Add(new ToolStripSeparator());
 
+            // Chromebook Management
+            menu.Items.Add(
+                "Chromebook Management",
+                null,
+                (s, e) =>
+                {
+                    try
+                    {
+                        using var form = new ChromebookManagementForm();
+                        form.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Failed to open Chromebook Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                            "Chromebook Management",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                });
+
+            menu.Items.Add(new ToolStripSeparator());
+
             // Edit config
             menu.Items.Add("Edit config...", null, (s, e) =>
             {

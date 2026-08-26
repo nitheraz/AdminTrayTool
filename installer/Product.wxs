@@ -13,7 +13,6 @@
 		Manufacturer="Nitheraz"
 		UpgradeCode="244eca79-078b-40c5-8c1c-2b7fc36ba934">
 
-		<!-- Installer package settings -->
 		<Package
 			InstallerVersion="500"
 			Compressed="yes"
@@ -24,7 +23,6 @@
 			Id="TrayIcon"
 			SourceFile="adminTray.ico" />
 
-		<!-- Icon shown in Add/Remove Programs -->
 		<Property
 			Id="ARPPRODUCTICON"
 			Value="TrayIcon" />
@@ -33,17 +31,19 @@
 		<MajorUpgrade
 			DowngradeErrorMessage="A newer version of AdminTrayTool is already installed." />
 
-		<!-- Embed files inside MSI -->
+		<!-- Embed all files inside MSI -->
 		<MediaTemplate EmbedCab="yes" />
 
 		<!-- ========================================================= -->
-		<!-- Installer User Interface -->
+		<!-- Installer UI -->
 		<!-- ========================================================= -->
 
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
 		<WixVariable
 			Id="WixUILicenseRtf"
 			Value="installer\License.rtf" />
+
 		<UIRef Id="WixUI_InstallDir" />
 
 		<!-- ========================================================= -->
@@ -56,11 +56,15 @@
 			Description="AdminTrayTool application"
 			Level="1">
 
-			<!-- Main application files -->
+			<!-- Main application -->
 			<ComponentGroupRef
 				Id="AppFiles" />
 
-			<!-- Configuration file -->
+			<!-- GAM7 -->
+			<ComponentGroupRef
+				Id="GAM7Files" />
+
+			<!-- Configuration -->
 			<ComponentRef
 				Id="ConfigJsonComponent" />
 

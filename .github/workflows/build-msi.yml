@@ -70,7 +70,11 @@ jobs:
         $dst = "$PWD\publish\config.json"
 
         if (Test-Path $src) {
-          Copy-Item -Path $src -Destination $dst -Force
+          Copy-Item `
+            -Path $src `
+            -Destination $dst `
+            -Force
+
           Write-Host "config.json copied to publish folder."
         }
         else {
@@ -79,11 +83,135 @@ jobs:
 
 
     # ========================================
+    # Verify GAM7
+    # ========================================
+    - name: Verify GAM7
+      shell: powershell
+      run: |
+
+        $gamPath = "$PWD\GAM7"
+
+        Write-Host "Checking GAM7 folder..."
+        Write-Host $gamPath
+
+        if (-not (Test-Path $gamPath)) {
+          Write-Host "ERROR: GAM7 folder was not found."
+          exit 1
+        }
+
+        $gamExe = "$gamPath\gam.exe"
+
+        if (-not (Test-Path $gamExe)) {
+          Write-Host "ERROR: gam.exe was not found."
+          exit 1
+        }
+
+        Write-Host "GAM7 found successfully."
+        Write-Host "gam.exe:"
+        Write-Host $gamExe
+
+        Write-Host ""
+        Write-Host "GAM7 files:"
+
+        Get-ChildItem `
+          -Path $gamPath `
+          -Recurse |
+          ForEach-Object {
+            Write-Host $_.FullName
+          }
+
+
+    # ========================================
+    # Create MSI SourceDir
+    # ========================================
+    - name: Prepare MSI SourceDir
+      shell: powershell
+      run: |
+
+        $sourceDir = "$PWD\SourceDir"
+
+        if (Test-Path $sourceDir) {
+          Remove-Item `
+            -Path $sourceDir `
+            -Recurse `
+            -Force
+        }
+
+        New-Item `
+          -ItemType Directory `
+          -Force `
+          -Path $sourceDir |
+          Out-Null
+
+        Write-Host "SourceDir created."
+
+
+    # ========================================
+    # Copy published application
+    # ========================================
+    - name: Copy application to SourceDir
+      shell: powershell
+      run: |
+
+        Copy-Item `
+          -Path "$PWD\publish\*" `
+          -Destination "$PWD\SourceDir" `
+          -Recurse `
+          -Force
+
+        Write-Host "Published application copied to SourceDir."
+
+
+    # ========================================
+    # Copy GAM7 to SourceDir
+    # ========================================
+    - name: Copy GAM7 to SourceDir
+      shell: powershell
+      run: |
+
+        $gamDestination = "$PWD\SourceDir\GAM7"
+
+        New-Item `
+          -ItemType Directory `
+          -Force `
+          -Path $gamDestination |
+          Out-Null
+
+        Copy-Item `
+          -Path "$PWD\GAM7\*" `
+          -Destination $gamDestination `
+          -Recurse `
+          -Force
+
+        Write-Host "GAM7 copied to SourceDir."
+
+
+    # ========================================
+    # Verify MSI SourceDir
+    # ========================================
+    - name: Verify MSI SourceDir
+      shell: powershell
+      run: |
+
+        Write-Host "========================================"
+        Write-Host "MSI SourceDir contents"
+        Write-Host "========================================"
+
+        Get-ChildItem `
+          -Path "$PWD\SourceDir" `
+          -Recurse |
+          ForEach-Object {
+            Write-Host $_.FullName
+          }
+
+
+    # ========================================
     # Create installer output directory
     # ========================================
     - name: Create installer output directory
       shell: powershell
       run: |
+
         New-Item `
           -ItemType Directory `
           -Force `
@@ -99,10 +227,13 @@ jobs:
     - name: Create portable ZIP
       shell: powershell
       run: |
+
         $zip = "$PWD\installer-output\AdminTrayTool-portable.zip"
 
         if (Test-Path $zip) {
-          Remove-Item $zip -Force
+          Remove-Item `
+            $zip `
+            -Force
         }
 
         Compress-Archive `
@@ -124,6 +255,7 @@ jobs:
     - name: Locate WiX Toolset
       shell: powershell
       run: |
+
         Write-Host "Searching for WiX Toolset..."
 
         $candle = Get-ChildItem `
@@ -134,12 +266,14 @@ jobs:
           Select-Object -First 1
 
         if (-not $candle) {
+
           $candle = Get-ChildItem `
             -Path "C:\Program Files" `
             -Filter "candle.exe" `
             -Recurse `
             -ErrorAction SilentlyContinue |
             Select-Object -First 1
+
         }
 
         if (-not $candle) {
@@ -181,31 +315,27 @@ jobs:
     # ========================================
     # Harvest publish folder
     # ========================================
-    - name: Harvest publish folder with Heat
+    - name: Harvest application with Heat
       shell: powershell
       run: |
+
         $wix = "$env:WIX_PATH"
 
-        Write-Host "Using WiX from:"
-        Write-Host $wix
-
-        if (-not (Test-Path "$PWD\publish")) {
-          Write-Host "ERROR: publish folder does not exist."
-          exit 1
-        }
+        Write-Host "Harvesting application files..."
 
         & "$wix\heat.exe" `
-          dir "$PWD\publish" `
+          dir "$PWD\SourceDir" `
           -cg AppFiles `
           -dr INSTALLFOLDER `
           -gg `
           -sfrag `
           -srd `
+          -x GAM7 `
           -var var.SourceDir `
-          -out "installer\components.wxs"
+          -out "$PWD\installer\components.wxs"
 
         if ($LASTEXITCODE -ne 0) {
-          Write-Host "ERROR: Heat failed."
+          Write-Host "ERROR: Application Heat failed."
           exit $LASTEXITCODE
         }
 
@@ -214,7 +344,42 @@ jobs:
           exit 1
         }
 
-        Write-Host "components.wxs created successfully."
+        Write-Host "Application components.wxs created."
+
+
+    # ========================================
+    # Harvest GAM7 folder
+    # ========================================
+    - name: Harvest GAM7 with Heat
+      shell: powershell
+      run: |
+
+        $wix = "$env:WIX_PATH"
+
+        Write-Host "Harvesting GAM7 files..."
+
+        & "$wix\heat.exe" `
+          dir "$PWD\SourceDir\GAM7" `
+          -cg GAM7Files `
+          -dr GAM7Folder `
+          -gg `
+          -sfrag `
+          -srd `
+          -var var.GAM7SourceDir `
+          -out "$PWD\installer\GAM7Components.wxs"
+
+        if ($LASTEXITCODE -ne 0) {
+          Write-Host "ERROR: GAM7 Heat failed."
+          exit $LASTEXITCODE
+        }
+
+        if (-not (Test-Path "$PWD\installer\GAM7Components.wxs")) {
+          Write-Host "ERROR: GAM7Components.wxs was not created."
+          exit 1
+        }
+
+        Write-Host "GAM7Components.wxs created successfully."
+
 
     # ========================================
     # Determine MSI version
@@ -222,6 +387,7 @@ jobs:
     - name: Determine MSI version
       shell: powershell
       run: |
+
         if ("${{ github.ref }}" -match "^refs/tags/v(.+)$") {
           $version = $Matches[1]
         }
@@ -237,13 +403,13 @@ jobs:
             -Encoding utf8
 
 
-
     # ========================================
     # Build MSI
     # ========================================
     - name: Build MSI with WiX
       shell: powershell
       run: |
+
         $wix = "$env:WIX_PATH"
         $outputDir = "$PWD\installer-output"
 
@@ -253,12 +419,14 @@ jobs:
         Write-Host "Compiling WiX source files..."
 
         & "$wix\candle.exe" `
-          -dSourceDir="$PWD\publish" `
+          -dSourceDir="$PWD\SourceDir" `
+          -dGAM7SourceDir="$PWD\SourceDir\GAM7" `
           -dAdminTrayToolOutputDir="$PWD\publish" `
           -dProductVersion="$env:MSI_VERSION" `
           -out "$outputDir\" `
           "installer\Product.wxs" `
-          "installer\components.wxs"
+          "installer\components.wxs" `
+          "installer\GAM7Components.wxs"
 
         if ($LASTEXITCODE -ne 0) {
           Write-Host "ERROR: WiX candle.exe failed."
@@ -269,6 +437,7 @@ jobs:
 
         $productObj = "$outputDir\Product.wixobj"
         $componentsObj = "$outputDir\components.wixobj"
+        $gamObj = "$outputDir\GAM7Components.wixobj"
 
         if (-not (Test-Path $productObj)) {
           Write-Host "ERROR: Product.wixobj was not created."
@@ -280,6 +449,11 @@ jobs:
           exit 1
         }
 
+        if (-not (Test-Path $gamObj)) {
+          Write-Host "ERROR: GAM7Components.wixobj was not created."
+          exit 1
+        }
+
         Write-Host "Linking MSI..."
 
         & "$wix\light.exe" `
@@ -287,7 +461,8 @@ jobs:
           -ext WixUIExtension `
           -out "$outputDir\AdminTrayTool.msi" `
           "$productObj" `
-          "$componentsObj"
+          "$componentsObj" `
+          "$gamObj"
 
         if ($LASTEXITCODE -ne 0) {
           Write-Host "ERROR: WiX light.exe failed."
@@ -335,6 +510,7 @@ jobs:
       with:
         name: AdminTrayTool-publish
         path: publish
+
 
     # ========================================
     # Create GitHub Release
