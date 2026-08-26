@@ -25,7 +25,7 @@
 		<None Update="adminTray.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
 
 		<!-- Bundled GAM7 runtime -->
-		<Content Include="Gam7\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
+		<Content Include="GAM7\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
 
 	</ItemGroup>
 
