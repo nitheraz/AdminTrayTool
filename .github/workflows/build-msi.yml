@@ -355,14 +355,8 @@ jobs:
         Write-Host "WiX Toolset is ready."
 
 
-    # ========================================
+        # ========================================
     # Harvest application
-    #
-    # IMPORTANT:
-    # Harvest AppSourceDir, NOT publish.
-    #
-    # AppSourceDir contains everything except
-    # GAM7.
     # ========================================
     - name: Harvest application with Heat
       shell: powershell
@@ -370,32 +364,32 @@ jobs:
 
         $wix = "$env:WIX_PATH"
 
-        Write-Host "========================================"
-        Write-Host "Harvesting application"
-        Write-Host "========================================"
+        Write-Host "Harvesting application files..."
+
+        if (-not (Test-Path "$PWD\publish")) {
+          Write-Host "ERROR: publish folder does not exist."
+          exit 1
+        }
 
         & "$wix\heat.exe" `
-          dir "$PWD\AppSourceDir" `
+          dir "$PWD\publish" `
           -cg AppFiles `
           -dr INSTALLFOLDER `
           -gg `
           -sfrag `
           -srd `
+          -sreg `
           -var var.SourceDir `
           -out "$PWD\installer\components.wxs"
 
         if ($LASTEXITCODE -ne 0) {
-
           Write-Host "ERROR: Application Heat failed."
           exit $LASTEXITCODE
-
         }
 
         if (-not (Test-Path "$PWD\installer\components.wxs")) {
-
           Write-Host "ERROR: components.wxs was not created."
           exit 1
-
         }
 
         Write-Host "Application components.wxs created."
