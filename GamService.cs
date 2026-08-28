@@ -308,6 +308,15 @@ namespace AdminTrayTool
         }
 
         // ============================================================
+        // TEST GAM / GOOGLE WORKSPACE ACCESS
+        // ============================================================
+
+        public async Task<GamResult> TestConnectionAsync()
+        {
+            return await RunGamAsync("info currentprojectid");
+        }
+
+        // ============================================================
         // RUN GAM
         // ============================================================
 

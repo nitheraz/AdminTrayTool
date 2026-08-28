@@ -233,11 +233,66 @@ namespace AdminTrayTool
             menu.Items.Add(
                 "Chromebook Management",
                 null,
-                (s, e) =>
+                async (s, e) =>
                 {
                     try
                     {
-                        using var form = new ChromebookManagementForm();
+                        var gamService = new GamService();
+
+                        // ----------------------------------------------------
+                        // Check that GAM7 exists
+                        // ----------------------------------------------------
+
+                        if (!gamService.IsGamInstalled())
+                        {
+                            MessageBox.Show(
+                                "GAM7 could not be found." +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "Please make sure GAM7 is installed before using Chromebook Management.",
+                                "GAM7 Required",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+
+                            return;
+                        }
+
+                        // ----------------------------------------------------
+                        // Check GAM authentication / Google access
+                        // ----------------------------------------------------
+
+                        GamResult result =
+                            await gamService.TestConnectionAsync();
+
+                        if (!result.Success)
+                        {
+                            MessageBox.Show(
+                                "GAM7 is installed, but it is not currently authenticated with Google Workspace." +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "Please complete the GAM7 OAuth setup first, then try Chromebook Management again." +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "After completing the setup, you can test GAM by running:" +
+                                Environment.NewLine +
+                                Environment.NewLine +
+                                "gam print cros basic",
+                                "GAM7 Setup Required",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+
+                            return;
+                        }
+
+                        // ----------------------------------------------------
+                        // GAM is ready — open Chromebook Management
+                        // ----------------------------------------------------
+
+                        using var form =
+                            new ChromebookManagementForm();
+
                         form.ShowDialog();
                     }
                     catch (Exception ex)
