@@ -35,116 +35,107 @@ namespace AdminTrayTool.Services
         /// 4. Admin account variations
         /// 5. All user profiles in C:\Users
         /// </summary>
-        private static string? FindOAuthTokenFile()
+private static string? FindOAuthTokenFile()
+{
+    var candidatePaths = new List<string>();
+
+    // 1. Check environment variable override (GAM_CONFIG_DIR)
+    string? gamConfigDir = Environment.GetEnvironmentVariable("GAM_CONFIG_DIR");
+    if (!string.IsNullOrWhiteSpace(gamConfigDir))
+    {
+        string envPath = Path.Combine(gamConfigDir, "oauth2.txt");
+        candidatePaths.Add(envPath);
+    }
+
+    // 2. Check current process user's .gam folder (most common)
+    string currentUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+    candidatePaths.Add(Path.Combine(currentUserProfile, ".gam", "oauth2.txt"));
+
+    // 3. Check APPDATA locations (Windows standard)
+    try
+    {
+        string? appData = Environment.GetEnvironmentVariable("APPDATA");
+        if (!string.IsNullOrWhiteSpace(appData))
         {
-            var candidatePaths = new List<string>();
-
-            // 1. Check environment variable override (GAM_CONFIG_DIR)
-            // Power users can set this to use a custom GAM config location
-            string? gamConfigDir = Environment.GetEnvironmentVariable("GAM_CONFIG_DIR");
-            if (!string.IsNullOrWhiteSpace(gamConfigDir))
-            {
-                string envPath = Path.Combine(gamConfigDir, "oauth2.txt");
-                candidatePaths.Add(envPath);
-            }
-
-            // 2. Check current process user's .gam folder (most common)
-            string currentUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            candidatePaths.Add(Path.Combine(currentUserProfile, ".gam", "oauth2.txt"));
-
-            // 3. Check APPDATA locations (Windows standard)
-            try
-            {
-                string? appData = Environment.GetEnvironmentVariable("APPDATA");
-                if (!string.IsNullOrWhiteSpace(appData))
-                {
-                    candidatePaths.Add(Path.Combine(appData, ".gam", "oauth2.txt"));
-                }
-
-                string? localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                if (!string.IsNullOrWhiteSpace(localAppData))
-                {
-                    candidatePaths.Add(Path.Combine(localAppData, ".gam", "oauth2.txt"));
-                }
-            }
-            catch
-            {
-                // Ignore errors when accessing environment variables
-            }
-
-            // 4. Check admin_mdejesus .gam folder (common admin account name)
-            string? adminPath = TryBuildAdminPath("admin_mdejesus");
-            if (adminPath != null)
-            {
-                candidatePaths.Add(adminPath);
-            }
-
-            // 5. Check common admin variations
-            foreach (string adminName in new[] { "admin", "administrator", "Administrator" })
-            {
-                string? altAdminPath = TryBuildAdminPath(adminName);
-                if (altAdminPath != null)
-                {
-                    candidatePaths.Add(altAdminPath);
-                }
-            }
-
-            // 6. Search all user profiles in C:\Users (comprehensive fallback)
-            try
-            {
-                string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
-                string usersDirectory = Path.Combine(systemDrive, "Users");
-                if (Directory.Exists(usersDirectory))
-                {
-                    foreach (string userDir in Directory.GetDirectories(usersDirectory))
-                    {
-                        string gamPath = Path.Combine(userDir, ".gam", "oauth2.txt");
-                        if (!candidatePaths.Contains(gamPath))
-                        {
-                            candidatePaths.Add(gamPath);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // Ignore errors when scanning user directories
-            }
-
-            // 7. Check system drive root as last resort (uncommon but covers edge cases)
-            try
-            {
-                string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
-                string systemRootPath = Path.Combine(systemDrive, ".gam", "oauth2.txt");
-                if (!candidatePaths.Contains(systemRootPath))
-                {
-                    candidatePaths.Add(systemRootPath);
-                }
-            }
-            catch
-            {
-                // Ignore errors
-            }
-
-            // Return the first oauth2.txt that exists
-            foreach (string path in candidatePaths)
-            {
-                try
-                {
-                    if (File.Exists(path))
-                    {
-                        return path;
-                    }
-                }
-                catch
-                {
-                    // If we can't check a path, skip it and try the next
-                    continue;
-                }
-            }
-
-            return null;
+            candidatePaths.Add(Path.Combine(appData, ".gam", "oauth2.txt"));
         }
+
+        string? localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+        if (!string.IsNullOrWhiteSpace(localAppData))
+        {
+            candidatePaths.Add(Path.Combine(localAppData, ".gam", "oauth2.txt"));
+        }
+    }
+    catch
+    {
+        // Ignore errors when accessing environment variables
+    }
+
+    // 4. Check common generic admin account names
+    foreach (string adminName in new[] { "admin", "administrator", "Administrator" })
+    {
+        string? altAdminPath = TryBuildAdminPath(adminName);
+        if (altAdminPath != null)
+        {
+            candidatePaths.Add(altAdminPath);
+        }
+    }
+
+    // 5. Search all user profiles in C:\Users (comprehensive fallback)
+    try
+    {
+        string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
+        string usersDirectory = Path.Combine(systemDrive, "Users");
+        if (Directory.Exists(usersDirectory))
+        {
+            foreach (string userDir in Directory.GetDirectories(usersDirectory))
+            {
+                string gamPath = Path.Combine(userDir, ".gam", "oauth2.txt");
+                if (!candidatePaths.Contains(gamPath))
+                {
+                    candidatePaths.Add(gamPath);
+                }
+            }
+        }
+    }
+    catch
+    {
+        // Ignore errors when scanning user directories
+    }
+
+    // 6. Check system drive root as last resort (uncommon but covers edge cases)
+    try
+    {
+        string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
+        string systemRootPath = Path.Combine(systemDrive, ".gam", "oauth2.txt");
+        if (!candidatePaths.Contains(systemRootPath))
+        {
+            candidatePaths.Add(systemRootPath);
+        }
+    }
+    catch
+    {
+        // Ignore errors
+    }
+
+    // Return the first oauth2.txt that exists
+    foreach (string path in candidatePaths)
+    {
+        try
+        {
+            if (File.Exists(path))
+            {
+                return path;
+            }
+        }
+        catch
+        {
+            continue;
+        }
+    }
+
+    return null;
+}
 
         private static string? TryBuildAdminPath(string userName)
         {
