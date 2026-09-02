@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="INSTALLFOLDER" />
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="AppFiles">
+            <Component Id="cmp46D00B7833BF94499A9E28955A3B8F1F" Directory="INSTALLFOLDER" Guid="{5B382899-A775-4F28-9F1E-6D51D6C2A1CA}">
+                <File Id="fil12550AD204CB805BC3A328176F36D3B4" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\adminTray.ico" />
+            </Component>
+            <Component Id="cmp30E0648AE9695D48B6E696325506078F" Directory="INSTALLFOLDER" Guid="{CF4C23FE-2EF9-489A-96F7-717D6261E206}">
+                <File Id="fil04B9080793246246A860947BFD3D935B" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\AdminTrayTool.deps.json" />
+            </Component>
+            <Component Id="cmp614618495F5B50EA62AFAA9AA1374963" Directory="INSTALLFOLDER" Guid="{087CFA62-5625-44CB-A121-01F83617E676}">
+                <File Id="filAFD8E2973FBBD1F26A73F6BA738ADE97" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\AdminTrayTool.dll" />
+            </Component>
+            <Component Id="cmp9094904F6410E28E4DFE18185BD4F4DC" Directory="INSTALLFOLDER" Guid="{30E71BA2-DE5E-4E56-8AA7-E2ADF0B26334}">
+                <File Id="fil344A16511E8617911ECF85392BDBE6F9" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\AdminTrayTool.exe" />
+            </Component>
+            <Component Id="cmpB5828E9816D3A2A225BA00876E1085F3" Directory="INSTALLFOLDER" Guid="{91B00FDC-0015-4CE5-8799-7ED0356D46E2}">
+                <File Id="filFDBA9F1FB45DFD3F216DC009C4714AC8" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\AdminTrayTool.runtimeconfig.json" />
+            </Component>
+            <Component Id="cmp43DFA35C625E169801A432AC5B55C6BF" Directory="INSTALLFOLDER" Guid="{1118A820-B980-490D-A613-8AFF4FD5C989}">
+                <File Id="fil500085127E05AE03EB9805427F00A82E" KeyPath="yes" Source="$(var.AdminTrayToolOutputDir)\config.json" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>
