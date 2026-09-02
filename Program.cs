@@ -5,18 +5,28 @@ using System.Drawing;
 using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
+using System.Threading;
+//using AdminTrayTool.Forms;
 
 namespace AdminTrayTool
 {
     static class Program
     {
         private static ContextMenuStrip trayMenu = null!;
+        private static Mutex? _appMutex;
         private static NotifyIcon trayIcon = null!;
         private static string AdminProfile = "Profile 1";
 
         [STAThread]
         static void Main()
         {
+            _appMutex = new Mutex(true, "AdminTrayTool", out bool createdNew);
+            if (!createdNew)
+            {
+                MessageBox.Show("AdminTrayTool is already running.", "AdminTrayTool", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
             ApplicationConfiguration.Initialize();
 
             trayMenu = new ContextMenuStrip();

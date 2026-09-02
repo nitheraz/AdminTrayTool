@@ -1,0 +1,174 @@
+=============================================================================
+				AdminTrayTool MSI Build - QUICK REFERENCE CARD
+=============================================================================
+
+📋 QUICKEST START (Copy & Paste)
+─────────────────────────────────────────────────────────────────────────
+
+1. Check Prerequisites:
+   .\Check-Prerequisites.bat
+
+2. Build MSI (Interactive Menu):
+   .\Build-Helper.ps1
+   → Select [2] Build MSI for Testing
+
+3. Find MSI:
+   .\msi-output\AdminTrayTool-1.1.4.msi
+
+4. Install on VM:
+   msiexec /i AdminTrayTool-1.1.4.msi
+
+=============================================================================
+
+🔧 COMMAND LINE OPTIONS
+─────────────────────────────────────────────────────────────────────────
+
+Build with defaults (v1.1.4):
+  .\Build-MSI.ps1
+
+Build with custom version:
+  .\Build-MSI.ps1 -ProductVersion "1.1.5"
+
+Build with custom output:
+  .\Build-MSI.ps1 -OutputPath "C:\builds\msi"
+
+Full custom build:
+  .\Build-MSI.ps1 -ProductVersion "2.0.0" -Configuration "Release" -OutputPath "$env:TEMP\msi"
+
+=============================================================================
+
+📁 KEY FILE LOCATIONS
+─────────────────────────────────────────────────────────────────────────
+
+MSI Output:         .\msi-output\AdminTrayTool-*.msi
+Published App:      .\publish\AdminTrayTool.exe
+WiX Sources:        .\installer\Product.wxs
+Build Scripts:      .\Build-MSI.ps1, .\Build-Helper.ps1
+Documentation:      .\BUILD-QUICK-START.md, .\MSI-BUILD-GUIDE.md
+
+=============================================================================
+
+✅ PREREQUISITES CHECKLIST
+─────────────────────────────────────────────────────────────────────────
+
+□ WiX Toolset v3.11.1.2318
+  Location: C:\Program Files (x86)\WiX Toolset v3.11\bin
+  Check: .\Check-Prerequisites.bat
+
+□ .NET 10 SDK
+  Verify: dotnet --version
+  Download: https://dotnet.microsoft.com/download
+
+□ adminTray.ico
+  Location: .\adminTray.ico
+  Optional if missing (build continues)
+
+□ PowerShell 5.0+
+  Verify: $PSVersionTable.PSVersion
+
+=============================================================================
+
+🚀 TESTING WORKFLOW
+─────────────────────────────────────────────────────────────────────────
+
+DEV PC:
+  1. .\Build-Helper.ps1
+  2. Select option [2]
+  3. Wait for "✓ MSI BUILD SUCCESSFUL"
+  4. MSI ready in .\msi-output\
+
+TEST VM:
+  1. Copy AdminTrayTool-1.1.4.msi
+  2. Run: msiexec /i AdminTrayTool-1.1.4.msi
+  3. Test OAuth setup
+  4. Test features
+  5. Verify in Start Menu
+
+=============================================================================
+
+📝 BUILD TROUBLESHOOTING
+─────────────────────────────────────────────────────────────────────────
+
+Error: heat.exe not found
+  Fix: Install WiX Toolset v3.11.1.2318
+	   https://github.com/wixtoolset/wix3/releases
+
+Error: dotnet not found
+  Fix: Install .NET 10 SDK
+	   https://dotnet.microsoft.com/download
+
+Error: Access Denied
+  Fix: Run PowerShell as Administrator
+	   Right-click PowerShell > Run as Administrator
+
+Error: adminTray.ico not found
+  Fix: File is optional, build will continue
+	   Or copy from project root if missing
+
+=============================================================================
+
+🔄 GITHUB WORKFLOW
+─────────────────────────────────────────────────────────────────────────
+
+After successful MSI test:
+
+1. Commit changes:
+   .\Build-Helper.ps1
+   → Select [6] Commit & Push to GitHub
+
+   OR manually:
+   git add .
+   git commit -m "v1.1.4: OAuth improvements & MSI support"
+   git push origin gam-detection
+
+2. Create GitHub Release:
+   Go to: https://github.com/nitheraz/AdminTrayTool/releases
+   - Tag: v1.1.4
+   - Upload: AdminTrayTool-1.1.4.msi
+   - Publish
+
+=============================================================================
+
+❓ FAQ
+─────────────────────────────────────────────────────────────────────────
+
+Q: How long does build take?
+A: ~30-60 seconds for basic build, longer if GAM7 is included (~5MB per sec)
+
+Q: Can I build on non-admin machine?
+A: No, MSI build requires admin to create installer engine
+
+Q: Can I ship MSI without GAM7?
+A: Yes, build will skip GAM7 if folder missing or deleted before build
+
+Q: How big is the MSI?
+A: ~10-50MB without GAM7, ~400MB+ with GAM7 included
+
+Q: Can I update MSI after release?
+A: Yes, increment version and rebuild. Old version uninstalls cleanly.
+
+Q: Is there auto-update?
+A: Not built-in, but MSI supports side-by-side installs with versioning
+
+=============================================================================
+
+📞 SUPPORT
+─────────────────────────────────────────────────────────────────────────
+
+Full Documentation:
+  → MSI-BUILD-GUIDE.md (detailed, technical)
+  → BUILD-QUICK-START.md (quick start, practical)
+
+WiX Toolset Docs:
+  → https://wixtoolset.org/docs/v3/
+
+Project Repository:
+  → https://github.com/nitheraz/AdminTrayTool
+
+=============================================================================
+
+Last Updated: 2025-02-09
+AdminTrayTool Version: 1.1.4
+WiX Toolset: v3.11.1.2318
+
+=============================================================================

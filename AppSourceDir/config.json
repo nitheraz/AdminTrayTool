@@ -1,0 +1,15 @@
+{
+  "editor": "notepad.exe",
+  "webPortals": [
+    { "name": "Website", "url": "https://website.example.com", "profile": "Profile 1" },
+    { "name": "Dashboard", "url": "https://dashboard.example.com", "profile": "Profile 1" }
+  ],
+  "rdpServers": [
+    { "name": "Server 1", "host": "Server 1" },
+    { "name": "Server 2", "host": "Server 2" }
+  ],
+  "adminTools": [
+    { "name": "PuTTY", "exe": "putty.exe", "args": "", "elevated": true },
+    { "name": "PowerShell (Admin)", "exe": "powershell.exe", "args": "-NoExit", "elevated": true }
+  ]
+}
