@@ -52,6 +52,12 @@ namespace AdminTrayTool
 
             if (!result.Success)
             {
+                if (result.IssueType == Services.GamIssueType.ProjectMissing)
+                {
+                    await OfferProjectSetupAsync(result);
+                    return;
+                }
+
                 DialogResult answer = MessageBox.Show(
                     "GAM7 is not authenticated on this computer.\n\n" +
                     "Would you like to run the OAuth setup now?",
@@ -72,6 +78,64 @@ namespace AdminTrayTool
             }
 
             EnableChromebookUI();
+        }
+
+        private async Task OfferProjectSetupAsync(Services.GamResult result)
+        {
+            DialogResult answer = MessageBox.Show(
+                "No GAM project was found on this computer.\n\n" +
+                result.Error + "\n\n" +
+                "Would you like to run 'gam create project' now? " +
+                "(Choose No if you already have a project and want to run 'gam use project' instead.)",
+                "GAM Project Required",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Warning);
+
+            if (answer == DialogResult.Cancel)
+            {
+                DisableChromebookUI();
+                return;
+            }
+
+            string gamArgs = answer == DialogResult.Yes ? "create project" : "use project";
+
+            string? gamPath = await GamLocator.LocateGam();
+            if (gamPath == null)
+            {
+                MessageBox.Show("GAM executable not found.", "GAM Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DisableChromebookUI();
+                return;
+            }
+
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = gamPath,
+                    Arguments = gamArgs,
+                    UseShellExecute = true,
+                    CreateNoWindow = false
+                };
+
+                using Process? process = Process.Start(psi);
+                if (process != null)
+                {
+                    await Task.Run(() => process.WaitForExit());
+                }
+
+                // After project setup, immediately try OAuth setup.
+                await RunOAuthSetupAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "An error occurred while running GAM project setup.\n\n" + ex.Message,
+                    "GAM Project Setup Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                DisableChromebookUI();
+            }
         }
 
         private async Task RunOAuthSetupAsync()
@@ -120,6 +184,7 @@ namespace AdminTrayTool
                 var checker = new GamOAuthChecker();
                 var result = await checker.CheckOAuthAsync();
 
+                // ⬇️ THIS IS THE BLOCK THAT REPLACES YOUR OLD if (result.Success) { ... } else { ... }
                 if (result.Success)
                 {
                     MessageBox.Show(
@@ -130,17 +195,20 @@ namespace AdminTrayTool
 
                     EnableChromebookUI();
                 }
+                else if (result.IssueType == Services.GamIssueType.ProjectMissing)
+                {
+                    await OfferProjectSetupAsync(result);
+                }
                 else
                 {
                     MessageBox.Show(
-                        "OAuth setup did not complete.\n\n" +
-                        "Please try again if you want to use Chromebook Management.",
+                        "OAuth setup did not complete.\n\n" + result.Error,
                         "GAM7 Authentication",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
-
                     DisableChromebookUI();
                 }
+                // ⬆️ END REPLACED BLOCK
             }
             catch (Exception ex)
             {
@@ -178,11 +246,11 @@ namespace AdminTrayTool
         private void EnableChromebookUI()
         {
             _btnLookup.Enabled = true;
-            _btnRefresh.Enabled = true;
+            /*_btnRefresh.Enabled = true;
             _btnDisable.Enabled = true;
             _btnReenable.Enabled = true;
             _btnCopyMac.Enabled = true;
-            _btnSaveAssetId.Enabled = true;
+            _btnSaveAssetId.Enabled = true;*/
 
             _lblDeviceStatus.Text = "Ready";
         }

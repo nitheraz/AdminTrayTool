@@ -1,16 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AdminTrayTool.Services
 {
+    public enum GamIssueType
+    {
+        None,
+        GamNotFound,
+        ProjectMissing,
+        OAuthTokenMissing,
+        OAuthTokenEmpty,
+        Unknown
+    }
+
     public class GamResult
     {
         public bool Success { get; set; }
         public int ExitCode { get; set; }
         public string? Output { get; set; }
         public string? Error { get; set; }
+        public GamIssueType IssueType { get; set; } = GamIssueType.None;
 
         public string CombinedOutput
         {
@@ -25,46 +38,31 @@ namespace AdminTrayTool.Services
 
     public class GamOAuthChecker
     {
-        /// <summary>
-        /// Finds the oauth2.txt file by checking multiple possible locations.
-        /// GAM might create config in different user profiles, APPDATA locations, or custom paths.
-        /// Checks in this order:
-        /// 1. Environment variable overrides (GAM_CONFIG_DIR)
-        /// 2. Current process user's .gam folder
-        /// 3. APPDATA and LOCALAPPDATA locations
-        /// 4. Admin account variations
-        /// 5. All user profiles in C:\Users
-        /// </summary>
-        private static string? FindOAuthTokenFile()
+        private static string? FindGamConfigFile(string fileName)
         {
             var candidatePaths = new List<string>();
 
-            // 1. Check environment variable override (GAM_CONFIG_DIR)
-            // Power users can set this to use a custom GAM config location
             string? gamConfigDir = Environment.GetEnvironmentVariable("GAM_CONFIG_DIR");
             if (!string.IsNullOrWhiteSpace(gamConfigDir))
             {
-                string envPath = Path.Combine(gamConfigDir, "oauth2.txt");
-                candidatePaths.Add(envPath);
+                candidatePaths.Add(Path.Combine(gamConfigDir, fileName));
             }
 
-            // 2. Check current process user's .gam folder (most common)
             string currentUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            candidatePaths.Add(Path.Combine(currentUserProfile, ".gam", "oauth2.txt"));
+            candidatePaths.Add(Path.Combine(currentUserProfile, ".gam", fileName));
 
-            // 3. Check APPDATA locations (Windows standard)
             try
             {
                 string? appData = Environment.GetEnvironmentVariable("APPDATA");
                 if (!string.IsNullOrWhiteSpace(appData))
                 {
-                    candidatePaths.Add(Path.Combine(appData, ".gam", "oauth2.txt"));
+                    candidatePaths.Add(Path.Combine(appData, ".gam", fileName));
                 }
 
                 string? localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
                 if (!string.IsNullOrWhiteSpace(localAppData))
                 {
-                    candidatePaths.Add(Path.Combine(localAppData, ".gam", "oauth2.txt"));
+                    candidatePaths.Add(Path.Combine(localAppData, ".gam", fileName));
                 }
             }
             catch
@@ -72,24 +70,19 @@ namespace AdminTrayTool.Services
                 // Ignore errors when accessing environment variables
             }
 
-            // 4. Check admin_mdejesus .gam folder (common admin account name)
-            string? adminPath = TryBuildAdminPath("admin_mdejesus");
-            if (adminPath != null)
-            {
-                candidatePaths.Add(adminPath);
-            }
-
-            // 5. Check common admin variations
             foreach (string adminName in new[] { "admin", "administrator", "Administrator" })
             {
-                string? altAdminPath = TryBuildAdminPath(adminName);
-                if (altAdminPath != null)
+                try
                 {
-                    candidatePaths.Add(altAdminPath);
+                    string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
+                    candidatePaths.Add(Path.Combine(systemDrive, "Users", adminName, ".gam", fileName));
+                }
+                catch
+                {
+                    // Ignore
                 }
             }
 
-            // 6. Search all user profiles in C:\Users (comprehensive fallback)
             try
             {
                 string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
@@ -98,10 +91,10 @@ namespace AdminTrayTool.Services
                 {
                     foreach (string userDir in Directory.GetDirectories(usersDirectory))
                     {
-                        string gamPath = Path.Combine(userDir, ".gam", "oauth2.txt");
-                        if (!candidatePaths.Contains(gamPath))
+                        string candidate = Path.Combine(userDir, ".gam", fileName);
+                        if (!candidatePaths.Contains(candidate))
                         {
-                            candidatePaths.Add(gamPath);
+                            candidatePaths.Add(candidate);
                         }
                     }
                 }
@@ -111,11 +104,10 @@ namespace AdminTrayTool.Services
                 // Ignore errors when scanning user directories
             }
 
-            // 7. Check system drive root as last resort (uncommon but covers edge cases)
             try
             {
                 string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
-                string systemRootPath = Path.Combine(systemDrive, ".gam", "oauth2.txt");
+                string systemRootPath = Path.Combine(systemDrive, ".gam", fileName);
                 if (!candidatePaths.Contains(systemRootPath))
                 {
                     candidatePaths.Add(systemRootPath);
@@ -126,7 +118,6 @@ namespace AdminTrayTool.Services
                 // Ignore errors
             }
 
-            // Return the first oauth2.txt that exists
             foreach (string path in candidatePaths)
             {
                 try
@@ -138,7 +129,6 @@ namespace AdminTrayTool.Services
                 }
                 catch
                 {
-                    // If we can't check a path, skip it and try the next
                     continue;
                 }
             }
@@ -146,23 +136,13 @@ namespace AdminTrayTool.Services
             return null;
         }
 
-        private static string? TryBuildAdminPath(string userName)
-        {
-            try
-            {
-                string systemDrive = Environment.GetEnvironmentVariable("SystemDrive") ?? "C:";
-                string adminPath = Path.Combine(systemDrive, "Users", userName, ".gam", "oauth2.txt");
-                return adminPath;
-            }
-            catch
-            {
-                return null;
-            }
-        }
+        private static string? FindOAuthTokenFile() => FindGamConfigFile("oauth2.txt");
+
+        // Public so the UI layer can check for/report on this file too.
+        private static string? FindClientSecretsFile() => FindGamConfigFile("client_secrets.json");
 
         public async Task<GamResult> CheckOAuthAsync()
         {
-            // 1️⃣ Locate GAM7 (embedded / global / PATH)
             string? gamPath = await GamLocator.LocateGam();
 
             if (gamPath == null || !File.Exists(gamPath))
@@ -171,12 +151,31 @@ namespace AdminTrayTool.Services
                 {
                     Success = false,
                     ExitCode = -1,
+                    IssueType = GamIssueType.GamNotFound,
                     Error = "GAM7 executable not found.\n\n" +
                             "Please ensure GAM7 is deployed with AdminTrayTool."
                 };
             }
 
-            // 2️⃣ Check for GAM7 OAuth token file in multiple possible locations
+            string? clientSecretsFile = FindClientSecretsFile();
+
+            if (clientSecretsFile == null)
+            {
+                return new GamResult
+                {
+                    Success = false,
+                    ExitCode = -1,
+                    IssueType = GamIssueType.ProjectMissing,
+                    Error = "No GAM project found (client_secrets.json is missing).\n\n" +
+                            "You need to create or select a GAM project before authorizing.\n\n" +
+                            "Please run:\n\n" +
+                            "  gam create project\n\n" +
+                            "  (or, if you already have a project) gam use project\n\n" +
+                            "then run:\n\n" +
+                            "  gam oauth create"
+                };
+            }
+
             string? oauthFile = FindOAuthTokenFile();
 
             if (oauthFile == null)
@@ -185,6 +184,7 @@ namespace AdminTrayTool.Services
                 {
                     Success = false,
                     ExitCode = -1,
+                    IssueType = GamIssueType.OAuthTokenMissing,
                     Error = "GAM7 OAuth token not found.\n\n" +
                             "Please run:\n\n" +
                             "  gam oauth create\n\n" +
@@ -192,7 +192,6 @@ namespace AdminTrayTool.Services
                 };
             }
 
-            // 3️⃣ Verify oauth token file is not empty
             try
             {
                 var fileInfo = new FileInfo(oauthFile);
@@ -202,6 +201,7 @@ namespace AdminTrayTool.Services
                     {
                         Success = false,
                         ExitCode = -1,
+                        IssueType = GamIssueType.OAuthTokenEmpty,
                         Error = "GAM7 OAuth token file is empty.\n\n" +
                                 "Please run:\n\n" +
                                 "  gam oauth create\n\n" +
@@ -209,7 +209,6 @@ namespace AdminTrayTool.Services
                     };
                 }
 
-                // Verify we can read the file
                 string tokenContent = File.ReadAllText(oauthFile).Trim();
                 if (string.IsNullOrEmpty(tokenContent))
                 {
@@ -217,6 +216,7 @@ namespace AdminTrayTool.Services
                     {
                         Success = false,
                         ExitCode = -1,
+                        IssueType = GamIssueType.OAuthTokenEmpty,
                         Error = "GAM7 OAuth token file is invalid or empty.\n\n" +
                                 "Please run:\n\n" +
                                 "  gam oauth create\n\n" +
@@ -230,13 +230,11 @@ namespace AdminTrayTool.Services
                 {
                     Success = false,
                     ExitCode = -1,
+                    IssueType = GamIssueType.Unknown,
                     Error = $"Failed to read GAM7 OAuth token:\n\n{ex.Message}"
                 };
             }
 
-            // 4️⃣ Try to validate OAuth with a simple GAM command
-            // Note: This may fail if gam.cfg is not configured with domain/customer_id
-            // In that case, OAuth is still valid, just not fully configured for this app
             try
             {
                 var startInfo = new ProcessStartInfo
@@ -264,26 +262,24 @@ namespace AdminTrayTool.Services
                 string output = await outputTask;
                 string error = await errorTask;
 
-                // gam version should succeed regardless of domain configuration
                 if (process.ExitCode == 0)
                 {
                     return new GamResult
                     {
                         Success = true,
                         ExitCode = process.ExitCode,
+                        IssueType = GamIssueType.None,
                         Output = output.Trim(),
                         Error = error.Trim()
                     };
                 }
                 else
                 {
-                    // Even if gam version fails, if oauth2.txt exists and isn't empty,
-                    // we consider OAuth successful. The failure might be due to other GAM config issues.
-                    // Log the error but still return success.
                     return new GamResult
                     {
                         Success = true,
                         ExitCode = 0,
+                        IssueType = GamIssueType.None,
                         Output = "OAuth token exists and is valid.",
                         Error = $"Warning: GAM version check failed (non-critical): {error.Trim()}"
                     };
@@ -291,12 +287,11 @@ namespace AdminTrayTool.Services
             }
             catch (Exception ex)
             {
-                // If we can't run gam version, but oauth2.txt exists, consider it successful
-                // The error is likely due to GAM not being in PATH correctly
                 return new GamResult
                 {
                     Success = true,
                     ExitCode = 0,
+                    IssueType = GamIssueType.None,
                     Output = "OAuth token exists and is valid.",
                     Error = $"Warning: Could not verify GAM (non-critical): {ex.Message}"
                 };

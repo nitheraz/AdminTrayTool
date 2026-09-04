@@ -261,6 +261,28 @@ namespace AdminTrayTool
                     }
                 });
 
+            // Group Management
+            menu.Items.Add(
+                "Group Management",
+                null,
+                (s, e) =>
+                {
+                    try
+                    {
+                        using var form = new GroupManagementForm();
+                        form.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Failed to open Group Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                            "Group Management",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                });
+
             menu.Items.Add(new ToolStripSeparator());
 
             // Edit config
@@ -310,8 +332,21 @@ namespace AdminTrayTool
                     try
                     {
                         var folder = Path.GetDirectoryName(configPath);
-                        if (string.IsNullOrEmpty(folder)) throw new InvalidOperationException("Config folder path is invalid");
-                        Process.Start(new ProcessStartInfo { FileName = folder, UseShellExecute = true });
+
+                        if (string.IsNullOrEmpty(folder))
+                            throw new InvalidOperationException("Config folder path is invalid");
+
+                        if (!Directory.Exists(folder))
+                        {
+                            Directory.CreateDirectory(folder);
+                        }
+
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "explorer.exe",
+                            Arguments = $"\"{folder}\"",
+                            UseShellExecute = true
+                        });
                     }
                     catch (Exception ex)
                     {

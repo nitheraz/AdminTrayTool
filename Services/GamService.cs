@@ -2,7 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using AdminTrayTool.Models;   
+using AdminTrayTool.Models;
+using System.Collections.Generic;
 
 namespace AdminTrayTool.Services
 {
@@ -61,14 +62,14 @@ namespace AdminTrayTool.Services
             {
                 string error =
                     !string.IsNullOrWhiteSpace(result.Error)
-                        ? result.Error
-                        : result.Output;
+                        ? result.Error!
+                        : result.Output ?? "GAM returned no output.";
 
                 return (false, null, error);
             }
 
             ChromebookInfo device =
-                ParseChromebookInfo(result.Output, serialNumber);
+                ParseChromebookInfo(result.Output ?? string.Empty, serialNumber);
 
             return (true, device, string.Empty);
         }
@@ -117,6 +118,97 @@ namespace AdminTrayTool.Services
 
             return await RunGamAsync(
                 $"update cros cros_sn {QuoteArgument(serialNumber)} action reenable");
+        }
+
+        // ============================================================
+        // ADD USER TO GROUP
+        // ============================================================
+
+        public async Task<GamResult> AddUserToGroupAsync(string groupEmail, string userEmail)
+        {
+            if (string.IsNullOrWhiteSpace(groupEmail))
+                return new GamResult { Success = false, Error = "Group email is required." };
+
+            if (string.IsNullOrWhiteSpace(userEmail))
+                return new GamResult { Success = false, Error = "Staff email is required." };
+
+            groupEmail = groupEmail.Trim();
+            userEmail = userEmail.Trim();
+
+            return await RunGamAsync(
+                $"update group {QuoteArgument(groupEmail)} add member {QuoteArgument(userEmail)}");
+        }
+
+        public async Task<(bool Success, List<string> GroupEmails, string Error)> GetAllGroupEmailsAsync()
+        {
+            GamResult result = await RunGamAsync("print groups");
+
+            if (!result.Success)
+            {
+                string error = !string.IsNullOrWhiteSpace(result.Error)
+                    ? result.Error!
+                    : result.Output ?? "GAM returned no output.";
+
+                return (false, new List<string>(), error);
+            }
+
+            var emails = ParseEmailColumnFromCsv(result.Output ?? string.Empty);
+            return (true, emails, string.Empty);
+        }
+
+        // ============================================================
+        // LIST ALL USERS (for autocomplete)
+        // ============================================================
+
+        public async Task<(bool Success, List<string> UserEmails, string Error)> GetAllUserEmailsAsync()
+        {
+            GamResult result = await RunGamAsync("print users");
+
+            if (!result.Success)
+            {
+                string error = !string.IsNullOrWhiteSpace(result.Error)
+                    ? result.Error!
+                    : result.Output ?? "GAM returned no output.";
+
+                return (false, new List<string>(), error);
+            }
+
+            var emails = ParseEmailColumnFromCsv(result.Output ?? string.Empty);
+            return (true, emails, string.Empty);
+        }
+        private static List<string> ParseEmailColumnFromCsv(string csvOutput)
+        {
+            var emails = new List<string>();
+
+            string[] lines = csvOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length == 0)
+                return emails;
+
+            string[] headers = lines[0].Split(',');
+            int emailColumnIndex = Array.FindIndex(headers,
+                h => string.Equals(h.Trim(), "email", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(h.Trim(), "primaryEmail", StringComparison.OrdinalIgnoreCase));
+
+            if (emailColumnIndex == -1)
+                return emails;
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(',');
+
+                if (emailColumnIndex >= fields.Length)
+                    continue;
+
+                string email = fields[emailColumnIndex].Trim().Trim('"');
+
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    emails.Add(email);
+                }
+            }
+
+            return emails;
         }
 
         // ============================================================

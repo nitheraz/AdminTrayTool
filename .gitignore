@@ -364,3 +364,8 @@ FodyWeavers.xsd
 
 # WiX MSI build source directory
 SourceDir/
+
+# AdminTrayTool custom build output
+AppSourceDir/
+msi-output/
+wix-obj/
