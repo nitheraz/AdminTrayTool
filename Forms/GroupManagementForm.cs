@@ -46,7 +46,9 @@ namespace AdminTrayTool
             var userTask = LoadUserAutocompleteAsync();
             await Task.WhenAll(groupTask, userTask);
 
-            // Don't stomp on "GAM7 not authenticated" if auth failed earlier.
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             if (_btnAddToGroup.Enabled)
             {
                 _lblStatus.Text = "Ready";
@@ -119,6 +121,9 @@ namespace AdminTrayTool
 
         private void ApplyGroupAutocomplete(List<string> emails)
         {
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             var source = new AutoCompleteStringCollection();
             source.AddRange(emails.ToArray());
 
@@ -129,6 +134,9 @@ namespace AdminTrayTool
 
         private void ApplyUserAutocomplete(List<string> emails)
         {
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             var source = new AutoCompleteStringCollection();
             source.AddRange(emails.ToArray());
 
@@ -334,12 +342,18 @@ namespace AdminTrayTool
 
         private void DisableGroupUI()
         {
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             _btnAddToGroup.Enabled = false;
             _lblStatus.Text = "GAM7 not authenticated";
         }
 
         private void EnableGroupUI()
         {
+            if (IsDisposed || !IsHandleCreated)
+                return;
+
             _btnAddToGroup.Enabled = true;
             _lblStatus.Text = "Ready";
         }
@@ -656,6 +670,9 @@ namespace AdminTrayTool
         private void WriteLog(string text)
         {
             if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            if (IsDisposed || !IsHandleCreated)
                 return;
 
             if (_txtLog.TextLength > 0)

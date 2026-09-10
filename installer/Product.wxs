@@ -29,7 +29,8 @@
 
 		<!-- Handle upgrades -->
 		<MajorUpgrade
-			DowngradeErrorMessage="A newer version of AdminTrayTool is already installed." />
+			DowngradeErrorMessage="A newer version of AdminTrayTool is already installed."
+			Schedule="afterInstallInitialize" />
 
 		<!-- Embed all files inside MSI -->
 		<MediaTemplate EmbedCab="yes" />

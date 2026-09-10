@@ -42,6 +42,33 @@ jobs:
 
 
       # ========================================
+      # Determine version (used by build, publish, and MSI)
+      # ========================================
+
+      - name: Determine version
+        shell: powershell
+        run: |
+
+          if ("${{ github.ref }}" -match "^refs/tags/v(.+)$") {
+
+              $version = $Matches[1]
+
+          }
+          else {
+
+              $version = "1.0.0"
+
+          }
+
+          Write-Host "Version: $version"
+
+          "MSI_VERSION=$version" |
+            Out-File `
+              -FilePath $env:GITHUB_ENV `
+              -Encoding utf8
+
+
+      # ========================================
       # Restore
       # ========================================
 
@@ -54,7 +81,12 @@ jobs:
       # ========================================
 
       - name: Build Release
-        run: dotnet build -c Release --no-restore
+        shell: powershell
+        run: |
+          dotnet build -c Release --no-restore `
+            "/p:Version=$env:MSI_VERSION" `
+            "/p:AssemblyVersion=$env:MSI_VERSION.0" `
+            "/p:FileVersion=$env:MSI_VERSION.0"
 
 
       # ========================================
@@ -68,6 +100,9 @@ jobs:
             -c Release `
             -r win-x64 `
             --self-contained true `
+            "/p:Version=$env:MSI_VERSION" `
+            "/p:AssemblyVersion=$env:MSI_VERSION.0" `
+            "/p:FileVersion=$env:MSI_VERSION.0" `
             -o publish
 
 
@@ -755,33 +790,6 @@ jobs:
           }
 
           Write-Host "GAM7 WiX verification successful."
-
-
-      # ========================================
-      # Determine MSI version
-      # ========================================
-
-      - name: Determine MSI version
-        shell: powershell
-        run: |
-
-          if ("${{ github.ref }}" -match "^refs/tags/v(.+)$") {
-
-              $version = $Matches[1]
-
-          }
-          else {
-
-              $version = "1.0.0"
-
-          }
-
-          Write-Host "MSI Version: $version"
-
-          "MSI_VERSION=$version" |
-            Out-File `
-              -FilePath $env:GITHUB_ENV `
-              -Encoding utf8
 
 
       # ========================================

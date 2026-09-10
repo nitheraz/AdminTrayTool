@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
-using System.Windows.Forms;
 using System.Threading;
-//using AdminTrayTool.Forms;
+using System.Windows.Forms;
 
 namespace AdminTrayTool
 {
@@ -58,6 +58,13 @@ namespace AdminTrayTool
                 ContextMenuStrip = trayMenu,
                 Visible = true
             };
+
+            // Silent background update check on startup
+            var startupVersion = typeof(Program).Assembly.GetName().Version;
+            string startupVersionString = startupVersion != null
+                ? $"{startupVersion.Major}.{startupVersion.Minor}.{startupVersion.Build}"
+                : "0.0.0";
+            _ = UpdateCheckService.CheckForUpdateAsync(startupVersionString, showUpToDateMessage: false);
 
             Application.Run();
         }
@@ -355,9 +362,24 @@ namespace AdminTrayTool
                 };
                 menu.Items.Add(mi);
             }
+            // About
+            menu.Items.Add("About AdminTrayTool", null, (s, e) =>
+            {
+                using var form = new AboutForm();
+                form.ShowDialog();
+            });
+
+            // Check for Updates
+            menu.Items.Add("Check for Updates...", null, async (s, e) =>
+            {
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                string currentVersion = version != null ? $"{version.Major}.{version.Minor}.{version.Build}" : "0.0.0";
+                await UpdateCheckService.CheckForUpdateAsync(currentVersion, showUpToDateMessage: true);
+            });
+
+            menu.Items.Add(new ToolStripSeparator());
 
             // Exit
-            menu.Items.Add(new ToolStripSeparator());
             menu.Items.Add("Exit", null, (s, e) => Application.Exit());
         }
 

@@ -161,6 +161,7 @@ while ($true) {
 				}
 
 				Write-Host "`nDefault message: 'Release v$CurrentVersion'"
+				Write-Host "(For multi-line messages, press Enter here and use 'git commit' manually instead - this prompt only accepts one line.)"
 				$message = Read-Host "Enter commit message (or press Enter for default)"
 				if (-not $message) {
 					$message = "Release v$CurrentVersion"
@@ -181,6 +182,12 @@ while ($true) {
 
 					git checkout $MainBranch
 					git pull origin $MainBranch
+
+					if ($LASTEXITCODE -ne 0) {
+						Write-Host "`n[FAIL] 'git pull' failed or hit a conflict. Resolve manually (git status will show details), then re-run this option.`n" -ForegroundColor Red
+						break
+					}
+
 					git merge $originalBranch --no-edit
 
 					if ($LASTEXITCODE -ne 0) {
@@ -195,26 +202,48 @@ while ($true) {
 				}
 			}
 
+			# --- FIX #1: re-read version fresh, don't trust in-memory value this late in the flow ---
+			$CurrentVersion = Get-CurrentVersion
+
 			# --- Tag ---
 			Write-Host "Tag this commit as v$CurrentVersion? (y/n)" -ForegroundColor Yellow
 			$tagResp = Read-Host
 			if ($tagResp -eq "y") {
 				git tag -a "v$CurrentVersion" -m "v$CurrentVersion"
-				Write-Host "  [OK] Tagged v$CurrentVersion`n" -ForegroundColor Green
+				if ($LASTEXITCODE -eq 0) {
+					Write-Host "  [OK] Tagged v$CurrentVersion`n" -ForegroundColor Green
+				} else {
+					Write-Host "  [FAIL] Tagging failed - see output above.`n" -ForegroundColor Red
+					$tagResp = "n"  # don't try to push a tag that failed to create
+				}
 			}
 
-			# --- Push main + tag ---
+			# --- FIX #2: verify push actually succeeded via $LASTEXITCODE before claiming success ---
 			Write-Host "Push '$MainBranch' (and tag, if created) to origin? (y/n)" -ForegroundColor Yellow
 			$pushResp = Read-Host
 			if ($pushResp -eq "y") {
 				git push origin $MainBranch
-				if ($tagResp -eq "y") {
-					git push origin "v$CurrentVersion"
+
+				if ($LASTEXITCODE -eq 0) {
+					Write-Host "  [OK] Pushed $MainBranch to origin`n" -ForegroundColor Green
+
+					if ($tagResp -eq "y") {
+						git push origin "v$CurrentVersion"
+						if ($LASTEXITCODE -eq 0) {
+							Write-Host "  [OK] Pushed tag v$CurrentVersion to origin`n" -ForegroundColor Green
+						} else {
+							Write-Host "  [FAIL] Pushing tag v$CurrentVersion failed - see output above.`n" -ForegroundColor Red
+						}
+					}
+				} else {
+					Write-Host "`n[FAIL] Push to $MainBranch was rejected or failed. Your local branch may be behind origin - run 'git pull origin $MainBranch' and resolve any conflicts, then re-run this option.`n" -ForegroundColor Red
+					break
 				}
-				Write-Host "`nPushed to GitHub!`n" -ForegroundColor Green
 			}
 
 			# --- GitHub Release with MSI ---
+			# Re-read version again in case option 3 changed it mid-flow (unlikely here, but consistent with fix #1)
+			$CurrentVersion = Get-CurrentVersion
 			$msiPath = ".\msi-output\AdminTrayTool-$CurrentVersion.msi"
 
 			if (-not (Test-Path $msiPath)) {
