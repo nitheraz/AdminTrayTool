@@ -32,6 +32,7 @@ namespace AdminTrayTool
         private Label _lblDeviceStatus = null!;
         private TextBox _txtLog = null!;
         private ChromebookInfo? _currentDevice;
+        private ComboBox _cmbSearchType = null!;
 
         public ChromebookManagementForm()
         {
@@ -484,39 +485,6 @@ namespace AdminTrayTool
 
             mainPanel.Controls.Add(headerLine);
 
-            /*// =========================================================
-            // OAUTH WARNING PANEL
-            // =========================================================
-
-            var pnlOAuthWarning = new Panel
-            {
-                Location = new Point(30, 100),
-                Size = new Size(820, 60),
-                BackColor = Color.FromArgb(40, 20, 20),
-                Visible = false
-            };
-            mainPanel.Controls.Add(pnlOAuthWarning);
-
-            var lblOAuthMessage = new Label
-            {
-                Text = "",
-                AutoSize = true,
-                ForeColor = Color.FromArgb(255, 180, 180),
-                Location = new Point(20, 10),
-                Font = new Font("Segoe UI", 10F, FontStyle.Bold)
-            };
-            pnlOAuthWarning.Controls.Add(lblOAuthMessage);
-
-            var btnRunOAuth = CreateButton("RUN OAUTH SETUP", new Point(20, 30), new Size(200, 28));
-            btnRunOAuth.Click += BtnRunOAuth_Click;
-            pnlOAuthWarning.Controls.Add(btnRunOAuth);
-
-            // Store references
-            _oauthPanel = pnlOAuthWarning;
-            _lblOAuthMessage = lblOAuthMessage;
-            _btnRunOAuth = btnRunOAuth;*/
-
-
             // =========================================================
             // LOOKUP SECTION
             // =========================================================
@@ -528,23 +496,61 @@ namespace AdminTrayTool
             mainPanel.Controls.Add(
                 lookupPanel);
 
-            var lblSerial = CreateLabel(
-                "SERIAL NUMBER",
+            var lblSearchType = CreateLabel(
+                "SEARCH BY",
                 new Point(20, 18));
 
             lookupPanel.Controls.Add(
-                lblSerial);
+                lblSearchType);
+
+            _cmbSearchType = new ComboBox
+            {
+                Location =
+                    new Point(20, 45),
+
+                Size =
+                    new Size(160, 32),
+
+                BackColor =
+                    Color.FromArgb(20, 27, 40),
+
+                ForeColor =
+                    Color.White,
+
+                Font =
+                    new Font("Segoe UI", 10.5F),
+
+                DropDownStyle =
+                    ComboBoxStyle.DropDownList,
+
+                FlatStyle =
+                    FlatStyle.Flat
+            };
+
+            _cmbSearchType.Items.Add("Serial Number");
+            _cmbSearchType.Items.Add("Asset ID");
+            _cmbSearchType.SelectedIndex = 0;
+
+            lookupPanel.Controls.Add(
+                _cmbSearchType);
+
+            var lblSearchValue = CreateLabel(
+                "VALUE",
+                new Point(195, 18));
+
+            lookupPanel.Controls.Add(
+                lblSearchValue);
 
             _txtSerial = new TextBox
             {
                 Location =
                     new Point(
-                        20,
+                        195,
                         45),
 
                 Size =
                     new Size(
-                        570,
+                        395,
                         32),
 
                 BackColor =
@@ -1006,14 +1012,19 @@ namespace AdminTrayTool
 
         private async Task LookupChromebookAsync()
         {
-            string serial =
+            string searchValue =
                 _txtSerial.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(serial))
+            bool searchByAssetId =
+                _cmbSearchType.SelectedItem as string == "Asset ID";
+
+            if (string.IsNullOrWhiteSpace(searchValue))
             {
                 MessageBox.Show(
-                    "Please enter a Chromebook serial number.",
-                    "Serial Number Required",
+                    searchByAssetId
+                        ? "Please enter an Asset ID."
+                        : "Please enter a Chromebook serial number.",
+                    searchByAssetId ? "Asset ID Required" : "Serial Number Required",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
 
@@ -1027,14 +1038,15 @@ namespace AdminTrayTool
             ClearDeviceInformation();
 
             WriteLog(
-                $"Looking up Chromebook: {serial}");
+                searchByAssetId
+                    ? $"Looking up Chromebook by Asset ID: {searchValue}"
+                    : $"Looking up Chromebook by Serial: {searchValue}");
 
             try
             {
-                var result =
-                    await _gamService
-                        .GetChromebookInfoAsync(
-                            serial);
+                var result = searchByAssetId
+                    ? await _gamService.GetChromebookInfoByAssetIdAsync(searchValue)
+                    : await _gamService.GetChromebookInfoAsync(searchValue);
 
                 if (!result.Success ||
                     result.Device == null)
@@ -1791,6 +1803,9 @@ namespace AdminTrayTool
                 !busy;
 
             _txtSerial.Enabled =
+                !busy;
+
+            _cmbSearchType.Enabled =
                 !busy;
 
             _btnSaveAssetId.Enabled =

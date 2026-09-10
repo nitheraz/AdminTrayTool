@@ -65,10 +65,6 @@
 			<ComponentGroupRef
 				Id="GAM7Files" />
 
-			<!-- Configuration -->
-			<ComponentRef
-				Id="ConfigJsonComponent" />
-
 			<!-- Start Menu shortcut -->
 			<ComponentRef
 				Id="StartMenuShortcutComponent" />
@@ -119,17 +115,6 @@
 				<Directory
 					Id="ProgramDataAdminTrayTool"
 					Name="AdminTrayTool">
-
-					<Component
-						Id="ConfigJsonComponent"
-						Guid="{E890F3A4-1D23-405C-9B0C-F9AF0D9CD10F}">
-
-						<File
-							Id="ConfigJsonFile"
-							Source="$(var.AdminTrayToolOutputDir)\config.json"
-							KeyPath="yes" />
-
-					</Component>
 
 				</Directory>
 

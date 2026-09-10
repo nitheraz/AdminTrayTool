@@ -1,0 +1,71 @@
+﻿using AdminTrayTool.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+
+namespace AdminTrayTool.Services
+{
+    public static class AssetIdCacheService
+    {
+        public static string GetCachePath()
+        {
+            string programDataDir = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+                "AdminTrayTool");
+
+            try { Directory.CreateDirectory(programDataDir); } catch { /* ignore */ }
+
+            return Path.Combine(programDataDir, "assetIdCache.json");
+        }
+
+        public static Dictionary<string, string>? TryLoad(TimeSpan maxAge)
+        {
+            string path = GetCachePath();
+
+            try
+            {
+                if (!File.Exists(path))
+                    return null;
+
+                string json = File.ReadAllText(path);
+                var cache = JsonSerializer.Deserialize<AssetIdCache>(
+                    json,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (cache == null)
+                    return null;
+
+                bool expired = DateTime.UtcNow - cache.FetchedAtUtc > maxAge;
+
+                return expired ? null : cache.AssetIdToSerial;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static void Save(Dictionary<string, string> assetIdToSerial)
+        {
+            try
+            {
+                var cache = new AssetIdCache
+                {
+                    FetchedAtUtc = DateTime.UtcNow,
+                    AssetIdToSerial = assetIdToSerial
+                };
+
+                string json = JsonSerializer.Serialize(
+                    cache,
+                    new JsonSerializerOptions { WriteIndented = true });
+
+                File.WriteAllText(GetCachePath(), json);
+            }
+            catch
+            {
+                // Ignore write errors - caching is a convenience, not critical.
+            }
+        }
+    }
+}

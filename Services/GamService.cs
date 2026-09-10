@@ -74,6 +74,87 @@ namespace AdminTrayTool.Services
             return (true, device, string.Empty);
         }
 
+        private static readonly TimeSpan AssetIdCacheMaxAge = TimeSpan.FromHours(4);
+
+        public async Task<(bool Success, ChromebookInfo? Device, string Error)>
+            GetChromebookInfoByAssetIdAsync(string assetId, bool forceRefresh = false)
+        {
+            if (string.IsNullOrWhiteSpace(assetId))
+            {
+                return (false, null, "An Asset ID is required.");
+            }
+
+            assetId = assetId.Trim();
+
+            Dictionary<string, string>? map = forceRefresh
+                ? null
+                : AssetIdCacheService.TryLoad(AssetIdCacheMaxAge);
+
+            if (map == null)
+            {
+                GamResult listResult = await RunGamAsync(
+                    "print cros fields serialNumber,annotatedAssetId");
+
+                if (!listResult.Success)
+                {
+                    string error = !string.IsNullOrWhiteSpace(listResult.Error)
+                        ? listResult.Error!
+                        : listResult.Output ?? "GAM returned no output.";
+
+                    return (false, null, error);
+                }
+
+                map = BuildAssetIdMapFromCsv(listResult.Output ?? string.Empty);
+                AssetIdCacheService.Save(map);
+            }
+
+            if (!map.TryGetValue(assetId, out string? serial) || string.IsNullOrWhiteSpace(serial))
+            {
+                return (false, null, $"No Chromebook found with Asset ID '{assetId}'.");
+            }
+
+            return await GetChromebookInfoAsync(serial);
+        }
+
+        private static Dictionary<string, string> BuildAssetIdMapFromCsv(string csvOutput)
+        {
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            string[] lines = csvOutput.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length < 2)
+                return map;
+
+            string[] headers = lines[0].Split(',');
+
+            int serialColumnIndex = Array.FindIndex(headers,
+                h => string.Equals(h.Trim(), "serialNumber", StringComparison.OrdinalIgnoreCase));
+
+            int assetColumnIndex = Array.FindIndex(headers,
+                h => string.Equals(h.Trim(), "annotatedAssetId", StringComparison.OrdinalIgnoreCase));
+
+            if (serialColumnIndex == -1 || assetColumnIndex == -1)
+                return map;
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] fields = lines[i].Split(',');
+
+                if (assetColumnIndex >= fields.Length || serialColumnIndex >= fields.Length)
+                    continue;
+
+                string rowAssetId = fields[assetColumnIndex].Trim().Trim('"');
+                string rowSerial = fields[serialColumnIndex].Trim().Trim('"');
+
+                if (!string.IsNullOrWhiteSpace(rowAssetId) && !string.IsNullOrWhiteSpace(rowSerial))
+                {
+                    map[rowAssetId] = rowSerial;
+                }
+            }
+
+            return map;
+        }
+
         // ============================================================
         // UPDATE ANNOTATED ASSET ID
         // ============================================================
