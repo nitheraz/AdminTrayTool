@@ -20,9 +20,9 @@ namespace AdminTrayTool
         {
             Text = "About AdminTrayTool";
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(420, 260);
-            MinimumSize = new Size(420, 260);
-            MaximumSize = new Size(420, 260);
+            ClientSize = new Size(420, 280);
+            MinimumSize = new Size(420, 280);
+            MaximumSize = new Size(420, 280);
             BackColor = Color.FromArgb(10, 15, 25);
             ForeColor = Color.White;
             Font = new Font("Segoe UI", 10F, FontStyle.Regular);
