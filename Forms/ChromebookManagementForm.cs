@@ -596,7 +596,7 @@ namespace AdminTrayTool
             // =========================================================
 
             var infoPanel = CreatePanel(
-                new Point(30, 240),
+                new Point(30, 250),
                 new Size(820, 300));
 
             mainPanel.Controls.Add(
@@ -862,7 +862,7 @@ namespace AdminTrayTool
             // =========================================================
 
             var actionPanel = CreatePanel(
-                new Point(30, 540),
+                new Point(30, 560),
                 new Size(820, 80));
 
             mainPanel.Controls.Add(
@@ -954,7 +954,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        635)
+                        645)
             };
 
             mainPanel.Controls.Add(
@@ -965,7 +965,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        660),
+                        670),
 
                 Size =
                     new Size(
@@ -1899,26 +1899,12 @@ namespace AdminTrayTool
         // UI HELPERS
         // =============================================================
 
-        private Panel CreatePanel(
-            Point location,
-            Size size)
+        private Panel CreatePanel(Point location, Size size)
         {
-            return new Panel
+            return new HudPanel
             {
-                Location =
-                    location,
-
-                Size =
-                    size,
-
-                BackColor =
-                    Color.FromArgb(
-                        16,
-                        23,
-                        36),
-
-                BorderStyle =
-                    BorderStyle.FixedSingle
+                Location = location,
+                Size = size
             };
         }
 
@@ -2017,54 +2003,14 @@ namespace AdminTrayTool
             return valueLabel;
         }
 
-        private Button CreateButton(
-            string text,
-            Point location,
-            Size size)
+        private Button CreateButton(string text, Point location, Size size)
         {
-            var button = new Button
+            return new HudButton
             {
-                Text =
-                    text,
-
-                Location =
-                    location,
-
-                Size =
-                    size,
-
-                FlatStyle =
-                    FlatStyle.Flat,
-
-                BackColor =
-                    Color.FromArgb(
-                        25,
-                        35,
-                        52),
-
-                ForeColor =
-                    Color.White,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9F,
-                        FontStyle.Bold),
-
-                Cursor =
-                    Cursors.Hand
+                Text = text,
+                Location = location,
+                Size = size
             };
-
-            button.FlatAppearance.BorderColor =
-                Color.FromArgb(
-                    65,
-                    85,
-                    110);
-
-            button.FlatAppearance.BorderSize =
-                1;
-
-            return button;
         }
     }
 }

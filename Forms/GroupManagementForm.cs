@@ -689,12 +689,10 @@ namespace AdminTrayTool
 
         private Panel CreatePanel(Point location, Size size)
         {
-            return new Panel
+            return new HudPanel
             {
                 Location = location,
-                Size = size,
-                BackColor = Color.FromArgb(16, 23, 36),
-                BorderStyle = BorderStyle.FixedSingle
+                Size = size
             };
         }
 
@@ -712,22 +710,12 @@ namespace AdminTrayTool
 
         private Button CreateButton(string text, Point location, Size size)
         {
-            var button = new Button
+            return new HudButton
             {
                 Text = text,
                 Location = location,
-                Size = size,
-                FlatStyle = FlatStyle.Flat,
-                BackColor = Color.FromArgb(25, 35, 52),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                Cursor = Cursors.Hand
+                Size = size
             };
-
-            button.FlatAppearance.BorderColor = Color.FromArgb(65, 85, 110);
-            button.FlatAppearance.BorderSize = 1;
-
-            return button;
         }
     }
 }

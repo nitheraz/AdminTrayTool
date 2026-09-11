@@ -20,9 +20,9 @@ namespace AdminTrayTool
         {
             Text = "About AdminTrayTool";
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(420, 280);
-            MinimumSize = new Size(420, 280);
-            MaximumSize = new Size(420, 280);
+            ClientSize = new Size(420, 260);
+            MinimumSize = new Size(420, 260);
+            MaximumSize = new Size(420, 290);
             BackColor = Color.FromArgb(10, 15, 25);
             ForeColor = Color.White;
             Font = new Font("Segoe UI", 10F, FontStyle.Regular);
@@ -33,11 +33,14 @@ namespace AdminTrayTool
 
         private void BuildInterface()
         {
-            var mainPanel = new Panel
+            // The HudPanel is the chamfered "card" itself - fills the form
+            // with a small margin so the angled border is fully visible.
+            var mainPanel = new HudPanel
             {
-                Dock = DockStyle.Fill,
-                Padding = new Padding(30),
-                BackColor = Color.FromArgb(10, 15, 25)
+                Location = new Point(6, 6),
+                Size = new Size(ClientSize.Width - 12, ClientSize.Height - 12),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
+                Padding = new Padding(24)
             };
             Controls.Add(mainPanel);
 
@@ -47,7 +50,8 @@ namespace AdminTrayTool
                 AutoSize = true,
                 Font = new Font("Segoe UI", 18F, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(30, 20)
+                Location = new Point(24, 20),
+                BackColor = Color.Transparent
             };
             mainPanel.Controls.Add(lblTitle);
 
@@ -58,16 +62,17 @@ namespace AdminTrayTool
                 Text = $"Version {version}",
                 AutoSize = true,
                 Font = new Font("Segoe UI", 10.5F),
-                ForeColor = Color.FromArgb(150, 160, 175),
-                Location = new Point(33, 58)
+                ForeColor = Color.FromArgb(150, 190, 220),
+                Location = new Point(27, 58),
+                BackColor = Color.Transparent
             };
             mainPanel.Controls.Add(lblVersion);
 
             var headerLine = new Panel
             {
-                Location = new Point(30, 90),
-                Size = new Size(360, 1),
-                BackColor = Color.FromArgb(45, 55, 70)
+                Location = new Point(24, 90),
+                Size = new Size(354, 1),
+                BackColor = Color.FromArgb(120, 230, 255)
             };
             mainPanel.Controls.Add(headerLine);
 
@@ -76,10 +81,11 @@ namespace AdminTrayTool
                 Text = "IT Admin Quick Tools for Google Workspace management,\n" +
                        "Chromebook administration, and remote admin utilities.",
                 AutoSize = false,
-                Size = new Size(360, 50),
+                Size = new Size(354, 50),
                 Font = new Font("Segoe UI", 9.5F),
                 ForeColor = Color.White,
-                Location = new Point(30, 105)
+                Location = new Point(24, 105),
+                BackColor = Color.Transparent
             };
             mainPanel.Controls.Add(lblDescription);
 
@@ -88,8 +94,9 @@ namespace AdminTrayTool
                 Text = RepoUrl,
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9.5F),
-                LinkColor = Color.FromArgb(100, 170, 255),
-                Location = new Point(30, 165)
+                LinkColor = Color.FromArgb(120, 230, 255),
+                Location = new Point(24, 165),
+                BackColor = Color.Transparent
             };
             lblRepo.LinkClicked += (s, e) =>
             {
@@ -101,19 +108,12 @@ namespace AdminTrayTool
             };
             mainPanel.Controls.Add(lblRepo);
 
-            var btnCheckUpdate = new Button
+            var btnCheckUpdate = new HudButton
             {
                 Text = "CHECK FOR UPDATES",
-                Location = new Point(30, 200),
-                Size = new Size(200, 32),
-                FlatStyle = FlatStyle.Flat,
-                BackColor = Color.FromArgb(25, 35, 52),
-                ForeColor = Color.White,
-                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                Cursor = Cursors.Hand
+                Location = new Point(24, 200),
+                Size = new Size(200, 32)
             };
-            btnCheckUpdate.FlatAppearance.BorderColor = Color.FromArgb(65, 85, 110);
-            btnCheckUpdate.FlatAppearance.BorderSize = 1;
             btnCheckUpdate.Click += async (s, e) =>
             {
                 btnCheckUpdate.Enabled = false;
