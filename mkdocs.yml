@@ -1,0 +1,48 @@
+﻿site_name: AdminTrayTool
+site_description: Documentation for AdminTrayTool - IT Admin Quick Tools
+site_url: https://nitheraz.github.io/AdminTrayTool/
+repo_url: https://github.com/nitheraz/AdminTrayTool
+repo_name: nitheraz/AdminTrayTool
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Guides:
+      - Chromebook Management: guides/chromebook-management.md
+      - Group Management: guides/group-management.md
+      - Config Settings: guides/config-settings.md
+  - GAM7 Setup & Troubleshooting: gam-setup.md
+  - FAQ: faq.md
+  - About & Versioning: about.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
