@@ -19,6 +19,8 @@
 
 		<None Include=".github\workflows\build-msi.yml" />
 
+		<None Include=".github\workflows\docs.yml" />
+
 		<None Include="config.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
 
 		<!-- Copy tray icon to output and publish folders -->
