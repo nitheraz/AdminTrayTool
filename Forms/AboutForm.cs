@@ -33,8 +33,6 @@ namespace AdminTrayTool
 
         private void BuildInterface()
         {
-            // The HudPanel is the chamfered "card" itself - fills the form
-            // with a small margin so the angled border is fully visible.
             var mainPanel = new HudPanel
             {
                 Location = new Point(6, 6),

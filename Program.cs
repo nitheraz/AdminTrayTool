@@ -1,3 +1,5 @@
+using AdminTrayTool.Forms;
+using AdminTrayTool.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,7 +50,7 @@ namespace AdminTrayTool
             // Load the config from programConfigPath. LoadConfig will create a default file if missing.
             var cfg = LoadConfig(programConfigPath);
 
-            // Build menu from config (this also adds Edit config... using programConfigPath)
+            // Build menu from config (this also adds Config Settings using programConfigPath)
             BuildMenuFromConfig(trayMenu, cfg, programConfigPath);
 
             trayIcon = new NotifyIcon
@@ -68,6 +70,7 @@ namespace AdminTrayTool
 
             Application.Run();
         }
+
         static Icon LoadTrayIcon()
         {
             var assembly = typeof(Program).Assembly;
@@ -239,9 +242,6 @@ namespace AdminTrayTool
                     tools.DropDownItems.Add(capture.Name, null, (s, e) => LaunchProcess(capture.Exe, capture.Args, capture.Elevated));
                 }
             }
-            // Do not add hard-coded admin tools here. All admin tools are defined in the config so admins
-            // can customize and avoid duplicate entries. Built-in helpers (Putty/PowerShell) are still
-            // available as handler methods if referenced from the config.
 
             menu.Items.Add(tools);
             menu.Items.Add(new ToolStripSeparator());
@@ -292,13 +292,13 @@ namespace AdminTrayTool
 
             menu.Items.Add(new ToolStripSeparator());
 
-            // Edit config
-            menu.Items.Add("Edit config...", null, (s, e) =>
-            {
-                string? serializedCfg = null;
-                try { serializedCfg = JsonSerializer.Serialize(cfg, new JsonSerializerOptions { WriteIndented = true }); } catch { }
+            // Config Settings submenu
+            var configSettingsMenu = new ToolStripMenuItem("Config Settings");
 
-                using var form = new ConfigEditorForm(configPath, serializedCfg);
+            // --- App config (config.json) ---
+            configSettingsMenu.DropDownItems.Add("Edit App Config...", null, (s, e) =>
+            {
+                using var form = new ConfigEditorForm(configPath, ConfigEditorMode.AppConfig);
                 var result = form.ShowDialog();
                 if (result == DialogResult.OK)
                 {
@@ -315,66 +315,103 @@ namespace AdminTrayTool
                 }
             });
 
-            // Open config file / folder
+            configSettingsMenu.DropDownItems.Add("Open App Config File...", null, (s, e) =>
             {
-                var mi = new ToolStripMenuItem("Open config file...");
-                mi.Click += (s, e) =>
+                try
                 {
-                    try
-                    {
-                        Process.Start(new ProcessStartInfo { FileName = configPath, UseShellExecute = true });
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"Failed to open config file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                };
-                menu.Items.Add(mi);
-            }
+                    Process.Start(new ProcessStartInfo { FileName = configPath, UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open config file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
 
+            configSettingsMenu.DropDownItems.Add("Open App Config Folder...", null, (s, e) =>
             {
-                var mi = new ToolStripMenuItem("Open config folder...");
-                mi.Click += (s, e) =>
+                try
                 {
-                    try
+                    var folder = Path.GetDirectoryName(configPath);
+
+                    if (string.IsNullOrEmpty(folder))
+                        throw new InvalidOperationException("Config folder path is invalid");
+
+                    if (!Directory.Exists(folder))
                     {
-                        var folder = Path.GetDirectoryName(configPath);
-
-                        if (string.IsNullOrEmpty(folder))
-                            throw new InvalidOperationException("Config folder path is invalid");
-
-                        if (!Directory.Exists(folder))
-                        {
-                            Directory.CreateDirectory(folder);
-                        }
-
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = "explorer.exe",
-                            Arguments = $"\"{folder}\"",
-                            UseShellExecute = true
-                        });
+                        Directory.CreateDirectory(folder);
                     }
-                    catch (Exception ex)
+
+                    Process.Start(new ProcessStartInfo
                     {
-                        MessageBox.Show($"Failed to open config folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{folder}\"",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open config folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
+
+            configSettingsMenu.DropDownItems.Add(new ToolStripSeparator());
+
+            // --- Group templates (groupTemplates.json) ---
+            configSettingsMenu.DropDownItems.Add("Edit Group Templates...", null, (s, e) =>
+            {
+                string templatesPath = GroupTemplateService.GetDefaultPath();
+                using var form = new ConfigEditorForm(templatesPath, ConfigEditorMode.GroupTemplates);
+                form.ShowDialog();
+                // No menu rebuild needed - GroupManagementForm reloads templates fresh every time it opens.
+            });
+
+            configSettingsMenu.DropDownItems.Add("Open Group Templates File...", null, (s, e) =>
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo { FileName = GroupTemplateService.GetDefaultPath(), UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open group templates file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
+
+            configSettingsMenu.DropDownItems.Add("Open Group Templates Folder...", null, (s, e) =>
+            {
+                try
+                {
+                    var folder = Path.GetDirectoryName(GroupTemplateService.GetDefaultPath());
+
+                    if (string.IsNullOrEmpty(folder))
+                        throw new InvalidOperationException("Group templates folder path is invalid");
+
+                    if (!Directory.Exists(folder))
+                    {
+                        Directory.CreateDirectory(folder);
                     }
-                };
-                menu.Items.Add(mi);
-            }
+
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "explorer.exe",
+                        Arguments = $"\"{folder}\"",
+                        UseShellExecute = true
+                    });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Failed to open group templates folder: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
+
+            menu.Items.Add(configSettingsMenu);
+            menu.Items.Add(new ToolStripSeparator());
+
             // About
             menu.Items.Add("About AdminTrayTool", null, (s, e) =>
             {
                 using var form = new AboutForm();
                 form.ShowDialog();
-            });
-
-            // Check for Updates
-            menu.Items.Add("Check for Updates...", null, async (s, e) =>
-            {
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-                string currentVersion = version != null ? $"{version.Major}.{version.Minor}.{version.Build}" : "0.0.0";
-                await UpdateCheckService.CheckForUpdateAsync(currentVersion, showUpToDateMessage: true);
             });
 
             menu.Items.Add(new ToolStripSeparator());
@@ -406,7 +443,6 @@ namespace AdminTrayTool
         {
             if (string.IsNullOrWhiteSpace(url)) return;
             var browser = "chrome.exe";
-            // Intentionally avoid coalescing profileDirectory here; coalescing is handled elsewhere and we keep this explicit.
             var args = string.IsNullOrWhiteSpace(profileDirectory)
                 ? $"\"{url}\""
                 : $"--profile-directory=\"{profileDirectory}\" \"{url}\"";

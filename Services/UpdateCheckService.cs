@@ -67,7 +67,6 @@ namespace AdminTrayTool
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
                 }
-                // Silent failure on startup check - don't bother the user with connectivity issues.
             }
         }
 
