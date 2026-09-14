@@ -9,6 +9,7 @@ namespace AdminTrayTool
     public class AboutForm : Form
     {
         private const string RepoUrl = "https://github.com/nitheraz/AdminTrayTool";
+        private const string RepoWebsiteUrl = "https://nitheraz.github.io/AdminTrayTool/";
 
         public AboutForm()
         {
@@ -89,11 +90,11 @@ namespace AdminTrayTool
 
             var lblRepo = new LinkLabel
             {
-                Text = RepoUrl,
+                Text = "Repo: " + RepoUrl,
                 AutoSize = true,
                 Font = new Font("Segoe UI", 9.5F),
                 LinkColor = Color.FromArgb(120, 230, 255),
-                Location = new Point(24, 165),
+                Location = new Point(24, 175),
                 BackColor = Color.Transparent
             };
             lblRepo.LinkClicked += (s, e) =>
@@ -105,6 +106,25 @@ namespace AdminTrayTool
                 catch { /* ignore - non-critical */ }
             };
             mainPanel.Controls.Add(lblRepo);
+
+            var lblRepoWebsite = new LinkLabel
+            {
+                Text = "Website: " + RepoWebsiteUrl,
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9.5F),
+                LinkColor = Color.FromArgb(120, 230, 255),
+                Location = new Point(24, 155),
+                BackColor = Color.Transparent
+            };
+            lblRepoWebsite.LinkClicked += (s, e) =>
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo { FileName = RepoWebsiteUrl, UseShellExecute = true });
+                }
+                catch { /* ignore - non-critical */ }
+            };
+            mainPanel.Controls.Add(lblRepoWebsite);
 
             var btnCheckUpdate = new HudButton
             {
