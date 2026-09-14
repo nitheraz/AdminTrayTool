@@ -136,7 +136,6 @@ namespace AdminTrayTool.Forms
                     new() { Name = "name", DisplayName = "Name", Required = true, Placeholder = "Display name", ToolTip = "Display name shown in the menu" },
                     new() { Name = "exe", DisplayName = "Exe", Required = true, Placeholder = "putty.exe", ToolTip = "Executable name or full path" },
                     new() { Name = "args", DisplayName = "Args", Placeholder = "", ToolTip = "Command-line arguments (optional)" },
-                    new() { Name = "elevated", DisplayName = "Elevated", FieldType = typeof(bool), ToolTip = "Run elevated (requires UAC)" }
                 }
             };
         }
