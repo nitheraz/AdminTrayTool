@@ -25,6 +25,7 @@ namespace AdminTrayTool
 
         private Button _btnLookup = null!;
         private Button _btnRefresh = null!;
+        private Button _btnClear = null!;
         private Button _btnDisable = null!;
         private Button _btnReenable = null!;
         private Button _btnCopyMac = null!;
@@ -237,6 +238,7 @@ namespace AdminTrayTool
         {
             _btnLookup.Enabled = false;
             _btnRefresh.Enabled = false;
+            _btnClear.Enabled = false; 
             _btnDisable.Enabled = false;
             _btnReenable.Enabled = false;
             _btnCopyMac.Enabled = false;
@@ -256,101 +258,7 @@ namespace AdminTrayTool
 
             _lblDeviceStatus.Text = "Ready";
         }
-
-
-        private void DisableChromebookActions()
-        {
-            _btnLookup.Enabled = false;
-            _btnRefresh.Enabled = false;
-            _btnDisable.Enabled = false;
-            _btnReenable.Enabled = false;
-            _btnCopyMac.Enabled = false;
-            _btnSaveAssetId.Enabled = false;
-        }
-        private async void btnRunGamSetup_Click(object sender, EventArgs e)
-        {
-            string? gamPath = await GamLocator.LocateGam();
-
-            if (gamPath == null)
-            {
-                MessageBox.Show("GAM7 not found.");
-                return;
-            }
-
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = gamPath,
-                    Arguments = "oauth create",
-                    UseShellExecute = true
-                }
-            };
-
-            process.Start();
-            process.WaitForExit();
-
-            await ValidateGam7Async();
-        }
-
-        private void EnableChromebookActions()
-        {
-            _btnLookup.Enabled = true;
-            _btnRefresh.Enabled = true;
-            _btnDisable.Enabled = true;
-            _btnReenable.Enabled = true;
-        }
-
-/*        private async void BtnRunOAuth_Click(object? sender, EventArgs e)
-        {
-            _btnRunOAuth.Enabled = false;
-            _lblOAuthMessage.Text = "Starting GAM OAuth setup...";
-
-            string? gamPath = await GamLocator.LocateGam();
-
-            if (gamPath == null)
-            {
-                MessageBox.Show("GAM executable not found.", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _btnRunOAuth.Enabled = true;
-                return;
-            }
-
-            var psi = new ProcessStartInfo
-            {
-                FileName = gamPath,
-                Arguments = "oauth create",
-                UseShellExecute = true,   // REQUIRED: opens browser
-                CreateNoWindow = false
-            };
-
-            var process = Process.Start(psi);
-
-            await Task.Run(() => process.WaitForExit());
-
-            var checker = new GamOAuthChecker();
-            var result = await checker.CheckOAuthAsync();
-
-            if (result.Success)
-            {
-                MessageBox.Show("OAuth setup complete!", "Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                _oauthPanel.Visible = false;
-                EnableChromebookActions();
-            }
-            else
-            {
-                MessageBox.Show("OAuth setup did not complete.\nPlease try again.",
-                    "OAuth Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                _btnRunOAuth.Enabled = true;
-            }
-        }*/
-
-
+ 
         // =============================================================
         // FORM INITIALISATION
         // =============================================================
@@ -901,6 +809,26 @@ namespace AdminTrayTool
                 _btnRefresh);
 
             // =========================================================
+            // Clear BUTTON
+            // =========================================================
+
+            _btnClear = CreateButton(
+                "CLEAR",
+                new Point(630, 20),
+                new Size(150, 40));
+
+            _btnClear.Enabled = false;
+
+            _btnClear.Click +=
+                async (s, e) =>
+                {
+                    ClearChromebook();
+                };
+
+            actionPanel.Controls.Add(
+                _btnClear);
+
+            // =========================================================
             // DISABLE BUTTON
             // =========================================================
 
@@ -1088,6 +1016,7 @@ namespace AdminTrayTool
                 _btnRefresh.Enabled = true;
                 _btnDisable.Enabled = true;
                 _btnReenable.Enabled = true;
+                _btnClear.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -1121,6 +1050,8 @@ namespace AdminTrayTool
 
             if (string.IsNullOrWhiteSpace(serial))
                 return;
+
+            ClearDeviceInformation();
 
             SetBusy(true);
 
@@ -1178,6 +1109,18 @@ namespace AdminTrayTool
             {
                 SetBusy(false);
             }
+        }
+        private void ClearChromebook()
+        {
+            _currentDevice = null;
+
+            _txtSerial.Clear();
+
+            _txtAssetId.Clear();
+
+            ClearDeviceInformation();
+
+            WriteLog("Chromebook information cleared.");
         }
 
         // =============================================================
