@@ -398,6 +398,7 @@ namespace AdminTrayTool.Services
                 ParseValue(line, "macAddress:", v => device.MacAddress = v);
                 ParseValue(line, "orgUnitId:", v => device.OrgUnitId = v);
                 ParseValue(line, "orgUnitPath:", v => device.OrgUnitPath = v);
+                ParseValue(line, "annotatedUser:", v => device.RecentUserEmail = v);
                 ParseValue(line, "lastSync:", v => device.LastSync = v);
                 ParseValue(line, "status:", v => device.Status = v);
             }

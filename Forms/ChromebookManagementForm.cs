@@ -21,6 +21,7 @@ namespace AdminTrayTool
         private Label _lblMac = null!;
         private Label _lblOrgUnit = null!;
         private Label _lblLastSync = null!;
+        private Label _lblRecentUser = null!;
 
         private Button _btnLookup = null!;
         private Button _btnRefresh = null!;
@@ -362,7 +363,7 @@ namespace AdminTrayTool
                 FormStartPosition.CenterScreen;
 
             ClientSize =
-                new Size(900, 750);
+                new Size(890, 820);
 
             MinimumSize =
                 new Size(820, 680);
@@ -596,8 +597,8 @@ namespace AdminTrayTool
             // =========================================================
 
             var infoPanel = CreatePanel(
-                new Point(30, 250),
-                new Size(820, 300));
+                new Point(30, 215),
+                new Size(820, 355));
 
             mainPanel.Controls.Add(
                 infoPanel);
@@ -842,27 +843,38 @@ namespace AdminTrayTool
                 "—");
 
             // =========================================================
+            // Last User
+            // =========================================================
+
+            _lblRecentUser = AddInfoRow(
+                infoPanel,
+                "Recent User",
+                295,
+                out _,
+                "—");
+
+            // =========================================================
             // LAST SYNC
             // =========================================================
 
             _lblLastSync = AddInfoRow(
                 infoPanel,
                 "Last Sync",
-                260,
+                330,
                 out _,
                 "—");
 
             _lblLastSync.Location =
                 new Point(
-                    570,
-                    260);
+                    170,
+                    330);
 
             // =========================================================
             // ACTION PANEL
             // =========================================================
 
             var actionPanel = CreatePanel(
-                new Point(30, 560),
+                new Point(30, 590),
                 new Size(820, 80));
 
             mainPanel.Controls.Add(
@@ -954,7 +966,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        645)
+                        680)
             };
 
             mainPanel.Controls.Add(
@@ -965,7 +977,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        670),
+                        700),
 
                 Size =
                     new Size(
@@ -1261,6 +1273,16 @@ namespace AdminTrayTool
                     device.OrgUnitPath)
                     ? "—"
                     : device.OrgUnitPath;
+
+            // ---------------------------------------------------------
+            // LAST USER
+            // ---------------------------------------------------------
+
+            _lblRecentUser.Text =
+                string.IsNullOrWhiteSpace(
+                    device.RecentUserEmail)
+                    ? "—"
+                    : device.RecentUserEmail;
 
             // ---------------------------------------------------------
             // LAST SYNC
@@ -1764,7 +1786,10 @@ namespace AdminTrayTool
 
             _lblOrgUnit.Text =
                 "—";
-
+            
+            _lblRecentUser.Text =
+                "—";
+    
             _lblLastSync.Text =
                 "—";
 

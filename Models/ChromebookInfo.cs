@@ -9,6 +9,7 @@ namespace AdminTrayTool.Models
         public string SerialNumber { get; set; } = string.Empty;
         public string DeviceId { get; set; } = string.Empty;
         public string AnnotatedAssetId { get; set; } = string.Empty;
+        public string RecentUserEmail { get; set; } = string.Empty;
 
         public string AssetId
         {
