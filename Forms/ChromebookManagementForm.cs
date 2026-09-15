@@ -1148,28 +1148,8 @@ namespace AdminTrayTool
                 device.AssetId?.Trim()
                 ?? string.Empty;
 
-            if (string.IsNullOrWhiteSpace(assetId))
-            {
-                _txtAssetId.Text =
-                    string.Empty;
-
-                _txtAssetId.ReadOnly =
-                    false;
-
-                _btnSaveAssetId.Enabled =
-                    true;
-            }
-            else
-            {
-                _txtAssetId.Text =
-                    assetId;
-
-                _txtAssetId.ReadOnly =
-                    true;
-
-                _btnSaveAssetId.Enabled =
-                    false;
-            }
+            _txtAssetId.Text = assetId;
+            _txtAssetId.ReadOnly = false;
 
             // ---------------------------------------------------------
             // GOOGLE DEVICE ID
@@ -1778,10 +1758,7 @@ namespace AdminTrayTool
 
             _btnSaveAssetId.Enabled =
                 !busy &&
-                _currentDevice != null &&
-                !_txtAssetId.ReadOnly &&
-                !string.IsNullOrWhiteSpace(
-                    _txtAssetId.Text);
+                _currentDevice != null;
 
             if (busy)
             {
