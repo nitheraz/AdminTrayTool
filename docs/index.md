@@ -1,27 +1,31 @@
 ﻿# AdminTrayTool
 
-**AdminTrayTool** is a Windows system-tray utility built for IT administrators who manage Google Workspace, Chromebooks, and everyday admin tasks from a single, lightweight tool.
+**AdminTrayTool** is a lightweight Windows system-tray utility built for IT administrators who manage Google Workspace, Chromebooks, and everyday administrative tasks from a single application.
+
+It is designed to make common technician workflows faster without replacing your existing IT service-management platform.
 
 ## What is it for?
 
-AdminTrayTool lives in your system tray and gives you one-click access to:
+AdminTrayTool lives in the Windows system tray and provides one-click access to:
 
-- **Chromebook Management** — look up, disable, re-enable, and update Chromebooks via GAM7, by serial number or Asset ID.
-- **Group Management** — add staff to Google Groups individually or via role-based templates (e.g. Primary Staff, Secondary Staff, School Officer).
-- **Quick Launch** — configurable shortcuts to admin web portals, RDP servers, and local admin tools (PuTTY, PowerShell, etc.).
-- **Config Settings** — an in-app editor for all of the above, no manual JSON editing required.
+* **Chromebook Management** — look up, disable, re-enable, and update Chromebooks through GAM7 using Serial Number or Asset ID. Device information and search results are cached locally for faster repeat lookups.
+* **Group Management** — add staff to Google Groups individually or through role-based templates such as Primary Staff, Secondary Staff, and School Officer.
+* **Quick Launch** — configurable shortcuts to administration web portals, Remote Desktop connections, and local administration tools such as PuTTY and PowerShell.
+* **Config Settings** — manage application settings and group templates through an in-app editor without manually editing JSON files.
 
-It's built for IT staff who already have administrative access to their own workstation and need a faster way to run routine Google Workspace and device-management tasks — not a self-service elevation tool for end users.
+AdminTrayTool is intended for IT staff who already have the appropriate administrative access on their workstation. It is **not a self-service privilege-elevation tool for end users**.
 
 ## Requirements
 
-- Windows 10/11
-- [GAM7](https://github.com/GAM-team/GAM) (bundled with the installer)
-- A Google Workspace admin account with the necessary API scopes
+* Windows 10 or Windows 11
+* [GAM7](https://github.com/GAM-team/GAM), bundled with the AdminTrayTool installer
+* A Google Workspace administrator account with the permissions and API scopes required for the features being used
 
 ## Quick Links
 
-- [Getting Started](getting-started.md) — installation and first-run setup
-- [GAM7 Setup & Troubleshooting](gam-setup.md) — OAuth, projects, and common errors
-- [FAQ](faq.md)
-- [Latest Release](https://github.com/nitheraz/AdminTrayTool/releases/latest)
+* [Getting Started](getting-started.md) — installation and first-run setup
+* [Chromebook Management](chromebook-management.md) — device lookup and management
+* [Group Management](group-management.md) — staff and Google Group management
+* [GAM7 Setup & Troubleshooting](gam-setup.md) — GAM7 authentication, OAuth, projects, and common errors
+* [FAQ](faq.md) — frequently asked questions
+* [Latest Release](https://github.com/nitheraz/AdminTrayTool/releases/latest)

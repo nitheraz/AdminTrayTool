@@ -1,34 +1,157 @@
 ﻿# GAM7 Setup & Troubleshooting
 
-AdminTrayTool uses [GAM7](https://github.com/GAM-team/GAM) under the hood for all Google Workspace operations. GAM7 is bundled with the installer.
+AdminTrayTool uses [GAM7](https://github.com/GAM-team/GAM) for Google Workspace operations such as Chromebook and Group Management.
+
+GAM7 is bundled with the AdminTrayTool installer.
 
 ## Authentication Flow
 
-AdminTrayTool checks, in order:
+When a GAM7-powered feature is opened, AdminTrayTool checks the GAM7 configuration in the following order.
 
-1. **GAM7 executable found?** If not, reinstall AdminTrayTool.
-2. **GAM Project exists?** (`client_secrets.json`) — if missing, you'll be prompted to create a new project or point to an existing one.
-3. **OAuth token exists?** (`oauth2.txt`) — if missing or invalid, you'll be prompted to run `gam oauth create`, which opens a browser for sign-in.
+### 1. GAM7 Executable
 
-## Common Errors
+AdminTrayTool first checks that the bundled GAM7 executable is available.
 
-### "No such file or directory: client_secrets.json"
+If it cannot be found, reinstall AdminTrayTool.
 
-Your machine has no GAM project configured. If your organization already uses GAM elsewhere, copy the existing `client_secrets.json` from a working machine into `%USERPROFILE%\.gam\` on this one, then retry. Only create a brand-new project if this is the very first machine being set up for your organization — creating a second project when one already exists leads to confusion about which is authoritative.
+### 2. GAM7 Project
 
-### "invalid_client: The provided client secret is invalid"
+AdminTrayTool checks for the GAM7 project configuration, including:
 
-The OAuth client credentials no longer match what Google has on record — usually because the client secret was rotated or regenerated in Google Cloud Console. Re-download `client_secrets.json` from the correct OAuth client and re-run `gam oauth create`.
+```text
+%USERPROFILE%\.gam\client_secrets.json
+```
 
-### "Client Secrets File... Does not exist"
+If the file does not exist, you will need to either:
+
+* use your organization's existing GAM7 project; or
+* create a new project if this is the first GAM7 setup for your organization.
+
+### 3. OAuth Authentication
+
+AdminTrayTool checks whether the machine has a valid GAM7 OAuth configuration.
+
+If authentication is required, GAM7 will start the OAuth process and open a browser for Google Workspace sign-in.
+
+## Using an Existing GAM7 Project
+
+If your organization already has GAM7 configured on another trusted machine, **do not create another Google Cloud project unless there is a specific reason to do so**.
+
+Instead, obtain the organization's existing `client_secrets.json` from a trusted, working GAM7 installation and copy it to:
+
+```text
+%USERPROFILE%\.gam\
+```
+
+The expected result is:
+
+```text
+%USERPROFILE%\.gam\client_secrets.json
+```
+
+You can then retry the OAuth setup.
+
+### Security Considerations
+
+`client_secrets.json` contains the OAuth client configuration used by GAM7. It should still be handled as organizational configuration and should only be copied between trusted, organization-managed computers.
+
+**Do not:**
+
+* commit `client_secrets.json` to GitHub;
+* upload it to a public file-sharing service;
+* include your organization's OAuth credentials in a public software release;
+* copy another technician's OAuth tokens to your machine.
+
+The OAuth tokens generated during authentication are separate from the client secrets file and should normally remain associated with the individual user's GAM7 session.
+
+## Creating a New GAM7 Project
+
+Only create a new project when your organization does not already have an appropriate GAM7 project.
 
 Run:
 
+```text
+gam create project
+```
+
+and then:
+
+```text
+gam oauth create
+```
+
+Follow the prompts provided by GAM7.
+
+Creating multiple projects for the same organization without a clear reason can make it difficult to determine which Google Cloud project and OAuth client should be maintained.
+
+# Common Errors
+
+## "No such file or directory: client_secrets.json"
+
+Your machine does not currently have the GAM7 project credentials required for authentication.
+
+If your organization already has a working GAM7 setup:
+
+1. Do not create another Google Cloud project.
+
+2. Copy the existing `client_secrets.json` from a trusted, working GAM7 machine.
+
+3. Place it in:
+
+   ```text
+   %USERPROFILE%\.gam\
+   ```
+
+4. Retry the GAM7 OAuth setup.
+
+If this is the first GAM7 machine for your organization, follow the [new project setup](#creating-a-new-gam7-project) process instead.
+
+## "invalid_client: The provided client secret is invalid"
+
+The OAuth client information does not match the client registered in Google Cloud.
+
+Possible causes include:
+
+* the wrong `client_secrets.json` was copied;
+* the OAuth client was deleted;
+* the OAuth client credentials were regenerated;
+* the file belongs to a different Google Cloud project.
+
+Download a fresh `client_secrets.json` from the correct OAuth client in your organization's Google Cloud project and then run:
+
+```text
+gam oauth create
+```
+
+## "Client Secrets File... Does not exist"
+
+GAM7 cannot locate the OAuth client credentials.
+
+If your organization already has a GAM7 project, copy the existing `client_secrets.json` into:
+
+```text
+%USERPROFILE%\.gam\
+```
+
+If this is a completely new GAM7 setup, run:
+
+```text
 gam create project
 gam oauth create
+```
 
-in order, in a terminal, to set up a new project and authorize it.
+## GAM7 Commands Work but AdminTrayTool Shows "Not Authenticated"
 
-### GAM commands succeed but AdminTrayTool still shows "not authenticated"
+If GAM7 works successfully from a terminal but AdminTrayTool still reports that the machine is not authenticated, check the GAM7 configuration.
 
-Check for a stray `oauth2service_json` warning in the GAM output — if `gam.cfg` references a service-account file that doesn't exist on this machine, it's usually harmless, but can be cleaned up by removing that line from `%USERPROFILE%\.gam\gam.cfg`.
+In particular, look for an `oauth2service_json` entry in:
+
+```text
+%USERPROFILE%\.gam\gam.cfg
+```
+
+If the entry references a service-account file that does not exist on the machine, it may generate a warning.
+
+If that service-account configuration is not required by your organization's GAM7 setup, the obsolete line can be removed from `gam.cfg`.
+
+> **Important:** Do not remove GAM7 configuration entries unless you understand what they are used for. If your organization relies on service-account authentication for a specific workflow, consult your Google Workspace/GAM7 administrator before changing the configuration.

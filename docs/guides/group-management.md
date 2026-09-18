@@ -1,24 +1,66 @@
 ﻿# Group Management
 
-Access via the tray icon → **Group Management**.
+Access Group Management through:
+
+**Tray icon → Group Management**
+
+Group Management uses GAM7 to manage Google Workspace group memberships.
 
 ## Adding a Single Staff Member
 
-1. Choose a **Staff Type** from the dropdown — this maps to a pre-defined [group template](#group-templates).
-2. Enter the staff member's email (autocomplete suggests known users as you type).
-3. Click **Add to Group(s)**. You'll see a confirmation dialog listing every group the template will add them to.
-4. A summary shows which additions succeeded or failed.
+To add a staff member using a predefined template:
+
+1. Select a **Staff Type** from the dropdown.
+2. Enter the staff member's Google Workspace email address.
+3. Autocomplete will suggest known users as you type.
+4. Click **Add to Group(s)**.
+5. A confirmation dialog displays all groups that will be updated.
+6. Confirm the operation.
+7. A summary displays which additions succeeded or failed.
 
 ## Custom Group
 
-Select **Custom** from the Staff Type dropdown to add a staff member to a single, specific group not covered by a template — the Group Email field becomes editable (with autocomplete).
+Select **Custom** from the **Staff Type** dropdown when the staff member needs to be added to a specific group that is not included in a predefined template.
+
+The **Group Email** field becomes available and supports autocomplete.
 
 ## Group Templates
 
-Templates map a "Staff Type" (e.g. *Primary Staff*, *Secondary Staff*, *School Officer*) to a list of groups that person should belong to, so adding a new hire is a single action instead of several manual group adds.
+Group templates allow a staff role to be mapped to multiple Google Groups.
 
-Templates are edited via **tray icon → Config Settings → Edit Group Templates**. Each row is one group; multiple rows sharing the same Template Name become one template.
+For example:
+
+```text
+Primary Staff
+├── primary-staff@example.com
+├── staff-announcements@example.com
+└── primary-resources@example.com
+```
+
+Instead of manually adding a new staff member to each group, the technician can select the appropriate staff type and perform the operation once.
+
+### Editing Templates
+
+Templates can be managed through:
+
+**Tray icon → Config Settings → Edit Group Templates**
+
+Each row represents one group.
+
+Multiple rows with the same **Template Name** are treated as a single template containing multiple groups.
+
+For example:
+
+| Template Name | Group Email                                                               |
+| ------------- | ------------------------------------------------------------------------- |
+| Primary Staff | [primary-staff@example.com](mailto:primary-staff@example.com)             |
+| Primary Staff | [staff-announcements@example.com](mailto:staff-announcements@example.com) |
+| Primary Staff | [primary-resources@example.com](mailto:primary-resources@example.com)     |
+
+These rows become one **Primary Staff** template.
 
 ## Autocomplete
 
-Group and staff email fields suggest matches from your domain as you type. This list is fetched from GAM7 and cached locally for 4 hours to keep the form responsive.
+Staff and group email fields provide autocomplete suggestions.
+
+The information is retrieved from Google Workspace through GAM7 and cached locally for approximately **4 hours** to keep the interface responsive and reduce repeated queries.
