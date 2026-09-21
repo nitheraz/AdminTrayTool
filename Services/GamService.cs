@@ -201,6 +201,87 @@ namespace AdminTrayTool.Services
                 $"update cros cros_sn {QuoteArgument(serialNumber)} action reenable");
         }
 
+        public async Task<GamResult> PowerwashChromebookAsync(string serialNumber)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return new GamResult
+                {
+                    Success = false,
+                    Error = "Serial number required."
+                };
+
+            serialNumber = serialNumber.Trim();
+
+            return await RunGamAsync(
+                $"issuecommand cros cros_sn {QuoteArgument(serialNumber)} command remote_powerwash doit");
+        }
+
+        public async Task<GamResult> ClearChromebookProfilesAsync(string serialNumber)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return new GamResult
+                {
+                    Success = false,
+                    Error = "Serial number required."
+                };
+
+            serialNumber = serialNumber.Trim();
+
+            return await RunGamAsync(
+                $"issuecommand cros cros_sn {QuoteArgument(serialNumber)} command wipe_users doit");
+        }
+        public async Task<GamResult> MoveChromebookToOuAsync(string serialNumber, string orgUnitPath)
+        {
+            if (string.IsNullOrWhiteSpace(serialNumber))
+                return new GamResult
+                {
+                    Success = false,
+                    Error = "Serial number required."
+                };
+
+            if (string.IsNullOrWhiteSpace(orgUnitPath))
+                return new GamResult
+                {
+                    Success = false,
+                    Error = "Organizational Unit path required."
+                };
+
+            serialNumber = serialNumber.Trim();
+            orgUnitPath = orgUnitPath.Trim();
+
+            return await RunGamAsync(
+                $"update org {QuoteArgument(orgUnitPath)} move cros_sn {QuoteArgument(serialNumber)}");
+        }
+
+        public async Task<(bool Success, List<string> OrgUnitPaths, string Error)>
+        GetAllOrgUnitPathsAsync()
+        {
+            GamResult result =
+                await RunGamAsync("print orgs");
+
+            if (!result.Success)
+            {
+                string error =
+                    !string.IsNullOrWhiteSpace(result.Error)
+                        ? result.Error!
+                        : result.Output ?? "GAM returned no output.";
+
+                return (
+                    false,
+                    new List<string>(),
+                    error);
+            }
+
+            var orgUnitPaths =
+                ParseOrgUnitPathsFromCsv(
+                    result.Output ?? string.Empty);
+
+            return (
+                true,
+                orgUnitPaths,
+                string.Empty);
+        }
+
         // ============================================================
         // ADD USER TO GROUP
         // ============================================================
@@ -410,6 +491,54 @@ namespace AdminTrayTool.Services
             device.MacAddress = FormatMacAddress(device.MacAddress);
 
             return device;
+        }
+
+        private static List<string> ParseOrgUnitPathsFromCsv(
+    string csvOutput)
+        {
+            var orgUnitPaths =
+                new List<string>();
+
+            string[] lines =
+                csvOutput.Split(
+                    new[] { '\r', '\n' },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length < 2)
+                return orgUnitPaths;
+
+            string[] headers =
+                lines[0].Split(',');
+
+            int orgUnitPathColumnIndex =
+                Array.FindIndex(
+                    headers,
+                    h => string.Equals(
+                        h.Trim(),
+                        "orgUnitPath",
+                        StringComparison.OrdinalIgnoreCase));
+
+            if (orgUnitPathColumnIndex == -1)
+                return orgUnitPaths;
+
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] fields =
+                    lines[i].Split(',');
+
+                if (orgUnitPathColumnIndex >= fields.Length)
+                    continue;
+
+                string path =
+                    fields[orgUnitPathColumnIndex]
+                        .Trim()
+                        .Trim('"');
+
+                if (!string.IsNullOrWhiteSpace(path))
+                    orgUnitPaths.Add(path);
+            }
+
+            return orgUnitPaths;
         }
 
         private static string NormalizeChromebookModel(string model)

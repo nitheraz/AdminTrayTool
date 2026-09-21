@@ -28,8 +28,16 @@ namespace AdminTrayTool
         private Button _btnClear = null!;
         private Button _btnDisable = null!;
         private Button _btnReenable = null!;
+        private Button _btnMoveOu = null!;
+        private Button _btnPowerwash = null!;
+        private Button _btnClearProfiles = null!;
         private Button _btnCopyMac = null!;
+        private Button _btnEditAssetId = null!;
         private Button _btnSaveAssetId = null!;
+        private Button _btnCancelAssetId = null!;
+        private Button _btnBulkManagement = null!;
+
+        private string _originalAssetId = string.Empty;
 
         private Label _lblDeviceStatus = null!;
         private TextBox _txtLog = null!;
@@ -241,6 +249,7 @@ namespace AdminTrayTool
             _btnClear.Enabled = false; 
             _btnDisable.Enabled = false;
             _btnReenable.Enabled = false;
+            _btnMoveOu.Enabled = false;
             _btnCopyMac.Enabled = false;
             _btnSaveAssetId.Enabled = false;
 
@@ -250,11 +259,6 @@ namespace AdminTrayTool
         private void EnableChromebookUI()
         {
             _btnLookup.Enabled = true;
-            /*_btnRefresh.Enabled = true;
-            _btnDisable.Enabled = true;
-            _btnReenable.Enabled = true;
-            _btnCopyMac.Enabled = true;
-            _btnSaveAssetId.Enabled = true;*/
 
             _lblDeviceStatus.Text = "Ready";
         }
@@ -271,10 +275,10 @@ namespace AdminTrayTool
                 FormStartPosition.CenterScreen;
 
             ClientSize =
-                new Size(890, 820);
+                new Size(890, 900);
 
             MinimumSize =
-                new Size(820, 680);
+                new Size(820, 775);
 
             BackColor =
                 Color.FromArgb(
@@ -506,7 +510,7 @@ namespace AdminTrayTool
 
             var infoPanel = CreatePanel(
                 new Point(30, 215),
-                new Size(820, 355));
+                new Size(820, 365));
 
             mainPanel.Controls.Add(
                 infoPanel);
@@ -622,13 +626,32 @@ namespace AdminTrayTool
                 ReadOnly = true
             };
 
+            _txtAssetId.KeyDown += TxtAssetId_KeyDown;
+
             infoPanel.Controls.Add(
                 _txtAssetId);
 
+            _btnEditAssetId = CreateButton(
+                "EDIT",
+                new Point(430, 88),
+                new Size(70, 30));
+
+            _btnEditAssetId.Enabled = false;
+
+            _btnEditAssetId.Click +=
+                (s, e) =>
+                {
+                    EditAssetId();
+                };
+
+            infoPanel.Controls.Add(
+                _btnEditAssetId);
+
+
             _btnSaveAssetId = CreateButton(
                 "SAVE",
-                new Point(430, 88),
-                new Size(90, 30));
+                new Point(505, 88),
+                new Size(70, 30));
 
             _btnSaveAssetId.Enabled = false;
 
@@ -640,6 +663,23 @@ namespace AdminTrayTool
 
             infoPanel.Controls.Add(
                 _btnSaveAssetId);
+
+
+            _btnCancelAssetId = CreateButton(
+                "CANCEL",
+                new Point(580, 88),
+                new Size(85, 30));
+
+            _btnCancelAssetId.Enabled = false;
+
+            _btnCancelAssetId.Click +=
+                (s, e) =>
+                {
+                    CancelAssetIdEdit();
+                };
+
+            infoPanel.Controls.Add(
+                _btnCancelAssetId);
 
             // =========================================================
             // GOOGLE DEVICE ID
@@ -728,7 +768,7 @@ namespace AdminTrayTool
 
             _btnCopyMac = CreateButton(
                 "COPY",
-                new Point(420, 214),
+                new Point(430, 214),
                 new Size(85, 30));
 
             _btnCopyMac.Enabled = false;
@@ -743,12 +783,56 @@ namespace AdminTrayTool
             // ORGANISATION UNIT
             // =========================================================
 
-            _lblOrgUnit = AddInfoRow(
-                infoPanel,
-                "Organisation Unit",
-                260,
-                out _,
-                "—");
+            var lblOrgUnitName = CreateLabel(
+                "ORGANISATION UNIT",
+                new Point(20, 260));
+
+            infoPanel.Controls.Add(
+                lblOrgUnitName);
+
+            _lblOrgUnit = new Label
+            {
+                Text = "—",
+
+                Location =
+                    new Point(
+                        170,
+                        259),
+
+                AutoSize = false,
+
+                Size =
+                    new Size(
+                        250,
+                        30),
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.White
+            };
+
+            infoPanel.Controls.Add(
+                _lblOrgUnit);
+
+            _btnMoveOu = CreateButton(
+                "MOVE OU",
+                new Point(430, 253),
+                new Size(110, 32));
+
+            _btnMoveOu.Enabled = false;
+
+            _btnMoveOu.Click +=
+                async (s, e) =>
+                {
+                    await MoveChromebookOuAsync();
+                };
+
+            infoPanel.Controls.Add(
+                _btnMoveOu);
 
             // =========================================================
             // Last User
@@ -757,7 +841,7 @@ namespace AdminTrayTool
             _lblRecentUser = AddInfoRow(
                 infoPanel,
                 "Recent User",
-                295,
+                305,
                 out _,
                 "—");
 
@@ -768,14 +852,14 @@ namespace AdminTrayTool
             _lblLastSync = AddInfoRow(
                 infoPanel,
                 "Last Sync",
-                330,
+                340,
                 out _,
                 "—");
 
             _lblLastSync.Location =
                 new Point(
                     170,
-                    330);
+                    339);
 
             // =========================================================
             // ACTION PANEL
@@ -788,14 +872,135 @@ namespace AdminTrayTool
             mainPanel.Controls.Add(
                 actionPanel);
 
+            var lblFormActions = new Label
+            {
+                Text = "FORM ACTIONS",
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
+                ForeColor = Color.FromArgb(
+                    120,
+                    135,
+                    150),
+                Location = new Point(20, 8)
+            };
+
+            actionPanel.Controls.Add(
+                lblFormActions);
+
+            // =========================================================
+            // DEVICE ACTIONS
+            // =========================================================
+
+            var deviceActionPanel = CreatePanel(
+                new Point(30, 680),
+                new Size(820, 80));
+
+            mainPanel.Controls.Add(
+                deviceActionPanel);
+
+            var lblDeviceActions = new Label
+            {
+                Text = "DEVICE ACTIONS",
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
+                ForeColor = Color.FromArgb(
+                    120,
+                    135,
+                    150),
+                Location = new Point(20, 8)
+            };
+
+            deviceActionPanel.Controls.Add(
+                lblDeviceActions);
+
+            _btnDisable = CreateButton(
+                "DISABLE CHROMEBOOK",
+                new Point(20, 30),
+                new Size(240, 40));
+
+            _btnDisable.Enabled = false;
+
+            _btnDisable.Click +=
+                async (s, e) =>
+                {
+                    await DisableChromebookAsync();
+                };
+
+            deviceActionPanel.Controls.Add(
+                _btnDisable);
+
+
+            _btnReenable = CreateButton(
+                "RE-ENABLE CHROMEBOOK",
+                new Point(280, 30),
+                new Size(240, 40));
+
+            _btnReenable.Enabled = false;
+
+            _btnReenable.Click +=
+                async (s, e) =>
+                {
+                    await ReenableChromebookAsync();
+                };
+
+            deviceActionPanel.Controls.Add(
+                _btnReenable);
+
+            // =========================================================
+            // POWERWASH BUTTON
+            // =========================================================
+
+            _btnPowerwash = CreateButton(
+                "POWERWASH",
+                new Point(540, 30),
+                new Size(120, 40));
+
+            _btnPowerwash.Enabled = false;
+
+            _btnPowerwash.Click +=
+                async (s, e) =>
+                {
+                    await PowerwashChromebookAsync();
+                };
+
+            deviceActionPanel.Controls.Add(
+                _btnPowerwash);
+
+
+            // =========================================================
+            // CLEAR PROFILES BUTTON
+            // =========================================================
+
+            _btnClearProfiles = CreateButton(
+                "CLEAR PROFILES",
+                new Point(670, 30),
+                new Size(130, 40));
+
+            _btnClearProfiles.Enabled = false;
+
+            _btnClearProfiles.Click +=
+                async (s, e) =>
+                {
+                    await ClearChromebookProfilesAsync();
+                };
+
+            deviceActionPanel.Controls.Add(
+                _btnClearProfiles);
+
             // =========================================================
             // REFRESH BUTTON
             // =========================================================
 
             _btnRefresh = CreateButton(
                 "REFRESH",
-                new Point(20, 20),
-                new Size(150, 40));
+                new Point(20, 30),
+                new Size(130, 40));
 
             _btnRefresh.Enabled = false;
 
@@ -808,34 +1013,15 @@ namespace AdminTrayTool
             actionPanel.Controls.Add(
                 _btnRefresh);
 
-            // =========================================================
-            // Clear BUTTON
-            // =========================================================
 
-            _btnClear = CreateButton(
-                "CLEAR",
-                new Point(630, 20),
-                new Size(150, 40));
-
-            _btnClear.Enabled = false;
-
-            _btnClear.Click +=
-                async (s, e) =>
-                {
-                    ClearChromebook();
-                };
-
-            actionPanel.Controls.Add(
-                _btnClear);
-
-            // =========================================================
+            /*// =========================================================
             // DISABLE BUTTON
             // =========================================================
 
             _btnDisable = CreateButton(
-                "DISABLE CHROMEBOOK",
-                new Point(190, 20),
-                new Size(200, 40));
+                "DISABLE",
+                new Point(160, 20),
+                new Size(180, 40));
 
             _btnDisable.Enabled = false;
 
@@ -848,14 +1034,15 @@ namespace AdminTrayTool
             actionPanel.Controls.Add(
                 _btnDisable);
 
+
             // =========================================================
             // RE-ENABLE BUTTON
             // =========================================================
 
             _btnReenable = CreateButton(
-                "RE-ENABLE CHROMEBOOK",
-                new Point(410, 20),
-                new Size(200, 40));
+                "RE-ENABLE",
+                new Point(350, 20),
+                new Size(180, 40));
 
             _btnReenable.Enabled = false;
 
@@ -866,7 +1053,45 @@ namespace AdminTrayTool
                 };
 
             actionPanel.Controls.Add(
-                _btnReenable);
+                _btnReenable);*/
+
+            // =========================================================
+            // CLEAR BUTTON
+            // =========================================================
+
+            _btnClear = CreateButton(
+                "CLEAR",
+                new Point(160, 30),
+                new Size(100, 40));
+
+            _btnClear.Enabled = false;
+
+            _btnClear.Click +=
+                (s, e) =>
+                {
+                    ClearChromebook();
+                };
+
+            actionPanel.Controls.Add(
+                _btnClear);
+
+            // =========================================================
+            // BULK MANAGEMENT BUTTON
+            // =========================================================
+
+            _btnBulkManagement = CreateButton(
+                "BULK MANAGEMENT",
+                new Point(270, 30),
+                new Size(160, 40));
+
+            _btnBulkManagement.Click +=
+                (s, e) =>
+                {
+                    OpenBulkChromebookManagement();
+                };
+
+            actionPanel.Controls.Add(
+                _btnBulkManagement);
 
             // =========================================================
             // LOG
@@ -894,7 +1119,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        680)
+                        775)
             };
 
             mainPanel.Controls.Add(
@@ -905,7 +1130,7 @@ namespace AdminTrayTool
                 Location =
                     new Point(
                         30,
-                        700),
+                        795),
 
                 Size =
                     new Size(
@@ -1016,7 +1241,10 @@ namespace AdminTrayTool
                 _btnRefresh.Enabled = true;
                 _btnDisable.Enabled = true;
                 _btnReenable.Enabled = true;
+                _btnMoveOu.Enabled = true;
                 _btnClear.Enabled = true;
+                _btnPowerwash.Enabled = true;
+                _btnClearProfiles.Enabled = true;
             }
             catch (Exception ex)
             {
@@ -1122,6 +1350,13 @@ namespace AdminTrayTool
 
             WriteLog("Chromebook information cleared.");
         }
+        private void OpenBulkChromebookManagement()
+        {
+            using var form =
+                new BulkChromebookManagementForm();
+
+            form.ShowDialog(this);
+        }
 
         // =============================================================
         // DISPLAY DEVICE INFORMATION
@@ -1144,13 +1379,13 @@ namespace AdminTrayTool
             // ASSET ID
             // ---------------------------------------------------------
 
-            string assetId =
-                device.AssetId?.Trim()
-                ?? string.Empty;
+            string assetId = device.AssetId?.Trim() ?? string.Empty;
 
             _txtAssetId.Text = assetId;
-            _txtAssetId.ReadOnly = false;
+            _originalAssetId = assetId;
 
+            SetAssetEditMode(false);
+           
             // ---------------------------------------------------------
             // GOOGLE DEVICE ID
             // ---------------------------------------------------------
@@ -1229,6 +1464,70 @@ namespace AdminTrayTool
 
             UpdateStatusAppearance(
                 device.Status);
+        }
+
+        private void EditAssetId()
+        {
+            if (_currentDevice == null)
+                return;
+
+            _originalAssetId = _txtAssetId.Text;
+
+            _txtAssetId.ReadOnly = false;
+
+            _btnEditAssetId.Enabled = false;
+            _btnSaveAssetId.Enabled = true;
+            _btnCancelAssetId.Enabled = true;
+
+            _txtAssetId.Focus();
+            _txtAssetId.SelectAll();
+        }
+
+        private void CancelAssetIdEdit()
+        {
+            _txtAssetId.Text = _originalAssetId;
+
+            SetAssetEditMode(false);
+        }
+
+        private void SetAssetEditMode(bool editing)
+        {
+            _txtAssetId.ReadOnly = !editing;
+
+            bool hasDevice = _currentDevice != null;
+
+            _btnEditAssetId.Enabled =
+                hasDevice &&
+                !editing;
+
+            _btnSaveAssetId.Enabled =
+                hasDevice &&
+                editing;
+
+            _btnCancelAssetId.Enabled =
+                hasDevice &&
+                editing;
+        }
+
+        private async void TxtAssetId_KeyDown(
+            object? sender,
+            KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter &&
+                !_txtAssetId.ReadOnly &&
+                _btnSaveAssetId.Enabled)
+            {
+                e.SuppressKeyPress = true;
+
+                await SaveAssetIdAsync();
+            }
+            else if (e.KeyCode == Keys.Escape &&
+                     !_txtAssetId.ReadOnly)
+            {
+                e.SuppressKeyPress = true;
+
+                CancelAssetIdEdit();
+            }
         }
 
         // =============================================================
@@ -1322,11 +1621,16 @@ namespace AdminTrayTool
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
-                _txtAssetId.ReadOnly =
-                    true;
+                SetAssetEditMode(false);
 
                 _btnSaveAssetId.Enabled =
                     false;
+
+                _btnCancelAssetId.Enabled =
+                    false;
+
+                _originalAssetId =
+                    string.Empty;
 
                 // Refresh Google Admin information.
                 await RefreshChromebookAsync();
@@ -1663,6 +1967,293 @@ namespace AdminTrayTool
             }
         }
 
+        private async Task MoveChromebookOuAsync()
+        {
+            if (_currentDevice == null)
+                return;
+
+            string serial =
+                _currentDevice.SerialNumber?.Trim()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(serial))
+                return;
+
+            string currentOu =
+                _currentDevice.OrgUnitPath?.Trim()
+                ?? string.Empty;
+
+            using var dialog =
+                new MoveChromebookOuForm(
+                    currentOu);
+
+            if (dialog.ShowDialog(this) !=
+                DialogResult.OK)
+            {
+                return;
+            }
+
+            string? newOu =
+                dialog.SelectedOrgUnitPath;
+
+            if (string.IsNullOrWhiteSpace(newOu))
+                return;
+
+            if (string.Equals(
+                currentOu,
+                newOu,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "The Chromebook is already in this organisational unit.",
+                    "Move Chromebook",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"Move this Chromebook to a different organisational unit?\n\n" +
+                    $"Serial Number:\n{serial}\n\n" +
+                    $"Current OU:\n{GetOuDisplay(currentOu)}\n\n" +
+                    $"New OU:\n{newOu}",
+                    "Confirm Move OU",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+            if (confirmation !=
+                DialogResult.Yes)
+            {
+                return;
+            }
+
+            SetBusy(true);
+
+            try
+            {
+                WriteLog(
+                    $"Moving Chromebook {serial}...");
+
+                WriteLog(
+                    $"Current OU: {GetOuDisplay(currentOu)}");
+
+                WriteLog(
+                    $"New OU: {newOu}");
+
+                Services.GamResult result =
+                    await _gamService
+                        .MoveChromebookToOuAsync(
+                            serial,
+                            newOu);
+
+                WriteLog(
+                    result.CombinedOutput);
+
+                if (!result.Success)
+                {
+                    MessageBox.Show(
+                        result.CombinedOutput,
+                        "Move Chromebook Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
+                    return;
+                }
+
+                MessageBox.Show(
+                    $"Chromebook {serial} was moved to:\n\n{newOu}",
+                    "Chromebook Moved",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                await RefreshChromebookAsync();
+            }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    "MOVE OU ERROR: " +
+                    ex.Message);
+
+                MessageBox.Show(
+                    ex.Message,
+                    "Move OU Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private static string GetOuDisplay(string ou)
+        {
+            return string.IsNullOrWhiteSpace(ou)
+                ? "Unknown"
+                : ou;
+        }
+
+
+        private async Task PowerwashChromebookAsync()
+        {
+            if (_currentDevice == null)
+                return;
+
+            string serial =
+                _currentDevice.SerialNumber?.Trim()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(serial))
+                return;
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"WARNING: This will POWERWASH the Chromebook.\n\n" +
+                    $"Serial Number:\n{serial}\n\n" +
+                    $"Asset ID:\n{GetAssetDisplay()}\n\n" +
+                    "The Chromebook will be reset and local user data " +
+                    "and profiles will be removed.\n\n" +
+                    "This action cannot be undone.\n\n" +
+                    "Do you want to continue?",
+                    "Confirm Chromebook Powerwash",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+            SetBusy(true);
+
+            try
+            {
+                WriteLog(
+                    $"Powerwashing Chromebook {serial}...");
+
+                Services.GamResult result =
+                    await _gamService
+                        .PowerwashChromebookAsync(serial);
+
+                WriteLog(
+                    result.CombinedOutput);
+
+                if (result.Success)
+                {
+                    MessageBox.Show(
+                        $"Powerwash command sent to Chromebook {serial}.",
+                        "Powerwash Initiated",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    await RefreshChromebookAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        result.CombinedOutput,
+                        "Powerwash Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    "POWERWASH ERROR: " +
+                    ex.Message);
+
+                MessageBox.Show(
+                    ex.Message,
+                    "Powerwash Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        private async Task ClearChromebookProfilesAsync()
+        {
+            if (_currentDevice == null)
+                return;
+
+            string serial =
+                _currentDevice.SerialNumber?.Trim()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(serial))
+                return;
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"WARNING: This will CLEAR USER PROFILES from the Chromebook.\n\n" +
+                    $"Serial Number:\n{serial}\n\n" +
+                    $"Asset ID:\n{GetAssetDisplay()}\n\n" +
+                    "All locally stored ChromeOS user profiles and their " +
+                    "local data will be removed from this device.\n\n" +
+                    "This action cannot be undone.\n\n" +
+                    "Do you want to continue?",
+                    "Confirm Clear Profiles",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+            SetBusy(true);
+
+            try
+            {
+                WriteLog(
+                    $"Clearing user profiles from Chromebook {serial}...");
+
+                Services.GamResult result =
+                    await _gamService
+                        .ClearChromebookProfilesAsync(serial);
+
+                WriteLog(
+                    result.CombinedOutput);
+
+                if (result.Success)
+                {
+                    MessageBox.Show(
+                        $"User profiles clear command sent to Chromebook {serial}.",
+                        "Clear Profiles Initiated",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    await RefreshChromebookAsync();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        result.CombinedOutput,
+                        "Clear Profiles Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    "CLEAR PROFILES ERROR: " +
+                    ex.Message);
+
+                MessageBox.Show(
+                    ex.Message,
+                    "Clear Profiles Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
         // =============================================================
         // GET ASSET DISPLAY
         // =============================================================
@@ -1695,8 +2286,9 @@ namespace AdminTrayTool
             _txtAssetId.ReadOnly =
                 true;
 
-            _btnSaveAssetId.Enabled =
-                false;
+            _btnEditAssetId.Enabled = false;
+            _btnSaveAssetId.Enabled = false;
+            _btnCancelAssetId.Enabled = false;
 
             _lblDeviceId.Text =
                 "—";
@@ -1739,6 +2331,12 @@ namespace AdminTrayTool
 
             _btnReenable.Enabled =
                 false;
+            
+            _btnPowerwash.Enabled =
+                false;
+
+            _btnClearProfiles.Enabled =
+                false;
         }
 
         // =============================================================
@@ -1756,10 +2354,6 @@ namespace AdminTrayTool
             _cmbSearchType.Enabled =
                 !busy;
 
-            _btnSaveAssetId.Enabled =
-                !busy &&
-                _currentDevice != null;
-
             if (busy)
             {
                 Cursor =
@@ -1773,28 +2367,29 @@ namespace AdminTrayTool
 
             if (_currentDevice == null)
             {
-                _btnRefresh.Enabled =
-                    false;
+                _btnRefresh.Enabled = false;
 
-                _btnDisable.Enabled =
-                    false;
+                _btnDisable.Enabled = false;
 
-                _btnReenable.Enabled =
-                    false;
+                _btnReenable.Enabled = false;
+                
+                _btnMoveOu.Enabled = false;
+                _btnPowerwash.Enabled = false;
+                _btnClearProfiles.Enabled = false;
 
-                _btnCopyMac.Enabled =
-                    false;
+                _btnCopyMac.Enabled = false;
             }
             else
             {
-                _btnRefresh.Enabled =
-                    !busy;
+                _btnRefresh.Enabled = !busy;
 
-                _btnDisable.Enabled =
-                    !busy;
+                _btnDisable.Enabled = !busy;
 
-                _btnReenable.Enabled =
-                    !busy;
+                _btnReenable.Enabled = !busy;
+
+                _btnMoveOu.Enabled = !busy;
+                _btnPowerwash.Enabled = !busy;
+                _btnClearProfiles.Enabled = !busy;
 
                 _btnCopyMac.Enabled =
                     !busy &&
