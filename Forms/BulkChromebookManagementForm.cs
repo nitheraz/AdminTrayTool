@@ -643,8 +643,8 @@ namespace AdminTrayTool
                 Enabled = false
             };
 
-            //_btnReview.Click +=
-            //    BtnReview_Click;
+            _btnReview.Click +=
+                BtnReview_Click;
 
             mainPanel.Controls.Add(
                 _btnReview);
@@ -658,7 +658,7 @@ namespace AdminTrayTool
             mainPanel.Controls.Add(
                 _btnValidate);
 
-            _btnExport = new Button
+            _btnExport = new HudButton
             {
                 Text = "EXPORT RESULTS",
                 Location = new Point(420, 690),
@@ -668,10 +668,14 @@ namespace AdminTrayTool
 
             _btnExport.Click += BtnExport_Click;
 
+            mainPanel.Controls.Add(
+                _btnExport);
+
+
             _btnClose = new HudButton
             {
                 Text = "CLOSE",
-                Location = new Point(700, 690),
+                Location = new Point(615, 690),
                 Size = new Size(150, 40)
             };
 
@@ -680,9 +684,7 @@ namespace AdminTrayTool
                 {
                     Close();
                 };
-            
-            Controls.Add(_btnClose);
-            
+
             mainPanel.Controls.Add(
                 _btnClose);
         }

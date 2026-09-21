@@ -938,7 +938,7 @@ namespace AdminTrayTool
 
             _btnReenable = CreateButton(
                 "RE-ENABLE CHROMEBOOK",
-                new Point(280, 30),
+                new Point(270, 30),
                 new Size(240, 40));
 
             _btnReenable.Enabled = false;
@@ -958,7 +958,7 @@ namespace AdminTrayTool
 
             _btnPowerwash = CreateButton(
                 "POWERWASH",
-                new Point(540, 30),
+                new Point(525, 30),
                 new Size(120, 40));
 
             _btnPowerwash.Enabled = false;
@@ -979,7 +979,7 @@ namespace AdminTrayTool
 
             _btnClearProfiles = CreateButton(
                 "CLEAR PROFILES",
-                new Point(670, 30),
+                new Point(655, 30),
                 new Size(130, 40));
 
             _btnClearProfiles.Enabled = false;
