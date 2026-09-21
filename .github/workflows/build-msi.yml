@@ -863,7 +863,7 @@ jobs:
           & "$wix\light.exe" `
             -ext WixUtilExtension `
             -ext WixUIExtension `
-            -out "$outputDir\AdminTrayTool.msi" `
+            -out "$outputDir\AdminTrayTool-$env:MSI_VERSION.msi" `
             "$productObj" `
             "$componentsObj" `
             "$gamObj"
@@ -900,8 +900,8 @@ jobs:
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AdminTrayTool-msi
-          path: installer-output/AdminTrayTool.msi
+          name: AdminTrayTool-MSI
+          path: installer-output/AdminTrayTool-${{ env.MSI_VERSION }}.msi
 
 
       # ========================================
@@ -935,7 +935,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            installer-output/AdminTrayTool.msi
+            installer-output/AdminTrayTool-${{ env.MSI_VERSION }}.msi
             installer-output/AdminTrayTool-portable.zip
           generate_release_notes: true
         env:
