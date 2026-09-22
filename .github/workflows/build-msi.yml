@@ -42,7 +42,7 @@ jobs:
 
 
       # ========================================
-      # Determine version (used by build, publish, and MSI)
+      # Determine version
       # ========================================
 
       - name: Determine version
@@ -83,6 +83,7 @@ jobs:
       - name: Build Release
         shell: powershell
         run: |
+
           dotnet build -c Release --no-restore `
             "/p:Version=$env:MSI_VERSION" `
             "/p:AssemblyVersion=$env:MSI_VERSION.0" `
@@ -96,6 +97,7 @@ jobs:
       - name: Publish win-x64
         shell: powershell
         run: |
+
           dotnet publish `
             -c Release `
             -r win-x64 `
@@ -316,7 +318,7 @@ jobs:
 
 
       # ========================================
-      # Locate WiX
+      # Locate WiX Toolset
       # ========================================
 
       - name: Locate WiX Toolset
@@ -525,9 +527,6 @@ jobs:
 
               }
 
-              # Directory creation is handled below.
-              # Each file gets its own component.
-
               [void]$xml.AppendLine(
                   "      <Component Id=`"$componentId`" Guid=`"*`">"
               )
@@ -546,7 +545,6 @@ jobs:
           [void]$xml.AppendLine('  </Fragment>')
           [void]$xml.AppendLine('')
 
-          # Component group
           [void]$xml.AppendLine('  <Fragment>')
           [void]$xml.AppendLine('    <ComponentGroup Id="GAM7Files">')
 
@@ -610,13 +608,8 @@ jobs:
 
                           $directories[$currentPath] = $dirId
 
-                          $escapedName = [System.Security.SecurityElement]::Escape($part)
-
-                          $lines.Add(
-                              "      <Directory Id=`"$dirId`" Name=`"$escapedName`">"
-                          )
-
-                          $parentId = $dirId
+                          $escapedName =
+                            [System.Security.SecurityElement]::Escape($part)
 
                       }
                       else {
@@ -642,7 +635,9 @@ jobs:
           $lines.Add('  <Fragment>')
           $lines.Add('    <DirectoryRef Id="GAM7Folder">')
 
-          $componentRefs = New-Object System.Collections.Generic.List[string]
+          $componentRefs =
+            New-Object System.Collections.Generic.List[string]
+
           $counter = 0
 
           function Add-GamDirectory {
@@ -662,12 +657,16 @@ jobs:
 
                   if ($item.PSIsContainer) {
 
-                      $safe = ($RelativePath + "\" + $item.Name) `
+                      $safe =
+                        ($RelativePath + "\" + $item.Name) `
                         -replace '[^A-Za-z0-9]', '_'
 
                       $directoryId = "GAM7Dir_$safe"
 
-                      $name = [System.Security.SecurityElement]::Escape($item.Name)
+                      $name =
+                        [System.Security.SecurityElement]::Escape(
+                            $item.Name
+                        )
 
                       $lines.Add(
                           "$indentText<Directory Id=`"$directoryId`" Name=`"$name`">"
@@ -694,15 +693,23 @@ jobs:
 
                       $script:counter++
 
-                      $relative = $item.FullName.Substring($gamPath.Length).TrimStart('\')
+                      $relative =
+                        $item.FullName.Substring(
+                            $gamPath.Length
+                        ).TrimStart('\')
 
-                      $safeFile = $relative `
+                      $safeFile =
+                        $relative `
                         -replace '[^A-Za-z0-9]', '_'
 
-                      $componentId = "GAM7Component_$script:counter"
-                      $fileId = "GAM7File_$script:counter"
+                      $componentId =
+                        "GAM7Component_$script:counter"
 
-                      $source = "`$(var.GAM7SourceDir)\$relative"
+                      $fileId =
+                        "GAM7File_$script:counter"
+
+                      $source =
+                        "`$(var.GAM7SourceDir)\$relative"
 
                       $lines.Add(
                           "$indentText<Component Id=`"$componentId`" Guid=`"*`">"
@@ -832,9 +839,14 @@ jobs:
 
           Write-Host "WiX compilation successful."
 
-          $productObj = Join-Path $outputDir "Product.wixobj"
-          $componentsObj = Join-Path $outputDir "components.wixobj"
-          $gamObj = Join-Path $outputDir "GAM7Components.wixobj"
+          $productObj =
+            Join-Path $outputDir "Product.wixobj"
+
+          $componentsObj =
+            Join-Path $outputDir "components.wixobj"
+
+          $gamObj =
+            Join-Path $outputDir "GAM7Components.wixobj"
 
           if (-not (Test-Path $productObj)) {
 
@@ -877,11 +889,11 @@ jobs:
 
           $msi = Join-Path `
             $outputDir `
-            "AdminTrayTool.msi"
+            "AdminTrayTool-$env:MSI_VERSION.msi"
 
           if (-not (Test-Path $msi)) {
 
-              Write-Host "ERROR: AdminTrayTool.msi was not created."
+              Write-Host "ERROR: $($msi) was not created."
               exit 1
 
           }
@@ -894,7 +906,7 @@ jobs:
 
 
       # ========================================
-      # Upload MSI
+      # Upload MSI artifact
       # ========================================
 
       - name: Upload MSI artifact
