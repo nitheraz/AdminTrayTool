@@ -289,6 +289,27 @@ namespace AdminTrayTool
                         );
                     }
                 });
+            // Windows Management
+            menu.Items.Add(
+                "Windows Management",
+                null,
+                (s, e) =>
+                {
+                    try
+                    {
+                        using var form = new WindowsManagementForm();
+                        form.ShowDialog();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(
+                            $"Failed to open Windows Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                            "Windows Management",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error
+                        );
+                    }
+                });
 
             menu.Items.Add(new ToolStripSeparator());
 

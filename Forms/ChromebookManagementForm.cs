@@ -246,12 +246,21 @@ namespace AdminTrayTool
         {
             _btnLookup.Enabled = false;
             _btnRefresh.Enabled = false;
-            _btnClear.Enabled = false; 
+            _btnClear.Enabled = false;
+
             _btnDisable.Enabled = false;
             _btnReenable.Enabled = false;
             _btnMoveOu.Enabled = false;
+            _btnPowerwash.Enabled = false;
+            _btnClearProfiles.Enabled = false;
+
             _btnCopyMac.Enabled = false;
+
+            _btnEditAssetId.Enabled = false;
             _btnSaveAssetId.Enabled = false;
+            _btnCancelAssetId.Enabled = false;
+
+            _btnBulkManagement.Enabled = false;
 
             _lblDeviceStatus.Text = "GAM7 not authenticated";
         }
@@ -259,10 +268,11 @@ namespace AdminTrayTool
         private void EnableChromebookUI()
         {
             _btnLookup.Enabled = true;
+            _btnBulkManagement.Enabled = true;
 
             _lblDeviceStatus.Text = "Ready";
         }
- 
+
         // =============================================================
         // FORM INITIALISATION
         // =============================================================
@@ -1340,11 +1350,7 @@ namespace AdminTrayTool
         }
         private void ClearChromebook()
         {
-            _currentDevice = null;
-
             _txtSerial.Clear();
-
-            _txtAssetId.Clear();
 
             ClearDeviceInformation();
 
