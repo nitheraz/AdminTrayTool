@@ -39,6 +39,8 @@ Primary Staff
 
 Instead of manually adding a new staff member to each group, the technician can select the appropriate staff type and perform the operation once.
 
+Group templates are configurable through the AdminTrayTool configuration settings.
+
 ### Editing Templates
 
 Templates can be managed through:

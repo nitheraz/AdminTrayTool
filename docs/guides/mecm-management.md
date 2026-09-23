@@ -8,7 +8,7 @@ MECM is also commonly referred to as **SCCM** or **Configuration Manager**.
 
 From the AdminTrayTool tray menu:
 
-**Windows Management → MECM / SCCM**
+**Tray icon → Windows Management → MECM / SCCM**
 
 ## Computer Lookup
 

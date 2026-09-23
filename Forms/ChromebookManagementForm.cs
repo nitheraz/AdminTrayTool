@@ -2,7 +2,7 @@
 using AdminTrayTool.Services;
 using System.Diagnostics;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class ChromebookManagementForm : Form
     {
@@ -48,10 +48,12 @@ namespace AdminTrayTool
             BuildInterface();
             Load += ChromebookManagementForm_Load;
         }
+
         private async void ChromebookManagementForm_Load(object? sender, EventArgs e)
         {
             await ValidateGam7Async();
         }
+
         private async Task ValidateGam7Async()
         {
             var checker = new GamOAuthChecker();
@@ -104,13 +106,20 @@ namespace AdminTrayTool
                 return;
             }
 
-            string gamArgs = answer == DialogResult.Yes ? "create project" : "use project";
+            string gamArgs = answer == DialogResult.Yes
+                ? "create project"
+                : "use project";
 
             string? gamPath = await GamLocator.LocateGam();
+
             if (gamPath == null)
             {
-                MessageBox.Show("GAM executable not found.", "GAM Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "GAM executable not found.",
+                    "GAM Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
                 DisableChromebookUI();
                 return;
             }
@@ -126,12 +135,12 @@ namespace AdminTrayTool
                 };
 
                 using Process? process = Process.Start(psi);
+
                 if (process != null)
                 {
                     await Task.Run(() => process.WaitForExit());
                 }
 
-                // After project setup, immediately try OAuth setup.
                 await RunOAuthSetupAsync();
             }
             catch (Exception ex)
@@ -141,6 +150,7 @@ namespace AdminTrayTool
                     "GAM Project Setup Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
+
                 DisableChromebookUI();
             }
         }
@@ -187,11 +197,9 @@ namespace AdminTrayTool
 
                 await Task.Run(() => process.WaitForExit());
 
-                // Check authentication again after GAM finishes.
                 var checker = new GamOAuthChecker();
                 var result = await checker.CheckOAuthAsync();
 
-                // ⬇️ THIS IS THE BLOCK THAT REPLACES YOUR OLD if (result.Success) { ... } else { ... }
                 if (result.Success)
                 {
                     MessageBox.Show(
@@ -213,9 +221,9 @@ namespace AdminTrayTool
                         "GAM7 Authentication",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning);
+
                     DisableChromebookUI();
                 }
-                // ⬆️ END REPLACED BLOCK
             }
             catch (Exception ex)
             {
@@ -229,15 +237,7 @@ namespace AdminTrayTool
                 DisableChromebookUI();
             }
         }
-        private void ShowGam7SetupDialog(string message)
-        {
-            MessageBox.Show(
-                message,
-                "GAM7 Setup Required",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
-        }
+
         private void DisableChromebookUI()
         {
             _btnLookup.Enabled = false;
@@ -277,32 +277,25 @@ namespace AdminTrayTool
         {
             Text = "Chromebook Management";
 
-            StartPosition =
-                FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.CenterScreen;
 
-            ClientSize =
-                new Size(890, 900);
+            ClientSize = new Size(890, 900);
 
-            MinimumSize =
-                new Size(820, 775);
+            MinimumSize = new Size(820, 775);
 
-            BackColor =
-                Color.FromArgb(
-                    10,
-                    15,
-                    25);
+            BackColor = Color.FromArgb(
+                10,
+                15,
+                25);
 
-            ForeColor =
-                Color.White;
+            ForeColor = Color.White;
 
-            Font =
-                new Font(
-                    "Segoe UI",
-                    10F,
-                    FontStyle.Regular);
+            Font = new Font(
+                "Segoe UI",
+                10F,
+                FontStyle.Regular);
 
-            FormBorderStyle =
-                FormBorderStyle.FixedSingle;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
 
             MaximizeBox = false;
         }
@@ -317,14 +310,12 @@ namespace AdminTrayTool
             {
                 Dock = DockStyle.Fill,
 
-                Padding =
-                    new Padding(30),
+                Padding = new Padding(30),
 
-                BackColor =
-                    Color.FromArgb(
-                        10,
-                        15,
-                        25)
+                BackColor = Color.FromArgb(
+                    10,
+                    15,
+                    25)
             };
 
             Controls.Add(mainPanel);
@@ -335,71 +326,60 @@ namespace AdminTrayTool
 
             var lblTitle = new Label
             {
-                Text =
-                    "CHROMEBOOK MANAGEMENT",
+                Text = "CHROMEBOOK MANAGEMENT",
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        20F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    20F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.White,
+                ForeColor = Color.White,
 
-                Location =
-                    new Point(
-                        30,
-                        25)
+                Location = new Point(
+                    30,
+                    25)
             };
 
             mainPanel.Controls.Add(lblTitle);
 
             var lblSubtitle = new Label
             {
-                Text =
-                    "Manage Google Workspace ChromeOS devices",
+                Text = "Manage Google Workspace ChromeOS devices",
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
 
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
+                ForeColor = Color.FromArgb(
+                    150,
+                    160,
+                    175),
 
-                Location =
-                    new Point(
-                        33,
-                        62)
+                Location = new Point(
+                    33,
+                    62)
             };
 
             mainPanel.Controls.Add(lblSubtitle);
 
             var headerLine = new Panel
             {
-                Location =
-                    new Point(
-                        30,
-                        90),
+                Location = new Point(
+                    30,
+                    90),
 
-                Size =
-                    new Size(
-                        820,
-                        1),
+                Size = new Size(
+                    820,
+                    1),
 
-                BackColor =
-                    Color.FromArgb(
-                        45,
-                        55,
-                        70)
+                BackColor = Color.FromArgb(
+                    45,
+                    55,
+                    70)
             };
 
             mainPanel.Controls.Add(headerLine);
@@ -412,103 +392,84 @@ namespace AdminTrayTool
                 new Point(30, 100),
                 new Size(820, 105));
 
-            mainPanel.Controls.Add(
-                lookupPanel);
+            mainPanel.Controls.Add(lookupPanel);
 
             var lblSearchType = CreateLabel(
                 "SEARCH BY",
                 new Point(20, 18));
 
-            lookupPanel.Controls.Add(
-                lblSearchType);
+            lookupPanel.Controls.Add(lblSearchType);
 
             _cmbSearchType = new ComboBox
             {
-                Location =
-                    new Point(20, 45),
+                Location = new Point(20, 45),
 
-                Size =
-                    new Size(160, 32),
+                Size = new Size(160, 32),
 
-                BackColor =
-                    Color.FromArgb(20, 27, 40),
+                BackColor = Color.FromArgb(
+                    20,
+                    27,
+                    40),
 
-                ForeColor =
-                    Color.White,
+                ForeColor = Color.White,
 
-                Font =
-                    new Font("Segoe UI", 10.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    10.5F),
 
-                DropDownStyle =
-                    ComboBoxStyle.DropDownList,
+                DropDownStyle = ComboBoxStyle.DropDownList,
 
-                FlatStyle =
-                    FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat
             };
 
             _cmbSearchType.Items.Add("Serial Number");
             _cmbSearchType.Items.Add("Asset ID");
             _cmbSearchType.SelectedIndex = 0;
 
-            lookupPanel.Controls.Add(
-                _cmbSearchType);
+            lookupPanel.Controls.Add(_cmbSearchType);
 
             var lblSearchValue = CreateLabel(
                 "VALUE",
                 new Point(195, 18));
 
-            lookupPanel.Controls.Add(
-                lblSearchValue);
+            lookupPanel.Controls.Add(lblSearchValue);
 
             _txtSerial = new TextBox
             {
-                Location =
-                    new Point(
-                        195,
-                        45),
+                Location = new Point(
+                    195,
+                    45),
 
-                Size =
-                    new Size(
-                        395,
-                        32),
+                Size = new Size(
+                    395,
+                    32),
 
-                BackColor =
-                    Color.FromArgb(
-                        20,
-                        27,
-                        40),
+                BackColor = Color.FromArgb(
+                    20,
+                    27,
+                    40),
 
-                ForeColor =
-                    Color.White,
+                ForeColor = Color.White,
 
-                BorderStyle =
-                    BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.FixedSingle,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        11F)
+                Font = new Font(
+                    "Segoe UI",
+                    11F)
             };
 
-            _txtSerial.KeyDown +=
-                TxtSerial_KeyDown;
+            _txtSerial.KeyDown += TxtSerial_KeyDown;
 
-            lookupPanel.Controls.Add(
-                _txtSerial);
+            lookupPanel.Controls.Add(_txtSerial);
 
             _btnLookup = CreateButton(
                 "LOOK UP",
                 new Point(610, 43),
                 new Size(180, 36));
 
-            _btnLookup.Click +=
-                async (s, e) =>
-                {
-                    await LookupChromebookAsync();
-                };
+            _btnLookup.Click += async (s, e) => await LookupChromebookAsync();
 
-            lookupPanel.Controls.Add(
-                _btnLookup);
+            lookupPanel.Controls.Add(_btnLookup);
 
             // =========================================================
             // DEVICE INFORMATION
@@ -518,33 +479,27 @@ namespace AdminTrayTool
                 new Point(30, 215),
                 new Size(820, 365));
 
-            mainPanel.Controls.Add(
-                infoPanel);
+            mainPanel.Controls.Add(infoPanel);
 
             var lblInfoTitle = new Label
             {
-                Text =
-                    "DEVICE INFORMATION",
+                Text = "DEVICE INFORMATION",
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        11F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    11F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.White,
+                ForeColor = Color.White,
 
-                Location =
-                    new Point(
-                        20,
-                        18)
+                Location = new Point(
+                    20,
+                    18)
             };
 
-            infoPanel.Controls.Add(
-                lblInfoTitle);
+            infoPanel.Controls.Add(lblInfoTitle);
 
             // =========================================================
             // DEVICE STATUS
@@ -552,31 +507,26 @@ namespace AdminTrayTool
 
             _lblDeviceStatus = new Label
             {
-                Text =
-                    "NO DEVICE LOADED",
+                Text = "NO DEVICE LOADED",
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        10F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    10F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.FromArgb(
-                        140,
-                        150,
-                        165),
+                ForeColor = Color.FromArgb(
+                    140,
+                    150,
+                    165),
 
-                Location =
-                    new Point(
-                        600,
-                        20)
+                Location = new Point(
+                    600,
+                    20)
             };
 
-            infoPanel.Controls.Add(
-                _lblDeviceStatus);
+            infoPanel.Controls.Add(_lblDeviceStatus);
 
             // =========================================================
             // SERIAL
@@ -597,45 +547,37 @@ namespace AdminTrayTool
                 "ASSET ID",
                 new Point(20, 92));
 
-            infoPanel.Controls.Add(
-                lblAsset);
+            infoPanel.Controls.Add(lblAsset);
 
             _txtAssetId = new TextBox
             {
-                Location =
-                    new Point(
-                        170,
-                        89),
+                Location = new Point(
+                    170,
+                    89),
 
-                Size =
-                    new Size(
-                        250,
-                        28),
+                Size = new Size(
+                    250,
+                    28),
 
-                BackColor =
-                    Color.FromArgb(
-                        20,
-                        27,
-                        40),
+                BackColor = Color.FromArgb(
+                    20,
+                    27,
+                    40),
 
-                ForeColor =
-                    Color.White,
+                ForeColor = Color.White,
 
-                BorderStyle =
-                    BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.FixedSingle,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
 
                 ReadOnly = true
             };
 
             _txtAssetId.KeyDown += TxtAssetId_KeyDown;
 
-            infoPanel.Controls.Add(
-                _txtAssetId);
+            infoPanel.Controls.Add(_txtAssetId);
 
             _btnEditAssetId = CreateButton(
                 "EDIT",
@@ -644,15 +586,9 @@ namespace AdminTrayTool
 
             _btnEditAssetId.Enabled = false;
 
-            _btnEditAssetId.Click +=
-                (s, e) =>
-                {
-                    EditAssetId();
-                };
+            _btnEditAssetId.Click += (s, e) => EditAssetId();
 
-            infoPanel.Controls.Add(
-                _btnEditAssetId);
-
+            infoPanel.Controls.Add(_btnEditAssetId);
 
             _btnSaveAssetId = CreateButton(
                 "SAVE",
@@ -661,15 +597,9 @@ namespace AdminTrayTool
 
             _btnSaveAssetId.Enabled = false;
 
-            _btnSaveAssetId.Click +=
-                async (s, e) =>
-                {
-                    await SaveAssetIdAsync();
-                };
+            _btnSaveAssetId.Click += async (s, e) => await SaveAssetIdAsync();
 
-            infoPanel.Controls.Add(
-                _btnSaveAssetId);
-
+            infoPanel.Controls.Add(_btnSaveAssetId);
 
             _btnCancelAssetId = CreateButton(
                 "CANCEL",
@@ -678,14 +608,9 @@ namespace AdminTrayTool
 
             _btnCancelAssetId.Enabled = false;
 
-            _btnCancelAssetId.Click +=
-                (s, e) =>
-                {
-                    CancelAssetIdEdit();
-                };
+            _btnCancelAssetId.Click += (s, e) => CancelAssetIdEdit();
 
-            infoPanel.Controls.Add(
-                _btnCancelAssetId);
+            infoPanel.Controls.Add(_btnCancelAssetId);
 
             // =========================================================
             // GOOGLE DEVICE ID
@@ -706,36 +631,30 @@ namespace AdminTrayTool
                 "MODEL",
                 new Point(20, 165));
 
-            infoPanel.Controls.Add(
-                lblModelName);
+            infoPanel.Controls.Add(lblModelName);
 
             _lblModel = new Label
             {
                 Text = "—",
 
-                Location =
-                    new Point(
-                        170,
-                        164),
+                Location = new Point(
+                    170,
+                    164),
 
                 AutoSize = false,
 
-                Size =
-                    new Size(
-                        620,
-                        48),
+                Size = new Size(
+                    620,
+                    48),
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
 
-                ForeColor =
-                    Color.White
+                ForeColor = Color.White
             };
 
-            infoPanel.Controls.Add(
-                _lblModel);
+            infoPanel.Controls.Add(_lblModel);
 
             // =========================================================
             // WI-FI MAC
@@ -745,32 +664,27 @@ namespace AdminTrayTool
                 "WI-FI MAC",
                 new Point(20, 220));
 
-            infoPanel.Controls.Add(
-                lblMacName);
+            infoPanel.Controls.Add(lblMacName);
 
             _lblMac = new Label
             {
                 Text = "—",
 
-                Location =
-                    new Point(
-                        170,
-                        219),
+                Location = new Point(
+                    170,
+                    219),
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Consolas",
-                        10F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Consolas",
+                    10F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.White
+                ForeColor = Color.White
             };
 
-            infoPanel.Controls.Add(
-                _lblMac);
+            infoPanel.Controls.Add(_lblMac);
 
             _btnCopyMac = CreateButton(
                 "COPY",
@@ -779,11 +693,9 @@ namespace AdminTrayTool
 
             _btnCopyMac.Enabled = false;
 
-            _btnCopyMac.Click +=
-                BtnCopyMac_Click;
+            _btnCopyMac.Click += BtnCopyMac_Click;
 
-            infoPanel.Controls.Add(
-                _btnCopyMac);
+            infoPanel.Controls.Add(_btnCopyMac);
 
             // =========================================================
             // ORGANISATION UNIT
@@ -793,36 +705,30 @@ namespace AdminTrayTool
                 "ORGANISATION UNIT",
                 new Point(20, 260));
 
-            infoPanel.Controls.Add(
-                lblOrgUnitName);
+            infoPanel.Controls.Add(lblOrgUnitName);
 
             _lblOrgUnit = new Label
             {
                 Text = "—",
 
-                Location =
-                    new Point(
-                        170,
-                        259),
+                Location = new Point(
+                    170,
+                    259),
 
                 AutoSize = false,
 
-                Size =
-                    new Size(
-                        250,
-                        30),
+                Size = new Size(
+                    250,
+                    30),
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
 
-                ForeColor =
-                    Color.White
+                ForeColor = Color.White
             };
 
-            infoPanel.Controls.Add(
-                _lblOrgUnit);
+            infoPanel.Controls.Add(_lblOrgUnit);
 
             _btnMoveOu = CreateButton(
                 "MOVE OU",
@@ -831,14 +737,9 @@ namespace AdminTrayTool
 
             _btnMoveOu.Enabled = false;
 
-            _btnMoveOu.Click +=
-                async (s, e) =>
-                {
-                    await MoveChromebookOuAsync();
-                };
+            _btnMoveOu.Click += async (s, e) => await MoveChromebookOuAsync();
 
-            infoPanel.Controls.Add(
-                _btnMoveOu);
+            infoPanel.Controls.Add(_btnMoveOu);
 
             // =========================================================
             // Last User
@@ -862,10 +763,9 @@ namespace AdminTrayTool
                 out _,
                 "—");
 
-            _lblLastSync.Location =
-                new Point(
-                    170,
-                    339);
+            _lblLastSync.Location = new Point(
+                170,
+                339);
 
             // =========================================================
             // ACTION PANEL
@@ -875,8 +775,7 @@ namespace AdminTrayTool
                 new Point(30, 590),
                 new Size(820, 80));
 
-            mainPanel.Controls.Add(
-                actionPanel);
+            mainPanel.Controls.Add(actionPanel);
 
             var lblFormActions = new Label
             {
@@ -893,8 +792,7 @@ namespace AdminTrayTool
                 Location = new Point(20, 8)
             };
 
-            actionPanel.Controls.Add(
-                lblFormActions);
+            actionPanel.Controls.Add(lblFormActions);
 
             // =========================================================
             // DEVICE ACTIONS
@@ -904,8 +802,7 @@ namespace AdminTrayTool
                 new Point(30, 680),
                 new Size(820, 80));
 
-            mainPanel.Controls.Add(
-                deviceActionPanel);
+            mainPanel.Controls.Add(deviceActionPanel);
 
             var lblDeviceActions = new Label
             {
@@ -922,8 +819,7 @@ namespace AdminTrayTool
                 Location = new Point(20, 8)
             };
 
-            deviceActionPanel.Controls.Add(
-                lblDeviceActions);
+            deviceActionPanel.Controls.Add(lblDeviceActions);
 
             _btnDisable = CreateButton(
                 "DISABLE CHROMEBOOK",
@@ -932,15 +828,9 @@ namespace AdminTrayTool
 
             _btnDisable.Enabled = false;
 
-            _btnDisable.Click +=
-                async (s, e) =>
-                {
-                    await DisableChromebookAsync();
-                };
+            _btnDisable.Click += async (s, e) => await DisableChromebookAsync();
 
-            deviceActionPanel.Controls.Add(
-                _btnDisable);
-
+            deviceActionPanel.Controls.Add(_btnDisable);
 
             _btnReenable = CreateButton(
                 "RE-ENABLE CHROMEBOOK",
@@ -949,14 +839,9 @@ namespace AdminTrayTool
 
             _btnReenable.Enabled = false;
 
-            _btnReenable.Click +=
-                async (s, e) =>
-                {
-                    await ReenableChromebookAsync();
-                };
+            _btnReenable.Click += async (s, e) => await ReenableChromebookAsync();
 
-            deviceActionPanel.Controls.Add(
-                _btnReenable);
+            deviceActionPanel.Controls.Add(_btnReenable);
 
             // =========================================================
             // POWERWASH BUTTON
@@ -969,15 +854,9 @@ namespace AdminTrayTool
 
             _btnPowerwash.Enabled = false;
 
-            _btnPowerwash.Click +=
-                async (s, e) =>
-                {
-                    await PowerwashChromebookAsync();
-                };
+            _btnPowerwash.Click += async (s, e) => await PowerwashChromebookAsync();
 
-            deviceActionPanel.Controls.Add(
-                _btnPowerwash);
-
+            deviceActionPanel.Controls.Add(_btnPowerwash);
 
             // =========================================================
             // CLEAR PROFILES BUTTON
@@ -990,14 +869,9 @@ namespace AdminTrayTool
 
             _btnClearProfiles.Enabled = false;
 
-            _btnClearProfiles.Click +=
-                async (s, e) =>
-                {
-                    await ClearChromebookProfilesAsync();
-                };
+            _btnClearProfiles.Click += async (s, e) => await ClearChromebookProfilesAsync();
 
-            deviceActionPanel.Controls.Add(
-                _btnClearProfiles);
+            deviceActionPanel.Controls.Add(_btnClearProfiles);
 
             // =========================================================
             // REFRESH BUTTON
@@ -1010,56 +884,9 @@ namespace AdminTrayTool
 
             _btnRefresh.Enabled = false;
 
-            _btnRefresh.Click +=
-                async (s, e) =>
-                {
-                    await RefreshChromebookAsync();
-                };
+            _btnRefresh.Click += async (s, e) => await RefreshChromebookAsync();
 
-            actionPanel.Controls.Add(
-                _btnRefresh);
-
-
-            /*// =========================================================
-            // DISABLE BUTTON
-            // =========================================================
-
-            _btnDisable = CreateButton(
-                "DISABLE",
-                new Point(160, 20),
-                new Size(180, 40));
-
-            _btnDisable.Enabled = false;
-
-            _btnDisable.Click +=
-                async (s, e) =>
-                {
-                    await DisableChromebookAsync();
-                };
-
-            actionPanel.Controls.Add(
-                _btnDisable);
-
-
-            // =========================================================
-            // RE-ENABLE BUTTON
-            // =========================================================
-
-            _btnReenable = CreateButton(
-                "RE-ENABLE",
-                new Point(350, 20),
-                new Size(180, 40));
-
-            _btnReenable.Enabled = false;
-
-            _btnReenable.Click +=
-                async (s, e) =>
-                {
-                    await ReenableChromebookAsync();
-                };
-
-            actionPanel.Controls.Add(
-                _btnReenable);*/
+            actionPanel.Controls.Add(_btnRefresh);
 
             // =========================================================
             // CLEAR BUTTON
@@ -1072,14 +899,9 @@ namespace AdminTrayTool
 
             _btnClear.Enabled = false;
 
-            _btnClear.Click +=
-                (s, e) =>
-                {
-                    ClearChromebook();
-                };
+            _btnClear.Click += (s, e) => ClearChromebook();
 
-            actionPanel.Controls.Add(
-                _btnClear);
+            actionPanel.Controls.Add(_btnClear);
 
             // =========================================================
             // BULK MANAGEMENT BUTTON
@@ -1090,14 +912,9 @@ namespace AdminTrayTool
                 new Point(270, 30),
                 new Size(160, 40));
 
-            _btnBulkManagement.Click +=
-                (s, e) =>
-                {
-                    OpenBulkChromebookManagement();
-                };
+            _btnBulkManagement.Click += (s, e) => OpenBulkChromebookManagement();
 
-            actionPanel.Controls.Add(
-                _btnBulkManagement);
+            actionPanel.Controls.Add(_btnBulkManagement);
 
             // =========================================================
             // LOG
@@ -1105,74 +922,61 @@ namespace AdminTrayTool
 
             var lblLog = new Label
             {
-                Text =
-                    "GAM OUTPUT",
+                Text = "GAM OUTPUT",
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    9F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
+                ForeColor = Color.FromArgb(
+                    150,
+                    160,
+                    175),
 
-                Location =
-                    new Point(
-                        30,
-                        775)
+                Location = new Point(
+                    30,
+                    775)
             };
 
-            mainPanel.Controls.Add(
-                lblLog);
+            mainPanel.Controls.Add(lblLog);
 
             _txtLog = new TextBox
             {
-                Location =
-                    new Point(
-                        30,
-                        795),
+                Location = new Point(
+                    30,
+                    795),
 
-                Size =
-                    new Size(
-                        820,
-                        45),
+                Size = new Size(
+                    820,
+                    45),
 
                 Multiline = true,
 
                 ReadOnly = true,
 
-                BackColor =
-                    Color.FromArgb(
-                        6,
-                        10,
-                        18),
+                BackColor = Color.FromArgb(
+                    6,
+                    10,
+                    18),
 
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
+                ForeColor = Color.FromArgb(
+                    150,
+                    160,
+                    175),
 
-                BorderStyle =
-                    BorderStyle.FixedSingle,
+                BorderStyle = BorderStyle.FixedSingle,
 
-                ScrollBars =
-                    ScrollBars.Vertical,
+                ScrollBars = ScrollBars.Vertical,
 
-                Font =
-                    new Font(
-                        "Consolas",
-                        8.5F)
+                Font = new Font(
+                    "Consolas",
+                    8.5F)
             };
 
-            mainPanel.Controls.Add(
-                _txtLog);
+            mainPanel.Controls.Add(_txtLog);
 
             _txtSerial.Focus();
         }
@@ -1183,8 +987,7 @@ namespace AdminTrayTool
 
         private async Task LookupChromebookAsync()
         {
-            string searchValue =
-                _txtSerial.Text.Trim();
+            string searchValue = _txtSerial.Text.Trim();
 
             bool searchByAssetId =
                 _cmbSearchType.SelectedItem as string == "Asset ID";
@@ -1195,7 +998,9 @@ namespace AdminTrayTool
                     searchByAssetId
                         ? "Please enter an Asset ID."
                         : "Please enter a Chromebook serial number.",
-                    searchByAssetId ? "Asset ID Required" : "Serial Number Required",
+                    searchByAssetId
+                        ? "Asset ID Required"
+                        : "Serial Number Required",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
 
@@ -1215,19 +1020,19 @@ namespace AdminTrayTool
 
             try
             {
-                var result = searchByAssetId
+                var (Success, Device, Error) = searchByAssetId
                     ? await _gamService.GetChromebookInfoByAssetIdAsync(searchValue)
                     : await _gamService.GetChromebookInfoAsync(searchValue);
 
-                if (!result.Success ||
-                    result.Device == null)
+                if (!Success ||
+                    Device == null)
                 {
                     WriteLog(
                         "GAM ERROR: " +
-                        result.Error);
+                        Error);
 
                     MessageBox.Show(
-                        result.Error,
+                        Error,
                         "Chromebook Lookup Failed",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -1235,14 +1040,11 @@ namespace AdminTrayTool
                     return;
                 }
 
-                _currentDevice =
-                    result.Device;
+                _currentDevice = Device;
 
-                DisplayDeviceInformation(
-                    result.Device);
+                DisplayDeviceInformation(Device);
 
-                WriteLog(
-                    result.Device.RawOutput);
+                WriteLog(Device.RawOutput);
 
                 _btnRefresh.Enabled = true;
                 _btnDisable.Enabled = true;
@@ -1279,8 +1081,7 @@ namespace AdminTrayTool
             if (_currentDevice == null)
                 return;
 
-            string serial =
-                _currentDevice.SerialNumber;
+            string serial = _currentDevice.SerialNumber;
 
             if (string.IsNullOrWhiteSpace(serial))
                 return;
@@ -1294,20 +1095,20 @@ namespace AdminTrayTool
 
             try
             {
-                var result =
+                var (Success, Device, Error) =
                     await _gamService
                         .GetChromebookInfoAsync(
                             serial);
 
-                if (!result.Success ||
-                    result.Device == null)
+                if (!Success ||
+                    Device == null)
                 {
                     WriteLog(
                         "GAM REFRESH ERROR: " +
-                        result.Error);
+                        Error);
 
                     MessageBox.Show(
-                        result.Error,
+                        Error,
                         "Chromebook Refresh Failed",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -1315,17 +1116,15 @@ namespace AdminTrayTool
                     return;
                 }
 
-                _currentDevice =
-                    result.Device;
+                _currentDevice = Device;
 
-                DisplayDeviceInformation(
-                    result.Device);
+                DisplayDeviceInformation(Device);
 
                 WriteLog(
                     "Chromebook information refreshed.");
 
                 WriteLog(
-                    result.Device.RawOutput);
+                    Device.RawOutput);
             }
             catch (Exception ex)
             {
@@ -1344,6 +1143,7 @@ namespace AdminTrayTool
                 SetBusy(false);
             }
         }
+
         private void ClearChromebook()
         {
             _txtSerial.Clear();
@@ -1352,6 +1152,7 @@ namespace AdminTrayTool
 
             WriteLog("Chromebook information cleared.");
         }
+
         private void OpenBulkChromebookManagement()
         {
             using var form =
@@ -1367,19 +1168,11 @@ namespace AdminTrayTool
         private void DisplayDeviceInformation(
             ChromebookInfo device)
         {
-            // ---------------------------------------------------------
-            // SERIAL
-            // ---------------------------------------------------------
-
             _lblSerial.Text =
                 string.IsNullOrWhiteSpace(
                     device.SerialNumber)
                     ? "—"
                     : device.SerialNumber;
-
-            // ---------------------------------------------------------
-            // ASSET ID
-            // ---------------------------------------------------------
 
             string assetId = device.AssetId?.Trim() ?? string.Empty;
 
@@ -1388,19 +1181,11 @@ namespace AdminTrayTool
 
             SetAssetEditMode(false);
 
-            // ---------------------------------------------------------
-            // GOOGLE DEVICE ID
-            // ---------------------------------------------------------
-
             _lblDeviceId.Text =
                 string.IsNullOrWhiteSpace(
                     device.DeviceId)
                     ? "—"
                     : device.DeviceId;
-
-            // ---------------------------------------------------------
-            // MODEL
-            // ---------------------------------------------------------
 
             string model =
                 GetCorrectModel(device);
@@ -1409,10 +1194,6 @@ namespace AdminTrayTool
                 string.IsNullOrWhiteSpace(model)
                     ? "—"
                     : model;
-
-            // ---------------------------------------------------------
-            // MAC ADDRESS
-            // ---------------------------------------------------------
 
             _lblMac.Text =
                 string.IsNullOrWhiteSpace(
@@ -1424,19 +1205,11 @@ namespace AdminTrayTool
                 !string.IsNullOrWhiteSpace(
                     device.MacAddress);
 
-            // ---------------------------------------------------------
-            // ORGANISATION UNIT
-            // ---------------------------------------------------------
-
             _lblOrgUnit.Text =
                 string.IsNullOrWhiteSpace(
                     device.OrgUnitPath)
                     ? "—"
                     : device.OrgUnitPath;
-
-            // ---------------------------------------------------------
-            // LAST USER
-            // ---------------------------------------------------------
 
             _lblRecentUser.Text =
                 string.IsNullOrWhiteSpace(
@@ -1444,19 +1217,11 @@ namespace AdminTrayTool
                     ? "—"
                     : device.RecentUserEmail;
 
-            // ---------------------------------------------------------
-            // LAST SYNC
-            // ---------------------------------------------------------
-
             _lblLastSync.Text =
                 string.IsNullOrWhiteSpace(
                     device.LastSync)
                     ? "—"
                     : device.LastSync;
-
-            // ---------------------------------------------------------
-            // STATUS
-            // ---------------------------------------------------------
 
             _lblDeviceStatus.Text =
                 string.IsNullOrWhiteSpace(
@@ -1464,8 +1229,7 @@ namespace AdminTrayTool
                     ? "DEVICE FOUND"
                     : device.Status.ToUpperInvariant();
 
-            UpdateStatusAppearance(
-                device.Status);
+            UpdateStatusAppearance(device.Status);
         }
 
         private void EditAssetId()
@@ -1574,7 +1338,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Update the Chromebook Asset ID?\n\n" +
+                    "Update the Chromebook Asset ID?\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"New Asset ID:\n{assetId}",
                     "Confirm Asset ID",
@@ -1625,16 +1389,11 @@ namespace AdminTrayTool
 
                 SetAssetEditMode(false);
 
-                _btnSaveAssetId.Enabled =
-                    false;
+                _btnSaveAssetId.Enabled = false;
+                _btnCancelAssetId.Enabled = false;
 
-                _btnCancelAssetId.Enabled =
-                    false;
+                _originalAssetId = string.Empty;
 
-                _originalAssetId =
-                    string.Empty;
-
-                // Refresh Google Admin information.
                 await RefreshChromebookAsync();
             }
             catch (Exception ex)
@@ -1679,11 +1438,10 @@ namespace AdminTrayTool
             {
                 string[] lines =
                     device.RawOutput.Split(
-                        new[]
-                        {
+                        [
                             '\r',
                             '\n'
-                        },
+                        ],
                         StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (string rawLine in lines)
@@ -1699,8 +1457,8 @@ namespace AdminTrayTool
                     }
 
                     string candidate =
-                        line.Substring(
-                            "model:".Length)
+                        line[
+                            "model:".Length..]
                             .Trim();
 
                     if (candidate.Contains(
@@ -1810,15 +1568,13 @@ namespace AdminTrayTool
                         Interval = 1500
                     };
 
-                timer.Tick +=
-                    (s, args) =>
-                    {
-                        _btnCopyMac.Text =
-                            "COPY";
+                timer.Tick += (s, args) =>
+                {
+                    _btnCopyMac.Text = "COPY";
 
-                        timer.Stop();
-                        timer.Dispose();
-                    };
+                    timer.Stop();
+                    timer.Dispose();
+                };
 
                 timer.Start();
             }
@@ -1847,7 +1603,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Are you sure you want to DISABLE this Chromebook?\n\n" +
+                    "Are you sure you want to DISABLE this Chromebook?\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"Asset ID:\n{GetAssetDisplay()}\n\n" +
                     "The device will no longer be usable by the student " +
@@ -1916,7 +1672,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Are you sure you want to RE-ENABLE this Chromebook?\n\n" +
+                    "Are you sure you want to RE-ENABLE this Chromebook?\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"Asset ID:\n{GetAssetDisplay()}",
                     "Confirm Chromebook Re-enable",
@@ -2017,7 +1773,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Move this Chromebook to a different organisational unit?\n\n" +
+                    "Move this Chromebook to a different organisational unit?\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"Current OU:\n{GetOuDisplay(currentOu)}\n\n" +
                     $"New OU:\n{newOu}",
@@ -2097,7 +1853,6 @@ namespace AdminTrayTool
                 : ou;
         }
 
-
         private async Task PowerwashChromebookAsync()
         {
             if (_currentDevice == null)
@@ -2112,7 +1867,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"WARNING: This will POWERWASH the Chromebook.\n\n" +
+                    "WARNING: This will POWERWASH the Chromebook.\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"Asset ID:\n{GetAssetDisplay()}\n\n" +
                     "The Chromebook will be reset and local user data " +
@@ -2191,7 +1946,7 @@ namespace AdminTrayTool
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"WARNING: This will CLEAR USER PROFILES from the Chromebook.\n\n" +
+                    "WARNING: This will CLEAR USER PROFILES from the Chromebook.\n\n" +
                     $"Serial Number:\n{serial}\n\n" +
                     $"Asset ID:\n{GetAssetDisplay()}\n\n" +
                     "All locally stored ChromeOS user profiles and their " +
@@ -2279,45 +2034,33 @@ namespace AdminTrayTool
         {
             _currentDevice = null;
 
-            _lblSerial.Text =
-                "—";
+            _lblSerial.Text = "—";
 
-            _txtAssetId.Text =
-                string.Empty;
+            _txtAssetId.Text = string.Empty;
 
-            _txtAssetId.ReadOnly =
-                true;
+            _txtAssetId.ReadOnly = true;
 
             _btnEditAssetId.Enabled = false;
             _btnSaveAssetId.Enabled = false;
             _btnCancelAssetId.Enabled = false;
 
-            _lblDeviceId.Text =
-                "—";
+            _lblDeviceId.Text = "—";
 
-            _lblModel.Text =
-                "—";
+            _lblModel.Text = "—";
 
-            _lblMac.Text =
-                "—";
+            _lblMac.Text = "—";
 
-            _lblOrgUnit.Text =
-                "—";
+            _lblOrgUnit.Text = "—";
 
-            _lblRecentUser.Text =
-                "—";
+            _lblRecentUser.Text = "—";
 
-            _lblLastSync.Text =
-                "—";
+            _lblLastSync.Text = "—";
 
-            _btnCopyMac.Enabled =
-                false;
+            _btnCopyMac.Enabled = false;
 
-            _btnCopyMac.Text =
-                "COPY";
+            _btnCopyMac.Text = "COPY";
 
-            _lblDeviceStatus.Text =
-                "NO DEVICE LOADED";
+            _lblDeviceStatus.Text = "NO DEVICE LOADED";
 
             _lblDeviceStatus.ForeColor =
                 Color.FromArgb(
@@ -2325,20 +2068,15 @@ namespace AdminTrayTool
                     150,
                     165);
 
-            _btnRefresh.Enabled =
-                false;
+            _btnRefresh.Enabled = false;
 
-            _btnDisable.Enabled =
-                false;
+            _btnDisable.Enabled = false;
 
-            _btnReenable.Enabled =
-                false;
+            _btnReenable.Enabled = false;
 
-            _btnPowerwash.Enabled =
-                false;
+            _btnPowerwash.Enabled = false;
 
-            _btnClearProfiles.Enabled =
-                false;
+            _btnClearProfiles.Enabled = false;
         }
 
         // =============================================================
@@ -2347,24 +2085,19 @@ namespace AdminTrayTool
 
         private void SetBusy(bool busy)
         {
-            _btnLookup.Enabled =
-                !busy;
+            _btnLookup.Enabled = !busy;
 
-            _txtSerial.Enabled =
-                !busy;
+            _txtSerial.Enabled = !busy;
 
-            _cmbSearchType.Enabled =
-                !busy;
+            _cmbSearchType.Enabled = !busy;
 
             if (busy)
             {
-                Cursor =
-                    Cursors.WaitCursor;
+                Cursor = Cursors.WaitCursor;
             }
             else
             {
-                Cursor =
-                    Cursors.Default;
+                Cursor = Cursors.Default;
             }
 
             if (_currentDevice == null)
@@ -2441,44 +2174,34 @@ namespace AdminTrayTool
         // UI HELPERS
         // =============================================================
 
-        private Panel CreatePanel(Point location, Size size)
+        private static HudPanel CreatePanel(Point location, Size size) => new()
         {
-            return new HudPanel
-            {
-                Location = location,
-                Size = size
-            };
-        }
+            Location = location,
+            Size = size
+        };
 
-        private Label CreateLabel(
+        private static Label CreateLabel(
             string text,
-            Point location)
-        {
-            return new Label
+            Point location) => new()
             {
-                Text =
-                    text,
+                Text = text,
 
-                Location =
-                    location,
+                Location = location,
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.FromArgb(
-                        140,
-                        150,
-                        165)
+                ForeColor = Color.FromArgb(
+                    140,
+                    150,
+                    165)
             };
-        }
 
-        private Label AddInfoRow(
+        private static Label AddInfoRow(
             Panel parent,
             string name,
             int y,
@@ -2487,72 +2210,58 @@ namespace AdminTrayTool
         {
             var nameLabel = new Label
             {
-                Text =
-                    name.ToUpperInvariant(),
+                Text = name.ToUpperInvariant(),
 
-                Location =
-                    new Point(
-                        20,
-                        y),
+                Location = new Point(
+                    20,
+                    y),
 
                 AutoSize = true,
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F,
-                        FontStyle.Bold),
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
 
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150)
+                ForeColor = Color.FromArgb(
+                    120,
+                    135,
+                    150)
             };
 
-            parent.Controls.Add(
-                nameLabel);
+            parent.Controls.Add(nameLabel);
 
             valueLabel = new Label
             {
-                Text =
-                    defaultValue,
+                Text = defaultValue,
 
-                Location =
-                    new Point(
-                        170,
-                        y - 1),
+                Location = new Point(
+                    170,
+                    y - 1),
 
                 AutoSize = true,
 
-                MaximumSize =
-                    new Size(
-                        620,
-                        0),
+                MaximumSize = new Size(
+                    620,
+                    0),
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
 
-                ForeColor =
-                    Color.White
+                ForeColor = Color.White
             };
 
-            parent.Controls.Add(
-                valueLabel);
+            parent.Controls.Add(valueLabel);
 
             return valueLabel;
         }
 
-        private Button CreateButton(string text, Point location, Size size)
+        private static HudButton CreateButton(string text, Point location, Size size) => new()
         {
-            return new HudButton
-            {
-                Text = text,
-                Location = location,
-                Size = size
-            };
-        }
+            Text = text,
+            Location = location,
+            Size = size
+        };
     }
 }

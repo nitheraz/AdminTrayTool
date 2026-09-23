@@ -72,7 +72,7 @@ AdminTrayTool stores its application configuration in:
 %ProgramData%\AdminTrayTool\
 ```
 
-The main files are:
+The main application configuration files are:
 
 ```text
 config.json
@@ -80,6 +80,27 @@ groupTemplates.json
 ```
 
 Because this is a machine-wide location, the application configuration is shared between Windows users on the same computer.
+
+The configuration is stored outside the AdminTrayTool installation directory so that normal application upgrades do not replace these files.
+
+## Bulk Chromebook Management Configuration
+
+Bulk Chromebook Management does not require separate configuration files.
+
+The CSV format is generated based on the selected action using the **Download Template** option in the Bulk Management window.
+
+The available templates are determined by the selected bulk action:
+
+| Action | CSV columns |
+| ------ | ----------- |
+| Disable Chromebook | `serialNumber` |
+| Re-enable Chromebook | `serialNumber` |
+| Move to OU | `serialNumber` |
+| Powerwash | `serialNumber` |
+| Clear Profiles | `serialNumber` |
+| Update Asset ID | `serialNumber`, `AssetId` |
+
+The target organisational unit for **Move to OU** is selected directly in the Bulk Management interface rather than being stored in the application configuration.
 
 ## GAM7 Configuration
 

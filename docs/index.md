@@ -9,7 +9,7 @@ It is designed to make common technician workflows faster without replacing your
 AdminTrayTool lives in the Windows system tray and provides one-click access to:
 
 * **Chromebook Management** — look up and manage individual Chromebooks through GAM7 using Serial Number or Asset ID. View device information, update Asset IDs, disable or re-enable devices, move devices between organisational units, clear profiles, and initiate Powerwash operations.
-* **Bulk Chromebook Management** — import Chromebook serial numbers from CSV files, validate devices against Google Workspace, select devices for bulk actions, review operations before execution, monitor progress, and export results.
+* **Bulk Chromebook Management** — import Chromebook information from action-specific CSV templates, validate CSV data locally, optionally check devices against Google Workspace, select devices for processing, review operations before execution, monitor progress, and export results.
 * **Windows Management** — access Windows administration tools for Active Directory and Microsoft Endpoint Configuration Manager (MECM/SCCM).
 * **Active Directory Management** — look up Windows computers, view computer information, search organisational units, and move computers between OUs.
 * **MECM / SCCM Management** — look up Windows computers, view device information, and add or remove devices from collections.
@@ -38,7 +38,7 @@ GAM7 is bundled with the AdminTrayTool installer.
 ### Chromebook Management
 
 * [Chromebook Management](guides/chromebook-management.md) — look up and manage individual Chromebooks.
-* [Bulk Chromebook Management](guides/bulk-chromebook-management.md) — import, validate, select, process, and export results for multiple Chromebooks.
+* [Bulk Chromebook Management](guides/bulk-chromebook-management.md) — use action-specific CSV templates to import, validate, select, review, process, and export results for multiple Chromebooks.
 * [GAM7 Setup & Troubleshooting](gam-setup.md) — GAM7 authentication, OAuth, projects, and common errors.
 
 ### Windows Management

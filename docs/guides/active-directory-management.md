@@ -6,7 +6,7 @@ Active Directory Management allows IT administrators to look up Windows computer
 
 From the AdminTrayTool tray menu:
 
-**Windows Management → Active Directory**
+**Tray icon → Windows Management → Active Directory**
 
 ## Computer Lookup
 

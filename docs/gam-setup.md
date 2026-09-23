@@ -1,20 +1,33 @@
 ﻿# GAM7 Setup & Troubleshooting
 
-AdminTrayTool uses [GAM7](https://github.com/GAM-team/GAM) for Google Workspace operations such as Chromebook and Group Management.
+AdminTrayTool uses [GAM7](https://github.com/GAM-team/GAM) for Google Workspace operations such as Chromebook Management, Bulk Chromebook Management, and Group Management.
 
 GAM7 is bundled with the AdminTrayTool installer.
 
 ## Authentication Flow
 
-When a GAM7-powered feature is opened, AdminTrayTool checks the GAM7 configuration in the following order.
+When a GAM7-powered feature is opened, AdminTrayTool checks whether GAM7 is available and configured before allowing the feature to continue.
 
-### 1. GAM7 Executable
+The general process is:
 
-AdminTrayTool first checks that the bundled GAM7 executable is available.
+1. Check that the bundled GAM7 executable is available.
+2. Check for the required GAM7 project configuration.
+3. Check whether GAM7 is authenticated.
+4. If authentication is required, guide the user through the GAM7 OAuth process.
 
-If it cannot be found, reinstall AdminTrayTool.
+## 1. GAM7 Executable
 
-### 2. GAM7 Project
+AdminTrayTool includes GAM7 with the application installation.
+
+The bundled executable is located within the AdminTrayTool installation directory under:
+
+```text
+GAM7\gam.exe
+```
+
+If the bundled GAM7 executable cannot be found, reinstall AdminTrayTool.
+
+## 2. GAM7 Project
 
 AdminTrayTool checks for the GAM7 project configuration, including:
 
@@ -27,11 +40,17 @@ If the file does not exist, you will need to either:
 * use your organization's existing GAM7 project; or
 * create a new project if this is the first GAM7 setup for your organization.
 
-### 3. OAuth Authentication
+If your organization already has an established GAM7 project, using the existing project is normally preferable to creating another Google Cloud project.
 
-AdminTrayTool checks whether the machine has a valid GAM7 OAuth configuration.
+## 3. OAuth Authentication
 
-If authentication is required, GAM7 will start the OAuth process and open a browser for Google Workspace sign-in.
+AdminTrayTool checks whether GAM7 has a valid authenticated session.
+
+If authentication is required, GAM7 starts the OAuth process and opens a browser for Google Workspace sign-in.
+
+Sign in using the Google Workspace account that has the permissions required for the operations you need to perform.
+
+Once authentication is complete, return to AdminTrayTool and retry the requested operation if necessary.
 
 ## Using an Existing GAM7 Project
 
@@ -53,7 +72,7 @@ You can then retry the OAuth setup.
 
 ### Security Considerations
 
-`client_secrets.json` contains the OAuth client configuration used by GAM7. It should still be handled as organizational configuration and should only be copied between trusted, organization-managed computers.
+`client_secrets.json` contains the OAuth client configuration used by GAM7. It should be handled as organizational configuration and should only be copied between trusted, organization-managed computers.
 
 **Do not:**
 
@@ -117,7 +136,7 @@ Possible causes include:
 * the OAuth client credentials were regenerated;
 * the file belongs to a different Google Cloud project.
 
-Download a fresh `client_secrets.json` from the correct OAuth client in your organization's Google Cloud project and then run:
+Obtain a fresh `client_secrets.json` from the correct OAuth client in your organization's Google Cloud project and then run:
 
 ```text
 gam oauth create
@@ -155,3 +174,67 @@ If the entry references a service-account file that does not exist on the machin
 If that service-account configuration is not required by your organization's GAM7 setup, the obsolete line can be removed from `gam.cfg`.
 
 > **Important:** Do not remove GAM7 configuration entries unless you understand what they are used for. If your organization relies on service-account authentication for a specific workflow, consult your Google Workspace/GAM7 administrator before changing the configuration.
+
+## Bulk Chromebook Management Takes a Long Time
+
+Bulk Chromebook Management can perform Google Workspace lookups when **Check Devices** is selected.
+
+Checking a large number of devices can take some time because AdminTrayTool is querying Google Workspace through GAM7.
+
+**Check Devices is optional.**
+
+You can import a valid CSV and proceed to **Review Action** without first checking every device.
+
+For operations such as **Update Asset ID**, the current Asset ID does not need to be retrieved before the action is executed.
+
+## Bulk CSV Import Fails
+
+If a CSV cannot be imported, first confirm that it matches the template for the selected action.
+
+The required columns are:
+
+| Action | Required CSV columns |
+| ------ | --------------------- |
+| Disable Chromebook | `serialNumber` |
+| Re-enable Chromebook | `serialNumber` |
+| Move to OU | `serialNumber` |
+| Powerwash | `serialNumber` |
+| Clear Profiles | `serialNumber` |
+| Update Asset ID | `serialNumber`, `AssetId` |
+
+Use **Download Template** after selecting the required action to generate the correct CSV structure.
+
+Check that:
+
+* The required column names are present.
+* Serial numbers are populated.
+* Asset IDs are populated when using **Update Asset ID**.
+* The CSV is saved in a standard CSV format.
+
+## A Bulk Operation Fails for Some Devices
+
+Bulk operations process devices individually.
+
+A failure for one device is recorded in the results and does not necessarily prevent other selected devices from being processed.
+
+Check the **Error** column and **GAM Output** panel for additional information.
+
+You can use **Export Results** to save the operation results for later investigation.
+
+## Google Workspace Permission Errors
+
+If GAM7 is authenticated but an operation fails with a Google Workspace permission error, the authenticated account may not have the required permissions for that operation.
+
+Check the GAM Output panel for the specific error returned by GAM7.
+
+The required permissions can differ between operations such as:
+
+* Chromebook lookups
+* Disabling or re-enabling Chromebooks
+* Moving Chromebooks between organizational units
+* Clearing profiles
+* Powerwashing Chromebooks
+* Updating Asset IDs
+* Google Group management
+
+Contact your Google Workspace administrator if the account requires additional permissions.

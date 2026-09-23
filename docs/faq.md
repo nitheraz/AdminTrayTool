@@ -71,7 +71,86 @@ The following features can operate independently of GAM7:
 The following features require GAM7 and appropriate Google Workspace permissions:
 
 * Chromebook Management
+* Bulk Chromebook Management
 * Group Management
+
+## Does Bulk Chromebook Management require me to check every device first?
+
+**No.**
+
+The **Check Devices** step is optional.
+
+You can import a valid CSV, select devices, and use **Review Action** without first checking every device against Google Workspace.
+
+Checking devices is useful when you want to verify that serial numbers exist in Google Workspace and, where available, retrieve information such as the current Asset ID.
+
+The actual bulk operation determines whether the requested action succeeds for each selected device.
+
+## What CSV format does Bulk Chromebook Management use?
+
+The required CSV columns depend on the selected action.
+
+For **Disable Chromebook**, **Re-enable Chromebook**, **Powerwash**, and **Clear Profiles**, the CSV requires:
+
+```text
+serialNumber
+```
+
+For **Move to OU**, the CSV requires:
+
+```text
+serialNumber
+```
+
+The target organizational unit is selected separately in AdminTrayTool.
+
+For **Update Asset ID**, the CSV requires:
+
+```text
+serialNumber,AssetId
+```
+
+Use **Download Template** in Bulk Chromebook Management to generate the appropriate template for the selected action.
+
+## Can I update Asset IDs in bulk?
+
+**Yes.**
+
+Select **Update Asset ID** as the bulk action and import a CSV containing:
+
+```text
+serialNumber,AssetId
+```
+
+For example:
+
+```text
+serialNumber,AssetId
+ABC123456,ASSET-1001
+ABC123457,ASSET-1002
+```
+
+The current Asset ID does not need to be checked before performing the update. The new Asset ID is taken from the CSV.
+
+## What happens if one device fails during a bulk operation?
+
+AdminTrayTool processes the selected devices individually and records the result for each device.
+
+A failed device is shown with its error information where available.
+
+Other selected devices can continue to be processed rather than treating the entire operation as a single all-or-nothing transaction.
+
+Use **Export Results** if you need to retain a record of the operation or identify devices that require further investigation.
+
+## Can I undo a bulk Powerwash or Clear Profiles operation?
+
+These actions should be treated as destructive operations.
+
+**Powerwash** resets the Chromebook and removes locally stored user data and settings.
+
+**Clear Profiles** removes locally stored user profiles.
+
+Review the selected devices and the confirmation warning carefully before executing either action.
 
 ## Does AdminTrayTool replace ServiceNow?
 

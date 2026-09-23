@@ -13,17 +13,9 @@ namespace AdminTrayTool
     /// </summary>
     static class Program
     {
-        [SuppressMessage(
-            "Major Code Smell",
-            "S4487:Unread private fields should be removed",
-            Justification = "The mutex reference must be retained for the lifetime of the application to enforce single-instance execution.")]
         private static Mutex? _appMutex;
-        [SuppressMessage(
-            "Major Code Smell",
-            "S4487:Unread private fields should be removed",
-            Justification = "The NotifyIcon reference must be retained for the lifetime of the tray application.")]
         private static NotifyIcon trayIcon = null!;
-        private static string AdminProfile = "Profile 1";
+        private const string AdminProfile = "Profile 1";
 
         /// <summary>
         /// Starts AdminTrayTool, initializes the system-tray application,
@@ -82,6 +74,11 @@ namespace AdminTrayTool
 
             Application.Run();
         }
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         /// <summary>
         /// Represents the application configuration.
@@ -89,9 +86,9 @@ namespace AdminTrayTool
         class AppConfig
         {
             public string Editor { get; set; } = "notepad.exe";
-            public List<WebPortal> WebPortals { get; set; } = new();
-            public List<RdpEntry> RdpServers { get; set; } = new();
-            public List<AdminTool> AdminTools { get; set; } = new();
+            public List<WebPortal> WebPortals { get; set; } = [];
+            public List<RdpEntry> RdpServers { get; set; } = [];
+            public List<AdminTool> AdminTools { get; set; } = [];
         }
 
         /// <summary>
@@ -134,21 +131,17 @@ namespace AdminTrayTool
                 var def = new AppConfig
                 {
                     Editor = "notepad.exe",
-                    WebPortals = new List<WebPortal>(),
-                    RdpServers = new List<RdpEntry>(),
-                    AdminTools = new List<AdminTool>()
+                    WebPortals = [],
+                    RdpServers = [],
+                    AdminTools = []
                 };
 
                 // append defaults to empty sections
                 AppendDefaultEntries(def);
 
-                var json = JsonSerializer.Serialize(
+                 var json = JsonSerializer.Serialize(
                     def,
-                    new JsonSerializerOptions
-                    {
-                        WriteIndented = true,
-                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                    });
+                    JsonOptions);
 
                 File.WriteAllText(path, json);
                 return def;
@@ -157,7 +150,7 @@ namespace AdminTrayTool
             try
             {
                 var text = File.ReadAllText(path);
-                var cfg = JsonSerializer.Deserialize<AppConfig>(text, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new AppConfig();
+                var cfg = JsonSerializer.Deserialize<AppConfig>(text, JsonOptions) ?? new AppConfig();
 
                 // If any section is empty, append defaults for fresh-install convenience (do not overwrite existing items)
                 AppendDefaultEntries(cfg);
@@ -174,9 +167,9 @@ namespace AdminTrayTool
         {
             if (cfg == null) return;
 
-            cfg.WebPortals ??= new List<WebPortal>();
-            cfg.RdpServers ??= new List<RdpEntry>();
-            cfg.AdminTools ??= new List<AdminTool>();
+            cfg.WebPortals ??= [];
+            cfg.RdpServers ??= [];
+            cfg.AdminTools ??= [];
 
             AddDefaultWebPortals(cfg);
             AddDefaultRdpServers(cfg);
@@ -339,6 +332,8 @@ namespace AdminTrayTool
                 null,
                 (s, e) => OpenManagementForm<WindowsManagementForm>(
                     "Windows Management"));
+
+            menu.Items.Add(new ToolStripSeparator());
         }
 
         static void OpenManagementForm<TForm>(string formName)
@@ -450,8 +445,10 @@ namespace AdminTrayTool
             try
             {
                 if (string.IsNullOrEmpty(folder))
+                {
                     throw new InvalidOperationException(
                         $"{description} path is invalid");
+                }
 
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
@@ -576,11 +573,7 @@ namespace AdminTrayTool
                 // Ask the user's normal Explorer process to launch Chrome.
                 // This prevents the elevated AdminTrayTool process from
                 // launching Chrome as Administrator.
-                Type? shellType = Type.GetTypeFromProgID("Shell.Application");
-
-                if (shellType == null)
-                    throw new InvalidOperationException("Windows Shell.Application could not be found.");
-
+                Type? shellType = Type.GetTypeFromProgID("Shell.Application") ?? throw new InvalidOperationException("Windows Shell.Application could not be found.");
                 dynamic shell = Activator.CreateInstance(shellType)
                     ?? throw new InvalidOperationException("Could not create Windows Shell.Application.");
 
@@ -611,57 +604,6 @@ namespace AdminTrayTool
             catch (Exception ex)
             {
                 MessageBox.Show($"Failed to start RDP: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        static void OnLaunchPutty(object sender, EventArgs e)
-        {
-            string[] candidates = {
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "PuTTY", "putty.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "PuTTY", "putty.exe"),
-                "putty.exe"
-            };
-
-            string? exe = null;
-            foreach (var c in candidates) { if (File.Exists(c)) { exe = c; break; } }
-            exe ??= "putty.exe";
-
-            try { Process.Start(new ProcessStartInfo { FileName = exe, UseShellExecute = true }); }
-            catch (Exception ex) { MessageBox.Show($"Failed to launch PuTTY: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-        }
-
-        static void OnLaunchPowerShell(object sender, EventArgs e)
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    Arguments = "-NoExit",
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to launch PowerShell: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        static void OnLaunchPowerShellElevated(object sender, EventArgs e)
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "powershell.exe",
-                    Arguments = "-NoExit",
-                    UseShellExecute = true,
-                    Verb = "runas"
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to launch elevated PowerShell: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

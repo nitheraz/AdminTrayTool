@@ -20,9 +20,17 @@
 
 ## First-Run Setup
 
-The first time you open **Chromebook Management** or **Group Management**, AdminTrayTool checks whether GAM7 is configured and authenticated on the machine.
+AdminTrayTool checks GAM7 configuration when you open a feature that requires Google Workspace access.
 
-If GAM7 is not configured, you will be guided through the setup process.
+These features include:
+
+* **Chromebook Management**
+* **Bulk Chromebook Management**
+* **Group Management**
+
+AdminTrayTool first checks whether an existing GAM7 project and authentication are available on the machine.
+
+If GAM7 is not configured or authenticated, you will be guided through the required setup.
 
 ### 1. GAM7 Project Setup
 

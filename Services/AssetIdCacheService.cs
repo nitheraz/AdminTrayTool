@@ -26,9 +26,10 @@ namespace AdminTrayTool.Services
                     return null;
 
                 string json = File.ReadAllText(path);
+
                 var cache = JsonSerializer.Deserialize<AssetIdCache>(
                     json,
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    DeserializeOptions);
 
                 if (cache == null)
                     return null;
@@ -42,7 +43,15 @@ namespace AdminTrayTool.Services
                 return null;
             }
         }
+        private static readonly JsonSerializerOptions DeserializeOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
+        private static readonly JsonSerializerOptions SerializeOptions = new()
+        {
+            WriteIndented = true
+        };
         public static void Save(Dictionary<string, string> assetIdToSerial)
         {
             try
@@ -55,7 +64,7 @@ namespace AdminTrayTool.Services
 
                 string json = JsonSerializer.Serialize(
                     cache,
-                    new JsonSerializerOptions { WriteIndented = true });
+                    SerializeOptions);
 
                 File.WriteAllText(GetCachePath(), json);
             }

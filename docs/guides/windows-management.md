@@ -4,8 +4,8 @@ Windows Management provides a central entry point for Windows administration tas
 
 From **Windows Management**, you can access:
 
-* Active Directory Management
-* MECM / SCCM Management
+* **Active Directory Management**
+* **MECM / SCCM Management**
 
 The Windows Management screen provides a consistent interface for Windows administration tools without requiring technicians to open each management function separately.
 
@@ -13,7 +13,7 @@ The Windows Management screen provides a consistent interface for Windows admini
 
 From the AdminTrayTool tray menu:
 
-**Windows Management**
+**Tray icon → Windows Management**
 
 The Windows Management window provides separate options for Active Directory and MECM / SCCM.
 
@@ -59,7 +59,6 @@ AdminTrayTool does not grant additional Windows or MECM permissions by itself.
 
 ## Closing the Management Windows
 
-The Windows, Active Directory, and MECM management windows include a **FORM ACTIONS** section with a **CLOSE** button.
+The Windows Management, Active Directory Management, and MECM / SCCM Management windows include a **FORM ACTIONS** section with a **CLOSE** button.
 
 Select **CLOSE** when you have finished working in the management window.
-
