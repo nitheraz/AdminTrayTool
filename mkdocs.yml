@@ -32,7 +32,9 @@ nav:
   - Guides:
       - Chromebook Management: guides/chromebook-management.md
       - Bulk Chromebook Management: guides/bulk-chromebook-management.md
-      - Windows Management: guides/windows-management.md
+      - Windows Management:
+          - Windows Management Setup: guides/windows-management-setup.md
+          - Windows Management Guide: guides/windows-management.md
       - Active Directory Management: guides/active-directory-management.md
       - MECM / SCCM Management: guides/mecm-management.md
       - Group Management: guides/group-management.md
