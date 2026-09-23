@@ -2174,15 +2174,20 @@ namespace AdminTrayTool.Forms
         // UI HELPERS
         // =============================================================
 
-        private static HudPanel CreatePanel(Point location, Size size) => new()
+        private static HudPanel CreatePanel(Point location, Size size)
         {
-            Location = location,
-            Size = size
-        };
+            return new()
+            {
+                Location = location,
+                Size = size
+            };
+        }
 
         private static Label CreateLabel(
             string text,
-            Point location) => new()
+            Point location)
+        {
+            return new()
             {
                 Text = text,
 
@@ -2200,6 +2205,7 @@ namespace AdminTrayTool.Forms
                     150,
                     165)
             };
+        }
 
         private static Label AddInfoRow(
             Panel parent,
@@ -2257,11 +2263,14 @@ namespace AdminTrayTool.Forms
             return valueLabel;
         }
 
-        private static HudButton CreateButton(string text, Point location, Size size) => new()
+        private static HudButton CreateButton(string text, Point location, Size size)
         {
-            Text = text,
-            Location = location,
-            Size = size
-        };
+            return new()
+            {
+                Text = text,
+                Location = location,
+                Size = size
+            };
+        }
     }
 }

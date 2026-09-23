@@ -1,6 +1,6 @@
 ﻿using AdminTrayTool.Services;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class MecmManagementForm : Form
     {
@@ -22,7 +22,7 @@ namespace AdminTrayTool
 
         private TextBox _txtLog = null!;
 
-        private List<MecmCollection> _collections = new();
+        private List<MecmCollection> _collections = [];
 
         private string _currentComputerName = string.Empty;
 
@@ -871,11 +871,7 @@ namespace AdminTrayTool
             object? sender,
             EventArgs e)
         {
-            CollectionDisplayItem? selected =
-                _cmbCollection.SelectedItem
-                    as CollectionDisplayItem;
-
-            if (selected == null)
+            if (_cmbCollection.SelectedItem is not CollectionDisplayItem selected)
                 return;
 
             string collectionName =
@@ -966,11 +962,7 @@ namespace AdminTrayTool
             object? sender,
             EventArgs e)
         {
-            CollectionDisplayItem? selected =
-                _cmbCollection.SelectedItem
-                    as CollectionDisplayItem;
-
-            if (selected == null)
+            if (_cmbCollection.SelectedItem is not CollectionDisplayItem selected)
                 return;
 
             string collectionName =
@@ -1303,8 +1295,7 @@ namespace AdminTrayTool
 
             private readonly string _displayText;
 
-            public CollectionDisplayItem(
-                MecmCollection collection,
+            public CollectionDisplayItem(MecmCollection collection,
                 string displayText)
             {
                 Collection =

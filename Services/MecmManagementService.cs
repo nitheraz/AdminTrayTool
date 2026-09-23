@@ -525,7 +525,7 @@ namespace AdminTrayTool.Services
         public bool Success { get; set; }
 
         public List<MecmCollection> Collections { get; set; } =
-            new();
+            [];
 
         public string Error { get; set; } =
             string.Empty;

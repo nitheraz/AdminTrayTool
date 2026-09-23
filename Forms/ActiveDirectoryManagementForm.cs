@@ -20,7 +20,7 @@ namespace AdminTrayTool
 
         private TextBox _txtLog = null!;
 
-        private List<string> _organizationalUnits = new();
+        private List<string> _organizationalUnits = [];
 
         public ActiveDirectoryManagementForm()
         {

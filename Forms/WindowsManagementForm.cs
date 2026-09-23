@@ -1,4 +1,7 @@
-﻿namespace AdminTrayTool
+﻿using AdminTrayTool.Services;
+using AdminTrayTool.Forms;
+
+namespace AdminTrayTool
 {
     public class WindowsManagementForm : Form
     {

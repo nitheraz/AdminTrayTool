@@ -402,7 +402,10 @@ namespace AdminTrayTool.Forms
 
         // For the grouped case, the "name" property in the JSON object is
         // assumed to be called "name" (e.g. { "name": "Primary Staff", "groups": [...] }).
-        private static string GetJsonPropertyNameForGroup() => "name";
+        private static string GetJsonPropertyNameForGroup()
+        {
+            return "name";
+        }
 
         // =============================================================
         // SAVE TO DISK
@@ -477,7 +480,7 @@ namespace AdminTrayTool.Forms
 
                     if (!grouped.TryGetValue(groupName, out var list))
                     {
-                        list = new List<string>();
+                        list = [];
                         grouped[groupName] = list;
                     }
 

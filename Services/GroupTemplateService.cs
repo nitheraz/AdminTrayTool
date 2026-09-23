@@ -68,36 +68,36 @@ namespace AdminTrayTool.Services
         {
             return new GroupTemplateConfig
             {
-                Templates = new List<GroupTemplate>
-                {
+                Templates =
+                [
                     new GroupTemplate
                     {
                         Name = "Primary Staff",
-                        Groups = new List<string>
-                        {
+                        Groups =
+                        [
                             "primary-staff@yourdomain.org",
                             "all-staff@yourdomain.org"
-                        }
+                        ]
                     },
                     new GroupTemplate
                     {
                         Name = "Secondary Staff",
-                        Groups = new List<string>
-                        {
+                        Groups =
+                        [
                             "secondary-staff@yourdomain.org",
                             "all-staff@yourdomain.org"
-                        }
+                        ]
                     },
                     new GroupTemplate
                     {
                         Name = "School Officer",
-                        Groups = new List<string>
-                        {
+                        Groups =
+                        [
                             "school-officers@yourdomain.org",
                             "all-staff@yourdomain.org"
-                        }
+                        ]
                     }
-                }
+                ]
             };
         }
     }

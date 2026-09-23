@@ -68,15 +68,15 @@ namespace AdminTrayTool.Forms
         {
             if (_mode == ConfigEditorMode.GroupTemplates)
             {
-                return new List<SectionSchema> { BuildGroupTemplatesSchema() };
+                return [BuildGroupTemplatesSchema()];
             }
 
-            return new List<SectionSchema>
-            {
+            return
+            [
                 BuildWebPortalsSchema(),
                 BuildRdpServersSchema(),
                 BuildAdminToolsSchema()
-            };
+            ];
         }
 
         private static SectionSchema BuildWebPortalsSchema()
@@ -87,8 +87,8 @@ namespace AdminTrayTool.Forms
                 SectionKey = "webPortals",
                 DedupeKey = "url",
                 InstructionText = "Enter web portals: Name | URL | Profile",
-                Columns = new List<ColumnSchema>
-                {
+                Columns =
+                [
                     new() { Name = "name", DisplayName = "Name", Required = true, Placeholder = "Display name", ToolTip = "Display name shown in the menu" },
                     new()
                     {
@@ -98,7 +98,7 @@ namespace AdminTrayTool.Forms
                         ValidationError = "URL must start with http:// or https://"
                     },
                     new() { Name = "profile", DisplayName = "Profile", Placeholder = "Profile 1", DefaultValue = "Profile 1", ToolTip = "Browser profile directory, e.g. Default or Profile 1" }
-                }
+                ]
             };
         }
 
@@ -110,11 +110,11 @@ namespace AdminTrayTool.Forms
                 SectionKey = "rdpServers",
                 DedupeKey = "host",
                 InstructionText = "Enter RDP servers: Name | Host",
-                Columns = new List<ColumnSchema>
-                {
+                Columns =
+                [
                     new() { Name = "name", DisplayName = "Name", Required = true, Placeholder = "Display name", ToolTip = "Display name shown in the menu" },
                     new() { Name = "host", DisplayName = "Host", Required = true, Placeholder = "10.1.1.1", ToolTip = "RDP host name or IP" }
-                }
+                ]
             };
         }
 
@@ -126,12 +126,12 @@ namespace AdminTrayTool.Forms
                 SectionKey = "adminTools",
                 DedupeKey = "exe",
                 InstructionText = "Enter admin tools: Name | Exe | Args | Elevated",
-                Columns = new List<ColumnSchema>
-                {
+                Columns =
+                [
                     new() { Name = "name", DisplayName = "Name", Required = true, Placeholder = "Display name", ToolTip = "Display name shown in the menu" },
                     new() { Name = "exe", DisplayName = "Exe", Required = true, Placeholder = "putty.exe", ToolTip = "Executable name or full path" },
                     new() { Name = "args", DisplayName = "Args", Placeholder = "", ToolTip = "Command-line arguments (optional)" },
-                }
+                ]
             };
         }
 
@@ -145,11 +145,11 @@ namespace AdminTrayTool.Forms
                 GroupByColumn = "templateName",
                 NestedArrayPropertyName = "groups",
                 InstructionText = "One row per group. Rows sharing a Template Name become one template.",
-                Columns = new List<ColumnSchema>
-                {
+                Columns =
+                [
                     new() { Name = "templateName", DisplayName = "Template Name", Required = true, Placeholder = "Primary Staff" },
                     new() { Name = "group", DisplayName = "Group Email", Required = true, Placeholder = "group@yourdomain.org" }
-                }
+                ]
             };
         }
     }

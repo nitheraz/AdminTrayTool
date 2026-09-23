@@ -6,14 +6,15 @@ namespace AdminTrayTool.Forms
     {
         private readonly GamService _gamService;
 
+        private readonly List<BulkChromebookItem> _devices = [];
+        private readonly BindingSource _deviceBindingSource = [];
+
         private Button _btnImport = null!;
         private Button _btnTemplate = null!;
         private Button _btnClear = null!;
         private Button _btnSelectAll = null!;
         private Button _btnSelectNone = null!;
-        private Button _btnSelectFound = null!;
-        private Button _btnValidate = null!;
-        private Button _btnReview = null!;
+        private Button _btnPerform = null!;
         private Button _btnClose = null!;
         private Button _btnExport = null!;
 
@@ -29,8 +30,7 @@ namespace AdminTrayTool.Forms
         private Label _lblBulkOrgUnit = null!;
 
         private bool _loadingOrgUnits;
-
-        private readonly List<BulkChromebookItem> _devices = [];
+        private bool _bulkOperationRunning;
 
         public BulkChromebookManagementForm()
         {
@@ -91,10 +91,11 @@ namespace AdminTrayTool.Forms
             {
                 Dock = DockStyle.Fill,
                 Padding = new Padding(30),
-                BackColor = Color.FromArgb(
-                    10,
-                    15,
-                    25)
+                BackColor =
+                    Color.FromArgb(
+                        10,
+                        15,
+                        25)
             };
 
             Controls.Add(mainPanel);
@@ -125,10 +126,11 @@ namespace AdminTrayTool.Forms
                 Font = new Font(
                     "Segoe UI",
                     9.5F),
-                ForeColor = Color.FromArgb(
-                    150,
-                    160,
-                    175),
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
                 Location = new Point(33, 62)
             };
 
@@ -138,10 +140,11 @@ namespace AdminTrayTool.Forms
             {
                 Location = new Point(30, 90),
                 Size = new Size(820, 1),
-                BackColor = Color.FromArgb(
-                    45,
-                    55,
-                    70)
+                BackColor =
+                    Color.FromArgb(
+                        45,
+                        55,
+                        70)
             };
 
             mainPanel.Controls.Add(headerLine);
@@ -158,8 +161,6 @@ namespace AdminTrayTool.Forms
 
             mainPanel.Controls.Add(actionPanel);
 
-            // ACTION LABEL
-
             _lblAction = new Label
             {
                 Text = "ACTION",
@@ -168,36 +169,31 @@ namespace AdminTrayTool.Forms
                     "Segoe UI",
                     8.5F,
                     FontStyle.Bold),
-                ForeColor = Color.FromArgb(
-                    120,
-                    135,
-                    150),
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
                 Location = new Point(20, 12)
             };
 
             actionPanel.Controls.Add(_lblAction);
 
-            // ACTION COMBO
-
             _cmbAction = new ComboBox
             {
                 Location = new Point(20, 36),
                 Size = new Size(300, 32),
-
-                BackColor = Color.FromArgb(
-                    20,
-                    27,
-                    40),
-
+                BackColor =
+                    Color.FromArgb(
+                        20,
+                        27,
+                        40),
                 ForeColor = Color.White,
-
                 Font = new Font(
                     "Segoe UI",
                     10F),
-
                 DropDownStyle =
                     ComboBoxStyle.DropDownList,
-
                 FlatStyle =
                     FlatStyle.Flat
             };
@@ -223,12 +219,11 @@ namespace AdminTrayTool.Forms
             _cmbAction.SelectedIndexChanged +=
                 CmbAction_SelectedIndexChanged;
 
-            actionPanel.Controls.Add(
-                _cmbAction);
+            actionPanel.Controls.Add(_cmbAction);
 
-            _cmbAction.SelectedIndex = -1;
-
-            // ORGANISATIONAL UNIT LABEL
+            // =========================================================
+            // ORGANISATIONAL UNIT
+            // =========================================================
 
             _lblBulkOrgUnit = new Label
             {
@@ -239,50 +234,44 @@ namespace AdminTrayTool.Forms
                     "Segoe UI",
                     8.5F,
                     FontStyle.Bold),
-                ForeColor = Color.FromArgb(
-                    120,
-                    135,
-                    150),
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
                 Location = new Point(340, 12)
             };
 
-            actionPanel.Controls.Add(
-                _lblBulkOrgUnit);
-
-            // ORGANISATIONAL UNIT COMBO
+            actionPanel.Controls.Add(_lblBulkOrgUnit);
 
             _cmbBulkOrgUnit = new ComboBox
             {
                 Location = new Point(340, 36),
                 Size = new Size(450, 32),
-
-                BackColor = Color.FromArgb(
-                    20,
-                    27,
-                    40),
-
+                BackColor =
+                    Color.FromArgb(
+                        20,
+                        27,
+                        40),
                 ForeColor = Color.White,
-
                 Font = new Font(
                     "Segoe UI",
                     9.5F),
-
                 DropDownStyle =
                     ComboBoxStyle.DropDownList,
-
                 FlatStyle =
                     FlatStyle.Flat,
-
                 Visible = false
             };
+
+            _cmbBulkOrgUnit.SelectedIndexChanged +=
+                CmbBulkOrgUnit_SelectedIndexChanged;
 
             actionPanel.Controls.Add(
                 _cmbBulkOrgUnit);
 
-            _cmbBulkOrgUnit.SelectedIndexChanged += (s, e) => UpdateReviewButton();
-
             // =========================================================
-            // IMPORT BUTTONS
+            // TEMPLATE BUTTON
             // =========================================================
 
             _btnTemplate = new HudButton
@@ -299,6 +288,10 @@ namespace AdminTrayTool.Forms
             actionPanel.Controls.Add(
                 _btnTemplate);
 
+            // =========================================================
+            // IMPORT BUTTON
+            // =========================================================
+
             _btnImport = new HudButton
             {
                 Text = "IMPORT CSV",
@@ -312,6 +305,10 @@ namespace AdminTrayTool.Forms
 
             actionPanel.Controls.Add(
                 _btnImport);
+
+            // =========================================================
+            // CLEAR BUTTON
+            // =========================================================
 
             _btnClear = new HudButton
             {
@@ -327,17 +324,23 @@ namespace AdminTrayTool.Forms
             actionPanel.Controls.Add(
                 _btnClear);
 
+            // =========================================================
+            // STATUS
+            // =========================================================
+
             _lblStatus = new Label
             {
-                Text = "Select an action to begin.",
+                Text =
+                    "Select an action to begin.",
                 AutoSize = true,
                 Font = new Font(
                     "Segoe UI",
                     8.5F),
-                ForeColor = Color.FromArgb(
-                    150,
-                    160,
-                    175),
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
                 Location = new Point(515, 88)
             };
 
@@ -399,11 +402,7 @@ namespace AdminTrayTool.Forms
             };
 
             _gridDevices.SelectionChanged +=
-                (s, e) =>
-                {
-                    UpdateSelectionStatus();
-                    UpdateReviewButton();
-                };
+                GridDevices_SelectionChanged;
 
             _gridDevices.ColumnHeadersDefaultCellStyle =
                 new DataGridViewCellStyle
@@ -451,8 +450,6 @@ namespace AdminTrayTool.Forms
                             8.5F)
                 };
 
-            // SERIAL NUMBER
-
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
@@ -461,8 +458,6 @@ namespace AdminTrayTool.Forms
                     DataPropertyName = "SerialNumber",
                     FillWeight = 25
                 });
-
-            // STATUS
 
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
@@ -473,8 +468,6 @@ namespace AdminTrayTool.Forms
                     FillWeight = 18
                 });
 
-            // CURRENT ASSET ID
-
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
@@ -483,8 +476,6 @@ namespace AdminTrayTool.Forms
                     DataPropertyName = "AssetId",
                     FillWeight = 22
                 });
-
-            // NEW ASSET ID
 
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
@@ -495,8 +486,6 @@ namespace AdminTrayTool.Forms
                     FillWeight = 22
                 });
 
-            // RESULT
-
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
@@ -505,8 +494,6 @@ namespace AdminTrayTool.Forms
                     DataPropertyName = "Result",
                     FillWeight = 18
                 });
-
-            // ERROR
 
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
@@ -517,8 +504,11 @@ namespace AdminTrayTool.Forms
                     FillWeight = 30
                 });
 
-            _gridDevices.DataSource =
+            _deviceBindingSource.DataSource =
                 _devices;
+
+            _gridDevices.DataSource =
+                _deviceBindingSource;
 
             listPanel.Controls.Add(
                 _gridDevices);
@@ -535,46 +525,22 @@ namespace AdminTrayTool.Forms
                 Enabled = false
             };
 
-            _btnSelectAll.Click += (s, e) => SelectDevices(_ => true);
+            _btnSelectAll.Click +=
+                BtnSelectAll_Click;
 
             listPanel.Controls.Add(
                 _btnSelectAll);
 
-            _btnSelectFound = new HudButton
-            {
-                Text = "SELECT FOUND",
-                Location = new Point(150, 292),
-                Size = new Size(135, 30),
-                Enabled = false
-            };
-
-            _btnSelectFound.Click +=
-                (s, e) =>
-                {
-                    SelectDevices(
-                        device =>
-                            device.Status.Equals(
-                                "FOUND",
-                                StringComparison.OrdinalIgnoreCase));
-                };
-
-            listPanel.Controls.Add(
-                _btnSelectFound);
-
             _btnSelectNone = new HudButton
             {
                 Text = "SELECT NONE",
-                Location = new Point(295, 292),
+                Location = new Point(150, 292),
                 Size = new Size(125, 30),
                 Enabled = false
             };
 
             _btnSelectNone.Click +=
-                (s, e) =>
-                {
-                    _gridDevices.ClearSelection();
-                    UpdateSelectionStatus();
-                };
+                BtnSelectNone_Click;
 
             listPanel.Controls.Add(
                 _btnSelectNone);
@@ -587,10 +553,11 @@ namespace AdminTrayTool.Forms
                     "Segoe UI",
                     9F,
                     FontStyle.Bold),
-                ForeColor = Color.FromArgb(
-                    150,
-                    160,
-                    175),
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
                 Location = new Point(440, 301)
             };
 
@@ -622,10 +589,11 @@ namespace AdminTrayTool.Forms
                     "Segoe UI",
                     9F,
                     FontStyle.Bold),
-                ForeColor = Color.FromArgb(
-                    150,
-                    160,
-                    175),
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
                 Location = new Point(545, 590),
                 Visible = false
             };
@@ -634,40 +602,32 @@ namespace AdminTrayTool.Forms
                 _lblProgress);
 
             // =========================================================
-            // BOTTOM ACTIONS
+            // PERFORM ACTION
             // =========================================================
 
-            _btnValidate = new HudButton
+            _btnPerform = new HudButton
             {
-                Text = "CHECK DEVICES",
+                Text = "PERFORM ACTION",
                 Location = new Point(30, 630),
-                Size = new Size(180, 40),
+                Size = new Size(220, 40),
                 Enabled = false
             };
 
-            _btnValidate.Click += async (s, e) => await ValidateDevicesAsync();
+            _btnPerform.Click +=
+                async (s, e) =>
+                    await BtnPerform_ClickAsync();
 
             mainPanel.Controls.Add(
-                _btnValidate);
+                _btnPerform);
 
-            _btnReview = new HudButton
-            {
-                Text = "REVIEW ACTION",
-                Location = new Point(225, 630),
-                Size = new Size(180, 40),
-                Enabled = false
-            };
-
-            _btnReview.Click +=
-                BtnReview_Click;
-
-            mainPanel.Controls.Add(
-                _btnReview);
+            // =========================================================
+            // EXPORT
+            // =========================================================
 
             _btnExport = new HudButton
             {
                 Text = "EXPORT RESULTS",
-                Location = new Point(420, 630),
+                Location = new Point(265, 630),
                 Size = new Size(180, 40),
                 Enabled = false
             };
@@ -678,6 +638,10 @@ namespace AdminTrayTool.Forms
             mainPanel.Controls.Add(
                 _btnExport);
 
+            // =========================================================
+            // CLOSE
+            // =========================================================
+
             _btnClose = new HudButton
             {
                 Text = "CLOSE",
@@ -685,10 +649,14 @@ namespace AdminTrayTool.Forms
                 Size = new Size(150, 40)
             };
 
-            _btnClose.Click += (s, e) => Close();
+            _btnClose.Click +=
+                (s, e) => Close();
 
             mainPanel.Controls.Add(
                 _btnClose);
+
+            UpdateSelectionStatus();
+            UpdatePerformButton();
         }
 
         // =============================================================
@@ -699,17 +667,38 @@ namespace AdminTrayTool.Forms
             object? sender,
             EventArgs e)
         {
+            if (_bulkOperationRunning)
+                return;
+
+            if (_cmbAction == null ||
+                _cmbBulkOrgUnit == null ||
+                _lblBulkOrgUnit == null ||
+                _btnImport == null ||
+                _btnTemplate == null ||
+                _lblStatus == null)
+            {
+                return;
+            }
+
+            string action =
+                _cmbAction.SelectedItem?.ToString()
+                ?? string.Empty;
+
             bool hasAction =
-                _cmbAction.SelectedIndex >= 0;
+                !string.IsNullOrWhiteSpace(action);
 
             bool moveToOu =
-                _cmbAction.SelectedItem as string ==
-                "Move to OU";
+                string.Equals(
+                    action,
+                    "Move to OU",
+                    StringComparison.OrdinalIgnoreCase);
 
             _lblBulkOrgUnit.Visible =
+                hasAction &&
                 moveToOu;
 
             _cmbBulkOrgUnit.Visible =
+                hasAction &&
                 moveToOu;
 
             _btnImport.Enabled =
@@ -721,12 +710,11 @@ namespace AdminTrayTool.Forms
             if (!hasAction)
             {
                 _cmbBulkOrgUnit.Items.Clear();
-                _cmbBulkOrgUnit.SelectedIndex = -1;
 
                 _lblStatus.Text =
                     "Select an action to begin.";
 
-                UpdateReviewButton();
+                UpdatePerformButton();
 
                 return;
             }
@@ -734,18 +722,33 @@ namespace AdminTrayTool.Forms
             if (!moveToOu)
             {
                 _cmbBulkOrgUnit.Items.Clear();
-                _cmbBulkOrgUnit.SelectedIndex = -1;
+
+                _lblStatus.Text =
+                    $"{action} selected.";
+
+                UpdatePerformButton();
+
+                return;
             }
 
-            if (moveToOu)
-            {
-                if (_loadingOrgUnits)
-                    return;
+            if (_loadingOrgUnits)
+                return;
 
-                await LoadBulkOrgUnitsAsync();
-            }
+            await LoadBulkOrgUnitsAsync();
+        }
 
-            UpdateReviewButton();
+        // =============================================================
+        // ORGANISATIONAL UNIT SELECTION
+        // =============================================================
+
+        private void CmbBulkOrgUnit_SelectedIndexChanged(
+            object? sender,
+            EventArgs e)
+        {
+            if (_bulkOperationRunning)
+                return;
+
+            UpdatePerformButton();
         }
 
         // =============================================================
@@ -754,11 +757,18 @@ namespace AdminTrayTool.Forms
 
         private async Task LoadBulkOrgUnitsAsync()
         {
+            if (_cmbBulkOrgUnit == null ||
+                _lblStatus == null)
+            {
+                return;
+            }
+
             _loadingOrgUnits = true;
 
             try
             {
-                _cmbBulkOrgUnit.Enabled = false;
+                _cmbBulkOrgUnit.Enabled =
+                    false;
 
                 _cmbBulkOrgUnit.Items.Clear();
 
@@ -781,7 +791,8 @@ namespace AdminTrayTool.Forms
                     OrgUnitPaths.Count == 0)
                 {
                     string error =
-                        string.IsNullOrWhiteSpace(Error)
+                        string.IsNullOrWhiteSpace(
+                            Error)
                             ? "No organisational units were found."
                             : Error;
 
@@ -797,13 +808,16 @@ namespace AdminTrayTool.Forms
                     return;
                 }
 
-                foreach (string orgUnitPath in
+                IEnumerable<string> orgUnitPaths =
                     OrgUnitPaths
-                        .Where(x =>
-                            !string.IsNullOrWhiteSpace(x))
+                        .Where(
+                            x =>
+                                !string.IsNullOrWhiteSpace(x))
                         .Distinct(
                             StringComparer.OrdinalIgnoreCase)
-                        .Order())
+                        .Order();
+
+                foreach (string orgUnitPath in orgUnitPaths)
                 {
                     _cmbBulkOrgUnit.Items.Add(
                         orgUnitPath);
@@ -832,10 +846,12 @@ namespace AdminTrayTool.Forms
             }
             finally
             {
-                _cmbBulkOrgUnit.Enabled = true;
+                _cmbBulkOrgUnit.Enabled =
+                    true;
+
                 _loadingOrgUnits = false;
 
-                UpdateReviewButton();
+                UpdatePerformButton();
             }
         }
 
@@ -848,7 +864,7 @@ namespace AdminTrayTool.Forms
             EventArgs e)
         {
             string action =
-                _cmbAction.SelectedItem as string
+                _cmbAction.SelectedItem?.ToString()
                 ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(action))
@@ -869,6 +885,7 @@ namespace AdminTrayTool.Forms
             switch (action)
             {
                 case "Move to OU":
+
                     fileName =
                         "Chromebook_MoveToOU_Template.csv";
 
@@ -882,6 +899,7 @@ namespace AdminTrayTool.Forms
                     break;
 
                 case "Update Asset ID":
+
                     fileName =
                         "Chromebook_UpdateAssetID_Template.csv";
 
@@ -894,6 +912,7 @@ namespace AdminTrayTool.Forms
                     break;
 
                 default:
+
                     fileName =
                         "Chromebook_Import_Template.csv";
 
@@ -966,7 +985,14 @@ namespace AdminTrayTool.Forms
             object? sender,
             EventArgs e)
         {
-            if (_cmbAction.SelectedIndex < 0)
+            if (_bulkOperationRunning)
+                return;
+
+            string action =
+                _cmbAction.SelectedItem?.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(action))
             {
                 MessageBox.Show(
                     "Please select an action before importing a CSV.",
@@ -999,11 +1025,13 @@ namespace AdminTrayTool.Forms
             try
             {
                 ImportSerialNumbers(
-                    dialog.FileName);
+                    dialog.FileName,
+                    action);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
+                    "Failed to import the CSV.\r\n\r\n" +
                     ex.Message,
                     "Import Failed",
                     MessageBoxButtons.OK,
@@ -1012,8 +1040,15 @@ namespace AdminTrayTool.Forms
         }
 
         private void ImportSerialNumbers(
-            string filePath)
+            string filePath,
+            string action)
         {
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
+
+            if (string.IsNullOrWhiteSpace(action))
+                return;
+
             string[] lines =
                 File.ReadAllLines(filePath);
 
@@ -1028,45 +1063,52 @@ namespace AdminTrayTool.Forms
                 return;
             }
 
-            string action =
-                _cmbAction.SelectedItem as string
-                ?? string.Empty;
-
             bool updateAssetId =
-                action == "Update Asset ID";
-
-            // ---------------------------------------------------------
-            // FIND CSV HEADERS
-            // ---------------------------------------------------------
+                string.Equals(
+                    action,
+                    "Update Asset ID",
+                    StringComparison.OrdinalIgnoreCase);
 
             string headerLine =
                 lines[0]
                     .Trim()
                     .TrimStart('\uFEFF');
 
+            if (string.IsNullOrWhiteSpace(headerLine))
+            {
+                MessageBox.Show(
+                    "The CSV does not contain a header row.",
+                    "Import",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
             string[] headers =
                 [.. headerLine
                     .Split(',')
                     .Select(
-                        x => x
-                            .Trim()
-                            .Trim('"'))];
+                        x =>
+                            x
+                                .Trim()
+                                .Trim('"'))];
 
             int serialColumnIndex =
                 Array.FindIndex(
                     headers,
-                    x => string.Equals(
-                        x,
-                        "serialNumber",
-                        StringComparison.OrdinalIgnoreCase));
+                    x =>
+                        string.Equals(
+                            x,
+                            "serialNumber",
+                            StringComparison.OrdinalIgnoreCase));
 
             if (serialColumnIndex < 0)
             {
                 MessageBox.Show(
                     "The selected CSV does not contain a " +
                     "'serialNumber' column.\r\n\r\n" +
-                    "Please use the DOWNLOAD TEMPLATE button " +
-                    "or export a Chromebook list containing serialNumber.",
+                    "Please use the DOWNLOAD TEMPLATE button.",
                     "Import",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -1077,10 +1119,11 @@ namespace AdminTrayTool.Forms
             int assetColumnIndex =
                 Array.FindIndex(
                     headers,
-                    x => string.Equals(
-                        x,
-                        "AssetId",
-                        StringComparison.OrdinalIgnoreCase));
+                    x =>
+                        string.Equals(
+                            x,
+                            "AssetId",
+                            StringComparison.OrdinalIgnoreCase));
 
             if (updateAssetId &&
                 assetColumnIndex < 0)
@@ -1088,8 +1131,7 @@ namespace AdminTrayTool.Forms
                 MessageBox.Show(
                     "The Update Asset ID CSV must contain both:\r\n\r\n" +
                     "serialNumber\r\n" +
-                    "AssetId\r\n\r\n" +
-                    "Please use the DOWNLOAD TEMPLATE button.",
+                    "AssetId",
                     "Import",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -1097,19 +1139,15 @@ namespace AdminTrayTool.Forms
                 return;
             }
 
-            // ---------------------------------------------------------
-            // CLEAR PREVIOUS LIST
-            // ---------------------------------------------------------
+            var importedDevices =
+                new List<BulkChromebookItem>();
 
-            _devices.Clear();
+            var importedSerials =
+                new HashSet<string>(
+                    StringComparer.OrdinalIgnoreCase);
 
-            int importedCount = 0;
             int duplicateCount = 0;
             int invalidCount = 0;
-
-            // ---------------------------------------------------------
-            // READ CSV
-            // ---------------------------------------------------------
 
             for (int i = 1;
                  i < lines.Length;
@@ -1142,23 +1180,11 @@ namespace AdminTrayTool.Forms
                     continue;
                 }
 
-                // -----------------------------------------------------
-                // DUPLICATE SERIAL CHECK
-                // -----------------------------------------------------
-
-                if (_devices.Any(
-                    x => string.Equals(
-                        x.SerialNumber,
-                        serial,
-                        StringComparison.OrdinalIgnoreCase)))
+                if (!importedSerials.Add(serial))
                 {
                     duplicateCount++;
                     continue;
                 }
-
-                // -----------------------------------------------------
-                // REQUESTED ASSET ID
-                // -----------------------------------------------------
 
                 string requestedAssetId =
                     string.Empty;
@@ -1185,7 +1211,7 @@ namespace AdminTrayTool.Forms
                     }
                 }
 
-                _devices.Add(
+                importedDevices.Add(
                     new BulkChromebookItem
                     {
                         SerialNumber =
@@ -1206,13 +1232,19 @@ namespace AdminTrayTool.Forms
                         Error =
                             string.Empty
                     });
-
-                importedCount++;
             }
 
-            RefreshGrid();
+            _devices.Clear();
 
-            _gridDevices.ClearSelection();
+            _devices.AddRange(
+                importedDevices);
+
+            _deviceBindingSource.ResetBindings(false);
+
+            ClearGridSelection();
+
+            int importedCount =
+                importedDevices.Count;
 
             _lblStatus.Text =
                 $"{importedCount} device(s) loaded.";
@@ -1235,51 +1267,86 @@ namespace AdminTrayTool.Forms
             _btnClear.Enabled =
                 hasDevices;
 
-            _btnValidate.Enabled =
-                hasDevices;
-
             _btnSelectAll.Enabled =
                 hasDevices;
 
             _btnSelectNone.Enabled =
                 hasDevices;
 
-            _btnSelectFound.Enabled =
-                hasDevices;
-
             _btnExport.Enabled =
                 hasDevices;
 
             UpdateSelectionStatus();
-            UpdateReviewButton();
+            UpdatePerformButton();
         }
 
         // =============================================================
         // SELECTION
         // =============================================================
 
-        private void SelectDevices(
-            Func<BulkChromebookItem, bool> predicate)
+        private void BtnSelectAll_Click(
+            object? sender,
+            EventArgs e)
         {
+            if (_bulkOperationRunning)
+                return;
+
+            if (_gridDevices.Rows.Count == 0)
+                return;
+
             _gridDevices.ClearSelection();
 
-            for (int i = 0;
-                 i < _devices.Count;
-                 i++)
+            foreach (DataGridViewRow row
+                in _gridDevices.Rows)
             {
-                if (predicate(_devices[i]))
-                {
-                    _gridDevices.Rows[i]
-                        .Selected = true;
-                }
+                if (!row.IsNewRow)
+                    row.Selected = true;
             }
 
             UpdateSelectionStatus();
-            UpdateReviewButton();
+            UpdatePerformButton();
+        }
+
+        private void BtnSelectNone_Click(
+            object? sender,
+            EventArgs e)
+        {
+            if (_bulkOperationRunning)
+                return;
+
+            ClearGridSelection();
+
+            UpdateSelectionStatus();
+            UpdatePerformButton();
+        }
+
+        private void GridDevices_SelectionChanged(
+            object? sender,
+            EventArgs e)
+        {
+            if (_bulkOperationRunning)
+                return;
+
+            UpdateSelectionStatus();
+            UpdatePerformButton();
+        }
+
+        private void ClearGridSelection()
+        {
+            if (_gridDevices == null)
+                return;
+
+            _gridDevices.ClearSelection();
         }
 
         private void UpdateSelectionStatus()
         {
+            if (_gridDevices == null ||
+                _lblSelected == null)
+            {
+                return;
+            }
+
             _lblSelected.Text =
                 $"SELECTED: {_gridDevices.SelectedRows.Count}";
         }
@@ -1292,239 +1359,602 @@ namespace AdminTrayTool.Forms
             object? sender,
             EventArgs e)
         {
+            if (_bulkOperationRunning)
+                return;
+
             _devices.Clear();
 
-            _gridDevices.DataSource = null;
-            _gridDevices.DataSource = _devices;
+            _deviceBindingSource.ResetBindings(false);
+
+            ClearGridSelection();
 
             _lblStatus.Text =
                 "No devices loaded.";
 
-            _btnClear.Enabled = false;
-            _btnSelectAll.Enabled = false;
-            _btnSelectNone.Enabled = false;
-            _btnSelectFound.Enabled = false;
-            _btnValidate.Enabled = false;
-            _btnReview.Enabled = false;
-            _btnExport.Enabled = false;
+            _btnClear.Enabled =
+                false;
 
-            _gridDevices.ClearSelection();
+            _btnSelectAll.Enabled =
+                false;
+
+            _btnSelectNone.Enabled =
+                false;
+
+            _btnPerform.Enabled =
+                false;
+
+            _btnExport.Enabled =
+                false;
 
             UpdateSelectionStatus();
         }
 
         // =============================================================
-        // CHECK DEVICES
+        // PERFORM BUTTON STATE
         // =============================================================
 
-        private async Task ValidateDevicesAsync()
-        {
-            if (_devices.Count == 0)
-                return;
-
-            DialogResult confirmation =
-                MessageBox.Show(
-                    "CHECK DEVICES will contact Google Admin/GAM " +
-                    "for every device in the list.\r\n\r\n" +
-                    "This can take a long time for large lists.\r\n\r\n" +
-                    "You do not need to run CHECK DEVICES before " +
-                    "using REVIEW ACTION.",
-                    "Check Devices",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Information);
-
-            if (confirmation !=
-                DialogResult.OK)
-            {
-                return;
-            }
-
-            _btnImport.Enabled = false;
-            _btnTemplate.Enabled = false;
-            _btnClear.Enabled = false;
-            _btnValidate.Enabled = false;
-            _btnReview.Enabled = false;
-
-            _cmbAction.Enabled = false;
-            _cmbBulkOrgUnit.Enabled = false;
-
-            try
-            {
-                for (int i = 0;
-                     i < _devices.Count;
-                     i++)
-                {
-                    BulkChromebookItem device =
-                        _devices[i];
-
-                    _lblStatus.Text =
-                        $"Checking {i + 1} of {_devices.Count}: " +
-                        device.SerialNumber;
-
-                    device.Status =
-                        "CHECKING...";
-
-                    device.Result =
-                        string.Empty;
-
-                    device.Error =
-                        string.Empty;
-
-                    RefreshGrid();
-
-                    try
-                    {
-                        var (Success, Device, Error) =
-                            await _gamService
-                                .GetChromebookInfoAsync(
-                                    device.SerialNumber);
-
-                        if (Success &&
-                            Device != null)
-                        {
-                            device.Status =
-                                "FOUND";
-
-                            device.AssetId =
-                                Device.AssetId
-                                ?? string.Empty;
-                        }
-                        else
-                        {
-                            device.Status =
-                                "NOT FOUND";
-
-                            device.AssetId =
-                                string.Empty;
-
-                            device.Error =
-                                Error
-                                ?? string.Empty;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        device.Status =
-                            "ERROR";
-
-                        device.AssetId =
-                            string.Empty;
-
-                        device.Error =
-                            ex.Message;
-                    }
-
-                    RefreshGrid();
-                }
-
-                _lblStatus.Text =
-                    $"Check complete: {_devices.Count} device(s).";
-            }
-            finally
-            {
-                _btnImport.Enabled =
-                    _cmbAction.SelectedIndex >= 0;
-
-                _btnTemplate.Enabled =
-                    _cmbAction.SelectedIndex >= 0;
-
-                _btnClear.Enabled =
-                    _devices.Count > 0;
-
-                _btnValidate.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectAll.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectNone.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectFound.Enabled =
-                    _devices.Count > 0;
-
-                _btnExport.Enabled =
-                    _devices.Count > 0;
-
-                _cmbAction.Enabled = true;
-                _cmbBulkOrgUnit.Enabled = true;
-
-                UpdateReviewButton();
-            }
-        }
-
-        // =============================================================
-        // REFRESH GRID
-        // =============================================================
-
-        private void RefreshGrid()
-        {
-            _gridDevices.DataSource = null;
-            _gridDevices.DataSource = _devices;
-            _gridDevices.Refresh();
-
-            UpdateReviewButton();
-        }
-
-        // =============================================================
-        // REVIEW BUTTON STATE
-        // =============================================================
-
-        private void UpdateReviewButton()
+        private void UpdatePerformButton()
         {
             if (_gridDevices == null ||
                 _cmbAction == null ||
-                _btnReview == null)
+                _btnPerform == null)
             {
+                return;
+            }
+
+            if (_bulkOperationRunning)
+            {
+                _btnPerform.Enabled =
+                    false;
+
+                return;
+            }
+
+            string action =
+                _cmbAction.SelectedItem?.ToString()
+                ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(action))
+            {
+                _btnPerform.Enabled =
+                    false;
+
                 return;
             }
 
             bool hasSelection =
                 _gridDevices.SelectedRows.Count > 0;
 
+            bool moveToOu =
+                string.Equals(
+                    action,
+                    "Move to OU",
+                    StringComparison.OrdinalIgnoreCase);
+
+            bool hasOu =
+                false;
+
+            if (_cmbBulkOrgUnit?.SelectedIndex >= 0)
+            {
+                string selectedOu =
+                    _cmbBulkOrgUnit.SelectedItem?.ToString()
+                    ?? string.Empty;
+
+                hasOu =
+                    !string.IsNullOrWhiteSpace(
+                        selectedOu);
+            }
+
+            bool validAssetIds =
+                true;
+
+            if (string.Equals(
+                action,
+                "Update Asset ID",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                validAssetIds =
+                    _gridDevices.SelectedRows
+                        .Cast<DataGridViewRow>()
+                        .All(
+                            row =>
+                            {
+                                if (row.DataBoundItem
+                                    is not BulkChromebookItem device)
+                                {
+                                    return false;
+                                }
+
+                                return
+                                    !string.IsNullOrWhiteSpace(
+                                        device.RequestedAssetId);
+                            });
+            }
+
+            _btnPerform.Enabled =
+                hasSelection &&
+                validAssetIds &&
+                (!moveToOu || hasOu);
+        }
+
+        // =============================================================
+        // PERFORM ACTION
+        // =============================================================
+
+        private async Task BtnPerform_ClickAsync()
+        {
+            if (_bulkOperationRunning)
+            {
+                return;
+            }
+
+            if (_gridDevices == null || _cmbAction == null)
+            {
+                return;
+            }
+
+            string action =
+                _cmbAction.SelectedItem?.ToString() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(action))
+            {
+                MessageBox.Show(
+                    "Please select an action.",
+                    "Bulk Chromebook Management",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            List<DataGridViewRow> selectedRows =
+                [.. _gridDevices.Rows
+                    .Cast<DataGridViewRow>()
+                    .Where(row => row.Selected && !row.IsNewRow)
+                    .OrderBy(row => row.Index)];
+
+            if (selectedRows.Count == 0)
+            {
+                MessageBox.Show(
+                    "Please select at least one device.",
+                    "Bulk Chromebook Management",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            string? selectedOu = null;
+
+            if (action == "Move to OU")
+            {
+                selectedOu =
+                    _cmbBulkOrgUnit?.SelectedItem?.ToString();
+
+                if (string.IsNullOrWhiteSpace(selectedOu))
+                {
+                    MessageBox.Show(
+                        "Please select an Organizational Unit.",
+                        "Bulk Chromebook Management",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+            }
+
+            if (action == "Update Asset ID")
+            {
+                foreach (DataGridViewRow row in selectedRows)
+                {
+                    string requestedAssetId =
+                        row.Cells["RequestedAssetId"].Value?.ToString() ?? string.Empty;
+
+                    if (string.IsNullOrWhiteSpace(requestedAssetId))
+                    {
+                        MessageBox.Show(
+                            "Every selected device must have a Requested Asset ID.",
+                            "Bulk Chromebook Management",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+
+                        return;
+                    }
+                }
+            }
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"You are about to perform '{action}' on {selectedRows.Count} device(s).\r\n\r\n" +
+                    "The action will be performed in the order shown in the list.\r\n\r\n" +
+                    "Do you want to continue?",
+                    "Confirm Bulk Action",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+            if (confirmation != DialogResult.Yes)
+            {
+                return;
+            }
+
+            _bulkOperationRunning = true;
+
+            SetControlsForBulkOperation(true);
+
+            _progressBar.Minimum = 0;
+            _progressBar.Maximum = selectedRows.Count;
+            _progressBar.Value = 0;
+
+            int successCount = 0;
+            int failureCount = 0;
+
+            try
+            {
+                for (int i = 0; i < selectedRows.Count; i++)
+                {
+                    DataGridViewRow row = selectedRows[i];
+
+                    string serialNumber =
+                        row.Cells["SerialNumber"].Value?.ToString() ?? string.Empty;
+
+                    BulkChromebookItem? device =
+                        _devices.FirstOrDefault(
+                            item => string.Equals(
+                                item.SerialNumber,
+                                serialNumber,
+                                StringComparison.OrdinalIgnoreCase));
+
+                    if (device == null)
+                    {
+                        failureCount++;
+
+                        row.Cells["Result"].Value = "FAILED";
+                        row.Cells["Error"].Value = "Device could not be found in the imported list.";
+
+                        _progressBar.Value = i + 1;
+
+                        continue;
+                    }
+
+                    device.Status = "PROCESSING";
+                    device.Result = string.Empty;
+                    device.Error = string.Empty;
+
+                    RefreshDeviceRow(device);
+
+                    try
+                    {
+                        switch (action)
+                        {
+                            case "Disable Chromebook":
+                                {
+                                    var result =
+                                        await _gamService.DisableChromebookAsync(
+                                            device.SerialNumber);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            case "Re-enable Chromebook":
+                                {
+                                    var result =
+                                        await _gamService.ReenableChromebookAsync(
+                                            device.SerialNumber);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            case "Move to OU":
+                                {
+                                    var result =
+                                        await _gamService.MoveChromebookToOuAsync(
+                                            device.SerialNumber,
+                                            selectedOu!);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            case "Powerwash":
+                                {
+                                    var result =
+                                        await _gamService.PowerwashChromebookAsync(
+                                            device.SerialNumber);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            case "Clear Profiles":
+                                {
+                                    var result =
+                                        await _gamService.ClearChromebookProfilesAsync(
+                                            device.SerialNumber);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            case "Update Asset ID":
+                                {
+                                    string requestedAssetId =
+                                        device.RequestedAssetId ?? string.Empty;
+
+                                    var result =
+                                        await _gamService.UpdateAnnotatedAssetIdAsync(
+                                            device.SerialNumber,
+                                            requestedAssetId);
+
+                                    if (result.Success)
+                                    {
+                                        device.Result = "SUCCESS";
+                                        device.Status = "COMPLETED";
+                                        device.AssetId = requestedAssetId;
+                                        successCount++;
+                                    }
+                                    else
+                                    {
+                                        device.Result = "FAILED";
+                                        device.Status = "FAILED";
+                                        device.Error =
+                                            result.Error ??
+                                            result.Output ??
+                                            "GAM command failed.";
+
+                                        failureCount++;
+                                    }
+
+                                    break;
+                                }
+
+                            default:
+                                device.Result = "FAILED";
+                                device.Status = "FAILED";
+                                device.Error = "Unknown action.";
+                                failureCount++;
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        device.Result = "FAILED";
+                        device.Status = "FAILED";
+                        device.Error = ex.Message;
+                        failureCount++;
+                    }
+
+                    RefreshDeviceRow(device);
+
+                    _progressBar.Value = i + 1;
+
+                    await Task.Yield();
+                }
+            }
+            finally
+            {
+                _bulkOperationRunning = false;
+
+                SetControlsForBulkOperation(false);
+
+                _progressBar.Value = _progressBar.Maximum;
+            }
+
+            MessageBox.Show(
+                "Bulk action completed.\r\n\r\n" +
+                $"Action: {action}\r\n" +
+                $"Successful: {successCount}\r\n" +
+                $"Failed: {failureCount}\r\n" +
+                $"Total: {selectedRows.Count}",
+                "Bulk Action Complete",
+                MessageBoxButtons.OK,
+                failureCount == 0
+                    ? MessageBoxIcon.Information
+                    : MessageBoxIcon.Warning);
+        }
+
+        // =============================================================
+        // UI CONTROL STATE
+        // =============================================================
+
+        private void SetControlsForBulkOperation(
+            bool enabled)
+        {
+            if (_cmbAction == null ||
+                _btnImport == null ||
+                _btnTemplate == null ||
+                _btnClear == null ||
+                _btnSelectAll == null ||
+                _btnSelectNone == null ||
+                _btnPerform == null ||
+                _btnExport == null ||
+                _cmbBulkOrgUnit == null ||
+                _btnClose == null)
+            {
+                return;
+            }
+
+            _cmbAction.Enabled =
+                enabled;
+
+            _cmbBulkOrgUnit.Enabled =
+                enabled &&
+                !_loadingOrgUnits;
+
             bool hasAction =
                 _cmbAction.SelectedIndex >= 0;
 
-            bool moveToOu =
-                _cmbAction.SelectedItem as string ==
-                "Move to OU";
+            bool hasDevices =
+                _devices.Count > 0;
 
-            bool hasOu =
-                _cmbBulkOrgUnit.SelectedIndex >= 0 &&
-                !string.IsNullOrWhiteSpace(
-                    _cmbBulkOrgUnit.SelectedItem as string);
+            _btnImport.Enabled =
+                enabled &&
+                hasAction;
 
-            bool validAssetIdSelection =
-                true;
+            _btnTemplate.Enabled =
+                enabled &&
+                hasAction;
 
-            if (_cmbAction.SelectedItem as string ==
-                "Update Asset ID")
+            _btnClear.Enabled =
+                enabled &&
+                hasDevices;
+
+            _btnSelectAll.Enabled =
+                enabled &&
+                hasDevices;
+
+            _btnSelectNone.Enabled =
+                enabled &&
+                hasDevices;
+
+            _btnExport.Enabled =
+                enabled &&
+                hasDevices;
+
+            _btnClose.Enabled =
+                enabled;
+
+            if (!enabled)
             {
-                validAssetIdSelection =
-                    _gridDevices.SelectedRows
-                        .Cast<DataGridViewRow>()
-                        .All(row =>
-                        {
-                            if (row.DataBoundItem
-                                is not BulkChromebookItem device)
-                            {
-                                return false;
-                            }
+                _btnPerform.Enabled =
+                    false;
+            }
+            else
+            {
+                UpdatePerformButton();
+            }
+        }
 
-                            return !string.IsNullOrWhiteSpace(
-                                device.RequestedAssetId);
-                        });
+        // =============================================================
+        // REFRESH SINGLE DEVICE ROW
+        // =============================================================
+
+        private void RefreshDeviceRow(
+            BulkChromebookItem device)
+        {
+            if (_gridDevices == null ||
+                device == null)
+            {
+                return;
             }
 
-            // IMPORTANT:
-            // Review does NOT require FOUND status.
-            // CHECK DEVICES is optional.
+            int index =
+                _devices.IndexOf(device);
 
-            _btnReview.Enabled =
-                hasSelection &&
-                hasAction &&
-                validAssetIdSelection &&
-                (!moveToOu || hasOu);
+            if (index < 0 ||
+                index >= _gridDevices.Rows.Count)
+            {
+                return;
+            }
+
+            DataGridViewRow row =
+                _gridDevices.Rows[index];
+
+            row.Cells["SerialNumber"].Value =
+                device.SerialNumber;
+
+            row.Cells["Status"].Value =
+                device.Status;
+
+            row.Cells["AssetId"].Value =
+                device.AssetId;
+
+            row.Cells["RequestedAssetId"].Value =
+                device.RequestedAssetId;
+
+            row.Cells["Result"].Value =
+                device.Result;
+
+            row.Cells["Error"].Value =
+                device.Error;
+
+            _gridDevices.InvalidateRow(index);
         }
 
         // =============================================================
@@ -1633,472 +2063,27 @@ namespace AdminTrayTool.Forms
         }
 
         // =============================================================
-        // REVIEW ACTION
+        // FORM CLOSING
         // =============================================================
 
-        private async void BtnReview_Click(
-            object? sender,
-            EventArgs e)
+        protected override void OnFormClosing(
+            FormClosingEventArgs e)
         {
-            var selectedDevices =
-                _gridDevices.SelectedRows
-                    .Cast<DataGridViewRow>()
-                    .Select(
-                        row =>
-                            row.DataBoundItem
-                                as BulkChromebookItem)
-                    .Where(
-                        device =>
-                            device != null)
-                    .Cast<BulkChromebookItem>()
-                    .ToList();
-
-            if (selectedDevices.Count == 0)
+            if (_bulkOperationRunning)
             {
+                e.Cancel = true;
+
                 MessageBox.Show(
-                    "Please select at least one Chromebook.",
-                    "Review Action",
+                    "A bulk action is currently running.\r\n\r\n" +
+                    "Please wait for the operation to complete before closing.",
+                    "Bulk Action Running",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                    MessageBoxIcon.Information);
 
                 return;
             }
 
-            string action =
-                _cmbAction.SelectedItem as string
-                ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(action))
-            {
-                MessageBox.Show(
-                    "Please select an action.",
-                    "Review Action",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            string orgUnit =
-                _cmbBulkOrgUnit.SelectedItem as string
-                ?? string.Empty;
-
-            // ---------------------------------------------------------
-            // BUILD DEVICE LIST
-            // ---------------------------------------------------------
-
-            string deviceList =
-                string.Join(
-                    Environment.NewLine,
-                    selectedDevices.Select(
-                        device =>
-                            $"• {device.SerialNumber}"));
-
-            string message =
-                "ACTION\r\n" +
-                $"{action}\r\n\r\n" +
-                $"DEVICES ({selectedDevices.Count})\r\n" +
-                $"{deviceList}";
-
-            // ---------------------------------------------------------
-            // MOVE TO OU
-            // ---------------------------------------------------------
-
-            if (action == "Move to OU")
-            {
-                message +=
-                    "\r\n\r\n" +
-                    "TARGET ORGANISATIONAL UNIT\r\n" +
-                    $"{orgUnit}";
-            }
-
-            // ---------------------------------------------------------
-            // UPDATE ASSET ID
-            // ---------------------------------------------------------
-
-            if (action == "Update Asset ID")
-            {
-                message +=
-                    "\r\n\r\n" +
-                    "ASSET ID CHANGES\r\n";
-
-                foreach (BulkChromebookItem device
-                    in selectedDevices)
-                {
-                    string currentAssetId =
-                        string.IsNullOrWhiteSpace(
-                            device.AssetId)
-                            ? "Not checked"
-                            : device.AssetId;
-
-                    message +=
-                        $"\r\n{device.SerialNumber}\r\n" +
-                        $"  Current: {currentAssetId}\r\n" +
-                        $"  New: {device.RequestedAssetId}\r\n";
-                }
-
-                message +=
-                    "\r\nWARNING\r\n" +
-                    "The Asset ID supplied in the CSV will be written " +
-                    "to Google Admin for each selected Chromebook.";
-            }
-
-            // ---------------------------------------------------------
-            // POWERWASH
-            // ---------------------------------------------------------
-
-            if (action == "Powerwash")
-            {
-                message +=
-                    "\r\n\r\nWARNING\r\n" +
-                    "Powerwash will remotely reset the selected Chromebooks.";
-            }
-
-            // ---------------------------------------------------------
-            // CLEAR PROFILES
-            // ---------------------------------------------------------
-
-            else if (action == "Clear Profiles")
-            {
-                message +=
-                    "\r\n\r\nWARNING\r\n" +
-                    "Clear Profiles will remove user profiles " +
-                    "from the selected Chromebooks.";
-            }
-
-            DialogResult result =
-                MessageBox.Show(
-                    message,
-                    "Review Bulk Action",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Warning);
-
-            if (result !=
-                DialogResult.OK)
-            {
-                return;
-            }
-
-            await ExecuteBulkActionAsync(
-                selectedDevices,
-                action,
-                orgUnit);
-        }
-
-        // =============================================================
-        // EXECUTE BULK ACTION
-        // =============================================================
-
-        private async Task ExecuteBulkActionAsync(
-            List<BulkChromebookItem> devices,
-            string action,
-            string orgUnit)
-        {
-            int successCount = 0;
-            int failedCount = 0;
-
-            _btnImport.Enabled = false;
-            _btnTemplate.Enabled = false;
-            _btnClear.Enabled = false;
-            _btnSelectAll.Enabled = false;
-            _btnSelectNone.Enabled = false;
-            _btnSelectFound.Enabled = false;
-            _btnValidate.Enabled = false;
-            _btnReview.Enabled = false;
-            _btnExport.Enabled = false;
-
-            _cmbAction.Enabled = false;
-            _cmbBulkOrgUnit.Enabled = false;
-            _btnClose.Enabled = false;
-
-            _progressBar.Visible = true;
-            _lblProgress.Visible = true;
-
-            _progressBar.Minimum = 0;
-            _progressBar.Maximum = devices.Count;
-            _progressBar.Value = 0;
-
-            try
-            {
-                for (int i = 0;
-                     i < devices.Count;
-                     i++)
-                {
-                    BulkChromebookItem device =
-                        devices[i];
-
-                    _lblProgress.Text =
-                        $"PROCESSING {i + 1} OF {devices.Count}";
-
-                    _lblStatus.Text =
-                        $"Processing {i + 1} of {devices.Count}: " +
-                        device.SerialNumber;
-
-                    device.Result =
-                        "PROCESSING...";
-
-                    device.Error =
-                        string.Empty;
-
-                    RefreshGrid();
-
-                    try
-                    {
-                        bool success = false;
-
-                        switch (action)
-                        {
-                            // -------------------------------------------------
-                            // DISABLE
-                            // -------------------------------------------------
-
-                            case "Disable Chromebook":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .DisableChromebookAsync(
-                                                device.SerialNumber);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            // -------------------------------------------------
-                            // RE-ENABLE
-                            // -------------------------------------------------
-
-                            case "Re-enable Chromebook":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .ReenableChromebookAsync(
-                                                device.SerialNumber);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            // -------------------------------------------------
-                            // MOVE TO OU
-                            // -------------------------------------------------
-
-                            case "Move to OU":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .MoveChromebookToOuAsync(
-                                                device.SerialNumber,
-                                                orgUnit);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            // -------------------------------------------------
-                            // POWERWASH
-                            // -------------------------------------------------
-
-                            case "Powerwash":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .PowerwashChromebookAsync(
-                                                device.SerialNumber);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            // -------------------------------------------------
-                            // CLEAR PROFILES
-                            // -------------------------------------------------
-
-                            case "Clear Profiles":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .ClearChromebookProfilesAsync(
-                                                device.SerialNumber);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            // -------------------------------------------------
-                            // UPDATE ASSET ID
-                            // -------------------------------------------------
-
-                            case "Update Asset ID":
-                                {
-                                    var result =
-                                        await _gamService
-                                            .UpdateAnnotatedAssetIdAsync(
-                                                device.SerialNumber,
-                                                device.RequestedAssetId);
-
-                                    success =
-                                        result.Success;
-
-                                    if (!success)
-                                    {
-                                        device.Error =
-                                            result.Error ??
-                                            result.Output ??
-                                            "GAM command failed.";
-                                    }
-
-                                    break;
-                                }
-
-                            default:
-                                device.Error =
-                                    "Unknown bulk action.";
-
-                                break;
-                        }
-
-                        if (success)
-                        {
-                            device.Result =
-                                "SUCCESS";
-
-                            successCount++;
-                        }
-                        else
-                        {
-                            device.Result =
-                                "FAILED";
-
-                            failedCount++;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        device.Result =
-                            "FAILED";
-
-                        device.Error =
-                            ex.Message;
-
-                        failedCount++;
-                    }
-
-                    // -----------------------------------------------------
-                    // UPDATE PROGRESS
-                    // -----------------------------------------------------
-
-                    _progressBar.Value =
-                        i + 1;
-
-                    RefreshGrid();
-                }
-
-                _lblProgress.Text =
-                    "COMPLETE";
-
-                _lblStatus.Text =
-                    "Bulk action complete: " +
-                    $"{successCount} successful, " +
-                    $"{failedCount} failed.";
-
-                MessageBox.Show(
-                    "Bulk action complete.\r\n\r\n" +
-                    $"Action: {action}\r\n" +
-                    $"Successful: {successCount}\r\n" +
-                    $"Failed: {failedCount}",
-                    "Bulk Action Complete",
-                    MessageBoxButtons.OK,
-                    failedCount == 0
-                        ? MessageBoxIcon.Information
-                        : MessageBoxIcon.Warning);
-            }
-            finally
-            {
-                _btnImport.Enabled =
-                    _cmbAction.SelectedIndex >= 0;
-
-                _btnTemplate.Enabled =
-                    _cmbAction.SelectedIndex >= 0;
-
-                _btnClear.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectAll.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectNone.Enabled =
-                    _devices.Count > 0;
-
-                _btnSelectFound.Enabled =
-                    _devices.Count > 0;
-
-                _btnValidate.Enabled =
-                    _devices.Count > 0;
-
-                _btnExport.Enabled =
-                    _devices.Count > 0;
-
-                _cmbAction.Enabled =
-                    true;
-
-                _cmbBulkOrgUnit.Enabled =
-                    true;
-
-                _btnClose.Enabled =
-                    true;
-
-                UpdateReviewButton();
-            }
+            base.OnFormClosing(e);
         }
     }
 

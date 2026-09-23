@@ -18,7 +18,7 @@
         public string TabTitle { get; set; } = string.Empty;
         public string SectionKey { get; set; } = string.Empty;   // JSON array key, e.g. "webPortals"
         public string DedupeKey { get; set; } = string.Empty;    // column Name used to detect duplicates/updates
-        public List<ColumnSchema> Columns { get; set; } = new();
+        public List<ColumnSchema> Columns { get; set; } = [];
         public string InstructionText { get; set; } = string.Empty;
 
         // Optional: for one-to-many shapes like Group Templates (Template -> [Groups]).

@@ -131,10 +131,16 @@ namespace AdminTrayTool.Services
             return null;
         }
 
-        private static string? FindOAuthTokenFile() => FindGamConfigFile("oauth2.txt");
+        private static string? FindOAuthTokenFile()
+        {
+            return FindGamConfigFile("oauth2.txt");
+        }
 
         // Public so the UI layer can check for/report on this file too.
-        private static string? FindClientSecretsFile() => FindGamConfigFile("client_secrets.json");
+        private static string? FindClientSecretsFile()
+        {
+            return FindGamConfigFile("client_secrets.json");
+        }
 
         public async Task<GamResult> CheckOAuthAsync()
         {

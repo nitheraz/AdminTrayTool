@@ -3,11 +3,11 @@
     public class GroupTemplate
     {
         public string Name { get; set; } = string.Empty;
-        public List<string> Groups { get; set; } = new();
+        public List<string> Groups { get; set; } = [];
     }
 
     public class GroupTemplateConfig
     {
-        public List<GroupTemplate> Templates { get; set; } = new();
+        public List<GroupTemplate> Templates { get; set; } = [];
     }
 }

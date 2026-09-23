@@ -3,6 +3,6 @@
     public class AssetIdCache
     {
         public DateTime FetchedAtUtc { get; set; }
-        public Dictionary<string, string> AssetIdToSerial { get; set; } = new();
+        public Dictionary<string, string> AssetIdToSerial { get; set; } = [];
     }
 }

@@ -16,11 +16,15 @@ namespace AdminTrayTool.Services
             return programDataDir;
         }
 
-        public static string GetGroupsCachePath() =>
-            Path.Combine(GetCacheFolder(), "groupEmailCache.json");
+        public static string GetGroupsCachePath()
+        {
+            return Path.Combine(GetCacheFolder(), "groupEmailCache.json");
+        }
 
-        public static string GetUsersCachePath() =>
-            Path.Combine(GetCacheFolder(), "userEmailCache.json");
+        public static string GetUsersCachePath()
+        {
+            return Path.Combine(GetCacheFolder(), "userEmailCache.json");
+        }
 
         /// <summary>
         /// Loads a cached email list if it exists and is younger than maxAge.
