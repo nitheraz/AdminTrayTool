@@ -1,6 +1,9 @@
-﻿using System;
+﻿using AdminTrayTool;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace AdminTrayTool
 {
@@ -12,97 +15,238 @@ namespace AdminTrayTool
         public WindowsManagementForm()
         {
             InitializeForm();
-            BuildUi();
+            BuildInterface();
         }
+
+        // =============================================================
+        // FORM INITIALISATION
+        // =============================================================
 
         private void InitializeForm()
         {
             Text = "Windows Management";
-            StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(910, 600);
 
-            BackColor = Color.FromArgb(10, 15, 25);
-            ForeColor = Color.White;
-            Font = new Font("Segoe UI", 10F);
+            StartPosition =
+                FormStartPosition.CenterScreen;
 
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            ClientSize =
+                new Size(890, 600);
+
+            MinimumSize =
+                new Size(820, 550);
+
+            BackColor =
+                Color.FromArgb(
+                    10,
+                    15,
+                    25);
+
+            ForeColor =
+                Color.White;
+
+            Font =
+                new Font(
+                    "Segoe UI",
+                    10F,
+                    FontStyle.Regular);
+
+            FormBorderStyle =
+                FormBorderStyle.FixedSingle;
+
             MaximizeBox = false;
         }
 
-        private void BuildUi()
+        // =============================================================
+        // BUILD INTERFACE
+        // =============================================================
+
+        private void BuildInterface()
         {
-            var header = new Label
+            var mainPanel = new Panel
             {
-                Text = "WINDOWS MANAGEMENT",
-                Location = new Point(25, 20),
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    18F,
-                    FontStyle.Bold),
-                ForeColor = Color.White
+                Dock = DockStyle.Fill,
+
+                Padding =
+                    new Padding(30),
+
+                BackColor =
+                    Color.FromArgb(
+                        10,
+                        15,
+                        25)
             };
 
-            Controls.Add(header);
+            Controls.Add(mainPanel);
 
-            var subtitle = new Label
+            // =========================================================
+            // HEADER
+            // =========================================================
+
+            var lblTitle = new Label
+            {
+                Text =
+                    "WINDOWS MANAGEMENT",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        20F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        30,
+                        25)
+            };
+
+            mainPanel.Controls.Add(lblTitle);
+
+            var lblSubtitle = new Label
             {
                 Text =
                     "Manage Windows computers, Active Directory and MECM",
-                Location = new Point(27, 55),
+
                 AutoSize = true,
-                ForeColor = Color.LightGray
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
+
+                Location =
+                    new Point(
+                        33,
+                        62)
             };
 
-            Controls.Add(subtitle);
+            mainPanel.Controls.Add(lblSubtitle);
 
-            // Active Directory
-            var adPanel = new Panel
+            var headerLine = new Panel
             {
-                Location = new Point(25, 105),
-                Size = new Size(860, 170),
-                BackColor = Color.FromArgb(20, 27, 40)
+                Location =
+                    new Point(
+                        30,
+                        90),
+
+                Size =
+                    new Size(
+                        820,
+                        1),
+
+                BackColor =
+                    Color.FromArgb(
+                        45,
+                        55,
+                        70)
             };
 
-            Controls.Add(adPanel);
+            mainPanel.Controls.Add(headerLine);
 
-            var adTitle = new Label
-            {
-                Text = "ACTIVE DIRECTORY",
-                Location = new Point(20, 20),
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    12F,
-                    FontStyle.Bold)
-            };
+            // =========================================================
+            // ACTIVE DIRECTORY
+            // =========================================================
 
-            adPanel.Controls.Add(adTitle);
+            var adPanel = CreatePanel(
+                new Point(30, 105),
+                new Size(820, 145));
 
-            var adDescription = new Label
+            mainPanel.Controls.Add(adPanel);
+
+            var lblAdTitle = new Label
             {
                 Text =
-                    "Find computers, view Active Directory information " +
-                    "and move computers between organisational units.",
-                Location = new Point(20, 55),
-                Size = new Size(570, 45),
-                ForeColor = Color.LightGray
+                    "ACTIVE DIRECTORY",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        11F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        20,
+                        18)
             };
 
-            adPanel.Controls.Add(adDescription);
+            adPanel.Controls.Add(lblAdTitle);
 
-            _btnActiveDirectory = new Button
+            var lblAdDescription = new Label
             {
-                Text = "OPEN AD MANAGEMENT",
-                Location = new Point(630, 65),
-                Size = new Size(190, 40),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                Text =
+                    "Find Windows computers, view Active Directory information " +
+                    "and move computers between organisational units.",
+
+                Location =
+                    new Point(
+                        20,
+                        52),
+
+                Size =
+                    new Size(
+                        520,
+                        45),
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175)
             };
 
-            _btnActiveDirectory.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
+            adPanel.Controls.Add(lblAdDescription);
+
+            var lblAdFeatures = new Label
+            {
+                Text =
+                    "Computer search  •  AD information  •  OU management",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        8.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
+
+                Location =
+                    new Point(
+                        20,
+                        105)
+            };
+
+            adPanel.Controls.Add(lblAdFeatures);
+
+            _btnActiveDirectory = CreateButton(
+                "OPEN AD MANAGEMENT",
+                new Point(590, 52),
+                new Size(200, 36));
 
             _btnActiveDirectory.Click +=
                 BtnActiveDirectory_Click;
@@ -110,78 +254,159 @@ namespace AdminTrayTool
             adPanel.Controls.Add(
                 _btnActiveDirectory);
 
-            // MECM
-            var mecmPanel = new Panel
-            {
-                Location = new Point(25, 300),
-                Size = new Size(860, 170),
-                BackColor = Color.FromArgb(20, 27, 40)
-            };
+            // =========================================================
+            // MECM / SCCM
+            // =========================================================
 
-            Controls.Add(mecmPanel);
+            var mecmPanel = CreatePanel(
+                new Point(30, 265),
+                new Size(820, 145));
 
-            var mecmTitle = new Label
-            {
-                Text = "MECM / SCCM",
-                Location = new Point(20, 20),
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    12F,
-                    FontStyle.Bold)
-            };
+            mainPanel.Controls.Add(mecmPanel);
 
-            mecmPanel.Controls.Add(mecmTitle);
-
-            var mecmDescription = new Label
+            var lblMecmTitle = new Label
             {
                 Text =
-                    "Find computers in MECM and manage collection " +
-                    "membership.",
-                Location = new Point(20, 55),
-                Size = new Size(570, 45),
-                ForeColor = Color.LightGray
+                    "MECM / SCCM",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        11F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        20,
+                        18)
             };
 
-            mecmPanel.Controls.Add(
-                mecmDescription);
+            mecmPanel.Controls.Add(lblMecmTitle);
 
-            _btnMecm = new Button
+            var lblMecmDescription = new Label
             {
-                Text = "OPEN MECM MANAGEMENT",
-                Location = new Point(630, 65),
-                Size = new Size(220, 40),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                Text =
+                    "Find Windows computers in Microsoft Endpoint Configuration " +
+                    "Manager and manage collection membership.",
+
+                Location =
+                    new Point(
+                        20,
+                        52),
+
+                Size =
+                    new Size(
+                        520,
+                        45),
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175)
             };
 
-            _btnMecm.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
+            mecmPanel.Controls.Add(lblMecmDescription);
+
+            var lblMecmFeatures = new Label
+            {
+                Text =
+                    "Computer search  •  Device information  •  Collections",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        8.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
+
+                Location =
+                    new Point(
+                        20,
+                        105)
+            };
+
+            mecmPanel.Controls.Add(lblMecmFeatures);
+
+            _btnMecm = CreateButton(
+                "OPEN MECM MANAGEMENT",
+                new Point(570, 52),
+                new Size(220, 36));
 
             _btnMecm.Click +=
                 BtnMecm_Click;
 
-            mecmPanel.Controls.Add(_btnMecm);
+            mecmPanel.Controls.Add(
+                _btnMecm);
 
-            var closeButton = new Button
+            // =========================================================
+            // FORM ACTIONS
+            // =========================================================
+
+            var actionPanel = CreatePanel(
+                new Point(30, 425),
+                new Size(820, 80));
+
+            mainPanel.Controls.Add(actionPanel);
+
+            var lblFormActions = new Label
             {
-                Text = "CLOSE",
-                Location = new Point(755, 510),
-                Size = new Size(120, 35),
-                BackColor = Color.FromArgb(35, 40, 50),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                Text =
+                    "FORM ACTIONS",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        8.5F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
+
+                Location =
+                    new Point(
+                        20,
+                        10)
             };
 
-            closeButton.FlatAppearance.BorderColor =
-                Color.FromArgb(70, 80, 95);
+            actionPanel.Controls.Add(lblFormActions);
+
+            var closeButton = CreateButton(
+                "CLOSE",
+                new Point(20, 32),
+                new Size(110, 34));
 
             closeButton.Click +=
                 (_, _) => Close();
 
-            Controls.Add(closeButton);
+            actionPanel.Controls.Add(
+                closeButton);
         }
+
+        // =============================================================
+        // ACTIVE DIRECTORY
+        // =============================================================
 
         private void BtnActiveDirectory_Click(
             object? sender,
@@ -207,6 +432,10 @@ namespace AdminTrayTool
             }
         }
 
+        // =============================================================
+        // MECM
+        // =============================================================
+
         private void BtnMecm_Click(
             object? sender,
             EventArgs e)
@@ -229,6 +458,34 @@ namespace AdminTrayTool
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+
+        // =============================================================
+        // UI HELPERS
+        // =============================================================
+
+        private Panel CreatePanel(
+            Point location,
+            Size size)
+        {
+            return new HudPanel
+            {
+                Location = location,
+                Size = size
+            };
+        }
+
+        private Button CreateButton(
+            string text,
+            Point location,
+            Size size)
+        {
+            return new HudButton
+            {
+                Text = text,
+                Location = location,
+                Size = size
+            };
         }
     }
 }

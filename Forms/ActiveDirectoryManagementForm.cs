@@ -39,11 +39,16 @@ namespace AdminTrayTool
         {
             Text = "Active Directory Management";
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(900, 700);
+
+            ClientSize = new Size(890, 800);
+            MinimumSize = new Size(820, 700);
 
             BackColor = Color.FromArgb(10, 15, 25);
             ForeColor = Color.White;
-            Font = new Font("Segoe UI", 10F);
+            Font = new Font(
+                "Segoe UI",
+                10F,
+                FontStyle.Regular);
 
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
@@ -51,153 +56,199 @@ namespace AdminTrayTool
 
         private void BuildUi()
         {
-            var header = new Label
+            var mainPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(30),
+                BackColor = Color.FromArgb(10, 15, 25)
+            };
+
+            Controls.Add(mainPanel);
+
+            // ---------------------------------------------------------
+            // HEADER
+            // ---------------------------------------------------------
+
+            var lblTitle = new Label
             {
                 Text = "ACTIVE DIRECTORY",
-                Location = new Point(25, 20),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 18F, FontStyle.Bold),
-                ForeColor = Color.White
+                Font = new Font(
+                    "Segoe UI",
+                    20F,
+                    FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(30, 25)
             };
 
-            Controls.Add(header);
+            mainPanel.Controls.Add(lblTitle);
 
-            var subtitle = new Label
+            var lblSubtitle = new Label
             {
                 Text = "Manage Active Directory computers and organisational units",
-                Location = new Point(27, 55),
                 AutoSize = true,
-                ForeColor = Color.LightGray
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F),
+                ForeColor = Color.FromArgb(150, 160, 175),
+                Location = new Point(33, 62)
             };
 
-            Controls.Add(subtitle);
+            mainPanel.Controls.Add(lblSubtitle);
 
-            // Computer lookup
-            var lookupPanel = new Panel
+            var headerLine = new Panel
             {
-                Location = new Point(25, 95),
-                Size = new Size(850, 75),
-                BackColor = Color.FromArgb(20, 27, 40)
+                Location = new Point(30, 90),
+                Size = new Size(820, 1),
+                BackColor = Color.FromArgb(45, 55, 70)
             };
 
-            Controls.Add(lookupPanel);
+            mainPanel.Controls.Add(headerLine);
 
-            var computerLabel = new Label
+            // ---------------------------------------------------------
+            // COMPUTER LOOKUP
+            // ---------------------------------------------------------
+
+            var lookupPanel =
+                CreatePanel(
+                    new Point(30, 105),
+                    new Size(820, 105));
+
+            mainPanel.Controls.Add(lookupPanel);
+
+            var lblLookupTitle = new Label
             {
-                Text = "Computer Name",
-                Location = new Point(15, 12),
-                AutoSize = true
+                Text = "COMPUTER LOOKUP",
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    11F,
+                    FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(20, 15)
             };
 
-            lookupPanel.Controls.Add(computerLabel);
+            lookupPanel.Controls.Add(lblLookupTitle);
+
+            var lblComputerNameTitle =
+                CreateLabel(
+                    "Computer Name",
+                    new Point(20, 48));
+
+            lookupPanel.Controls.Add(lblComputerNameTitle);
 
             _txtComputerName = new TextBox
             {
-                Location = new Point(15, 35),
-                Size = new Size(300, 27),
-                BackColor = Color.FromArgb(30, 38, 52),
+                Location = new Point(20, 68),
+                Size = new Size(420, 27),
+                BackColor = Color.FromArgb(20, 27, 40),
                 ForeColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
 
+            _txtComputerName.KeyDown +=
+                TxtComputerName_KeyDown;
+
             lookupPanel.Controls.Add(_txtComputerName);
 
-            _btnLookup = new Button
+            _btnLookup = new HudButton
             {
                 Text = "LOOK UP",
-                Location = new Point(330, 34),
-                Size = new Size(120, 30),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                Location = new Point(455, 67),
+                Size = new Size(130, 30)
             };
 
-            _btnLookup.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
-
-            _btnLookup.Click += BtnLookup_Click;
+            _btnLookup.Click +=
+                BtnLookup_Click;
 
             lookupPanel.Controls.Add(_btnLookup);
 
-            // Computer information
-            var infoPanel = new Panel
-            {
-                Location = new Point(25, 185),
-                Size = new Size(850, 170),
-                BackColor = Color.FromArgb(20, 27, 40)
-            };
+            // ---------------------------------------------------------
+            // COMPUTER INFORMATION
+            // ---------------------------------------------------------
 
-            Controls.Add(infoPanel);
+            var infoPanel =
+                CreatePanel(
+                    new Point(30, 220),
+                    new Size(820, 220));
 
-            var infoTitle = new Label
+            mainPanel.Controls.Add(infoPanel);
+
+            var lblInfoTitle = new Label
             {
                 Text = "COMPUTER INFORMATION",
-                Location = new Point(15, 12),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold)
+                Font = new Font(
+                    "Segoe UI",
+                    11F,
+                    FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(20, 15)
             };
 
-            infoPanel.Controls.Add(infoTitle);
+            infoPanel.Controls.Add(lblInfoTitle);
 
             _lblComputerName =
-                CreateInfoLabel(
+                CreateInfoRow(
+                    infoPanel,
                     "Computer:",
-                    new Point(15, 45));
+                    new Point(20, 50));
 
             _lblOperatingSystem =
-                CreateInfoLabel(
+                CreateInfoRow(
+                    infoPanel,
                     "Operating System:",
-                    new Point(15, 75));
+                    new Point(20, 85));
 
             _lblCurrentOu =
-                CreateInfoLabel(
+                CreateInfoRow(
+                    infoPanel,
                     "Current OU:",
-                    new Point(15, 105));
+                    new Point(20, 120));
 
             _lblDistinguishedName =
-                CreateInfoLabel(
+                CreateInfoRow(
+                    infoPanel,
                     "Distinguished Name:",
-                    new Point(15, 135));
+                    new Point(20, 155));
 
-            infoPanel.Controls.Add(_lblComputerName);
-            infoPanel.Controls.Add(_lblOperatingSystem);
-            infoPanel.Controls.Add(_lblCurrentOu);
-            infoPanel.Controls.Add(_lblDistinguishedName);
+            // ---------------------------------------------------------
+            // ACTIVE DIRECTORY ACTIONS
+            // ---------------------------------------------------------
 
-            // Active Directory actions
-            var adPanel = new Panel
-            {
-                Location = new Point(25, 370),
-                Size = new Size(850, 130),
-                BackColor = Color.FromArgb(20, 27, 40)
-            };
+            var adPanel =
+                CreatePanel(
+                    new Point(30, 450),
+                    new Size(820, 125));
 
-            Controls.Add(adPanel);
+            mainPanel.Controls.Add(adPanel);
 
-            var adTitle = new Label
+            var lblAdTitle = new Label
             {
                 Text = "ACTIVE DIRECTORY",
-                Location = new Point(15, 12),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold)
+                Font = new Font(
+                    "Segoe UI",
+                    11F,
+                    FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(20, 15)
             };
 
-            adPanel.Controls.Add(adTitle);
+            adPanel.Controls.Add(lblAdTitle);
 
-            var filterLabel = new Label
-            {
-                Text = "Filter OUs",
-                Location = new Point(15, 45),
-                AutoSize = true
-            };
+            var lblFilter =
+                CreateLabel(
+                    "Filter OUs",
+                    new Point(20, 47));
 
-            adPanel.Controls.Add(filterLabel);
+            adPanel.Controls.Add(lblFilter);
 
             _txtOuFilter = new TextBox
             {
-                Location = new Point(15, 68),
+                Location = new Point(20, 67),
                 Size = new Size(250, 27),
-                BackColor = Color.FromArgb(30, 38, 52),
+                BackColor = Color.FromArgb(20, 27, 40),
                 ForeColor = Color.White,
                 BorderStyle = BorderStyle.FixedSingle
             };
@@ -207,22 +258,21 @@ namespace AdminTrayTool
 
             adPanel.Controls.Add(_txtOuFilter);
 
-            var targetLabel = new Label
-            {
-                Text = "Target Organisational Unit",
-                Location = new Point(280, 45),
-                AutoSize = true
-            };
+            var lblTargetOu =
+                CreateLabel(
+                    "Target Organisational Unit",
+                    new Point(285, 47));
 
-            adPanel.Controls.Add(targetLabel);
+            adPanel.Controls.Add(lblTargetOu);
 
             _cmbTargetOu = new ComboBox
             {
-                Location = new Point(280, 68),
-                Size = new Size(390, 30),
+                Location = new Point(285, 67),
+                Size = new Size(330, 30),
                 DropDownStyle = ComboBoxStyle.DropDownList,
-                BackColor = Color.FromArgb(30, 38, 52),
-                ForeColor = Color.White
+                BackColor = Color.FromArgb(20, 27, 40),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat
             };
 
             _cmbTargetOu.SelectedIndexChanged +=
@@ -230,63 +280,159 @@ namespace AdminTrayTool
 
             adPanel.Controls.Add(_cmbTargetOu);
 
-            _btnMove = new Button
+            _btnMove = new HudButton
             {
                 Text = "MOVE COMPUTER",
-                Location = new Point(680, 67),
-                Size = new Size(150, 30),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
+                Location = new Point(630, 66),
+                Size = new Size(160, 32),
                 Enabled = false
             };
 
-            _btnMove.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
-
-            _btnMove.Click += BtnMove_Click;
+            _btnMove.Click +=
+                BtnMove_Click;
 
             adPanel.Controls.Add(_btnMove);
 
-            // Activity log
-            var logTitle = new Label
+            // ---------------------------------------------------------
+            // ACTIVITY LOG
+            // ---------------------------------------------------------
+
+            var logPanel =
+                CreatePanel(
+                    new Point(30, 590),
+                    new Size(820, 110));
+
+            mainPanel.Controls.Add(logPanel);
+
+            var lblLogTitle = new Label
             {
                 Text = "ACTIVITY LOG",
-                Location = new Point(25, 520),
                 AutoSize = true,
-                Font = new Font("Segoe UI", 11F, FontStyle.Bold)
+                Font = new Font(
+                    "Segoe UI",
+                    11F,
+                    FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(20, 10)
             };
 
-            Controls.Add(logTitle);
+            logPanel.Controls.Add(lblLogTitle);
 
             _txtLog = new TextBox
             {
-                Location = new Point(25, 550),
-                Size = new Size(850, 100),
+                Location = new Point(20, 38),
+                Size = new Size(780, 58),
                 Multiline = true,
                 ReadOnly = true,
                 ScrollBars = ScrollBars.Vertical,
-                BackColor = Color.FromArgb(15, 20, 30),
-                ForeColor = Color.LightGray,
-                BorderStyle = BorderStyle.FixedSingle
+                BackColor = Color.FromArgb(6, 10, 18),
+                ForeColor = Color.FromArgb(150, 160, 175),
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font(
+                    "Consolas",
+                    8.5F)
             };
 
-            Controls.Add(_txtLog);
+            logPanel.Controls.Add(_txtLog);
 
-            _txtComputerName.KeyDown +=
-                TxtComputerName_KeyDown;
+            var actionsPanel =
+            CreatePanel(
+                new Point(30, 715),
+                new Size(820, 70));
+
+                    mainPanel.Controls.Add(actionsPanel);
+
+                    var lblActionsTitle = new Label
+                    {
+                        Text = "FORM ACTIONS",
+                        AutoSize = true,
+                        Font = new Font(
+                            "Segoe UI",
+                            8.5F,
+                            FontStyle.Bold),
+                        ForeColor = Color.FromArgb(140, 150, 165),
+                        Location = new Point(20, 15)
+                    };
+
+                    actionsPanel.Controls.Add(lblActionsTitle);
+
+                    var btnClose = new HudButton
+                    {
+                        Text = "CLOSE",
+                        Location = new Point(650, 13),
+                        Size = new Size(150, 32)
+                    };
+
+                    btnClose.Click +=
+                        (_, _) => Close();
+
+                    actionsPanel.Controls.Add(btnClose);
         }
+        
 
-        private Label CreateInfoLabel(
-            string title,
+        private Label CreateLabel(
+            string text,
             Point location)
         {
             return new Label
             {
-                Text = title,
-                Location = location,
+                Text = text,
                 AutoSize = true,
-                ForeColor = Color.LightGray
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
+                ForeColor = Color.FromArgb(140, 150, 165),
+                Location = location
+            };
+        }
+
+        private Label CreateInfoRow(
+            Panel panel,
+            string title,
+            Point location)
+        {
+            var titleLabel = new Label
+            {
+                Text = title,
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
+                ForeColor = Color.FromArgb(120, 135, 150),
+                Location = location
+            };
+
+            panel.Controls.Add(titleLabel);
+
+            var valueLabel = new Label
+            {
+                Text = string.Empty,
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    9.5F,
+                    FontStyle.Regular),
+                ForeColor = Color.White,
+                Location = new Point(
+                    location.X + titleLabel.PreferredWidth + 8,
+                    location.Y - 1)
+            };
+
+            panel.Controls.Add(valueLabel);
+
+            return valueLabel;
+        }
+
+        private Panel CreatePanel(
+            Point location,
+            Size size)
+        {
+            return new HudPanel
+            {
+                Location = location,
+                Size = size
             };
         }
 
@@ -353,16 +499,16 @@ namespace AdminTrayTool
                 }
 
                 _lblComputerName.Text =
-                    $"Computer: {result.Name}";
+                    result.Name;
 
                 _lblOperatingSystem.Text =
-                    $"Operating System: {result.OperatingSystem}";
+                    result.OperatingSystem;
 
                 _lblCurrentOu.Text =
-                    $"Current OU: {result.OrganizationalUnit}";
+                    result.OrganizationalUnit;
 
                 _lblDistinguishedName.Text =
-                    $"Distinguished Name: {result.DistinguishedName}";
+                    result.DistinguishedName;
 
                 WriteLog(
                     $"Computer found: {result.Name}");
@@ -572,16 +718,16 @@ namespace AdminTrayTool
         private void ClearComputerInformation()
         {
             _lblComputerName.Text =
-                "Computer:";
+                string.Empty;
 
             _lblOperatingSystem.Text =
-                "Operating System:";
+                string.Empty;
 
             _lblCurrentOu.Text =
-                "Current OU:";
+                string.Empty;
 
             _lblDistinguishedName.Text =
-                "Distinguished Name:";
+                string.Empty;
 
             _organizationalUnits.Clear();
 

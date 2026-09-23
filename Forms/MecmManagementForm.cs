@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AdminTrayTool.Services;
 
@@ -36,190 +37,365 @@ namespace AdminTrayTool
                 new MecmManagementService();
 
             InitializeForm();
-            BuildUi();
+            BuildInterface();
         }
+
+        // =============================================================
+        // FORM INITIALISATION
+        // =============================================================
 
         private void InitializeForm()
         {
             Text = "MECM Management";
-            StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(900, 700);
 
-            BackColor = Color.FromArgb(10, 15, 25);
-            ForeColor = Color.White;
-            Font = new Font("Segoe UI", 10F);
+            StartPosition =
+                FormStartPosition.CenterScreen;
 
-            FormBorderStyle = FormBorderStyle.FixedSingle;
+            ClientSize =
+                new Size(890, 800);
+
+            MinimumSize =
+                new Size(820, 700);
+
+            BackColor =
+                Color.FromArgb(
+                    10,
+                    15,
+                    25);
+
+            ForeColor =
+                Color.White;
+
+            Font =
+                new Font(
+                    "Segoe UI",
+                    10F,
+                    FontStyle.Regular);
+
+            FormBorderStyle =
+                FormBorderStyle.FixedSingle;
+
             MaximizeBox = false;
         }
 
-        private void BuildUi()
+        // =============================================================
+        // BUILD INTERFACE
+        // =============================================================
+
+        private void BuildInterface()
         {
-            var header = new Label
+            var mainPanel = new Panel
             {
-                Text = "MECM / SCCM",
-                Location = new Point(25, 20),
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    18F,
-                    FontStyle.Bold),
-                ForeColor = Color.White
+                Dock = DockStyle.Fill,
+
+                Padding =
+                    new Padding(30),
+
+                BackColor =
+                    Color.FromArgb(
+                        10,
+                        15,
+                        25)
             };
 
-            Controls.Add(header);
+            Controls.Add(mainPanel);
 
-            var subtitle = new Label
+            // =========================================================
+            // HEADER
+            // =========================================================
+
+            var lblTitle = new Label
+            {
+                Text =
+                    "MECM / SCCM",
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        20F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        30,
+                        25)
+            };
+
+            mainPanel.Controls.Add(lblTitle);
+
+            var lblSubtitle = new Label
             {
                 Text =
                     "Find Windows computers and manage MECM collection membership",
-                Location = new Point(27, 55),
+
                 AutoSize = true,
-                ForeColor = Color.LightGray
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
+
+                Location =
+                    new Point(
+                        33,
+                        62)
             };
 
-            Controls.Add(subtitle);
+            mainPanel.Controls.Add(lblSubtitle);
 
-            // Computer lookup
-            var lookupPanel = new Panel
+            var headerLine = new Panel
             {
-                Location = new Point(25, 95),
-                Size = new Size(850, 75),
-                BackColor = Color.FromArgb(20, 27, 40)
+                Location =
+                    new Point(
+                        30,
+                        90),
+
+                Size =
+                    new Size(
+                        820,
+                        1),
+
+                BackColor =
+                    Color.FromArgb(
+                        45,
+                        55,
+                        70)
             };
 
-            Controls.Add(lookupPanel);
+            mainPanel.Controls.Add(headerLine);
 
-            var computerLabel = new Label
-            {
-                Text = "Computer Name",
-                Location = new Point(15, 12),
-                AutoSize = true
-            };
+            // =========================================================
+            // COMPUTER LOOKUP
+            // =========================================================
 
-            lookupPanel.Controls.Add(computerLabel);
+            var lookupPanel = CreatePanel(
+                new Point(30, 105),
+                new Size(820, 105));
+
+            mainPanel.Controls.Add(
+                lookupPanel);
+
+            var lblComputerName = CreateLabel(
+                "COMPUTER NAME",
+                new Point(
+                    20,
+                    18));
+
+            lookupPanel.Controls.Add(
+                lblComputerName);
 
             _txtComputerName = new TextBox
             {
-                Location = new Point(15, 35),
-                Size = new Size(300, 27),
-                BackColor = Color.FromArgb(30, 38, 52),
-                ForeColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle
+                Location =
+                    new Point(
+                        20,
+                        45),
+
+                Size =
+                    new Size(
+                        400,
+                        32),
+
+                BackColor =
+                    Color.FromArgb(
+                        20,
+                        27,
+                        40),
+
+                ForeColor =
+                    Color.White,
+
+                BorderStyle =
+                    BorderStyle.FixedSingle,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        10.5F)
             };
 
-            lookupPanel.Controls.Add(_txtComputerName);
+            _txtComputerName.KeyDown +=
+                TxtComputerName_KeyDown;
 
-            _btnLookup = new Button
+            lookupPanel.Controls.Add(
+                _txtComputerName);
+
+            _btnLookup = CreateButton(
+                "LOOK UP",
+                new Point(
+                    610,
+                    43),
+                new Size(
+                    180,
+                    36));
+
+            _btnLookup.Click +=
+                BtnLookup_Click;
+
+            lookupPanel.Controls.Add(
+                _btnLookup);
+
+            // =========================================================
+            // COMPUTER INFORMATION
+            // =========================================================
+
+            var infoPanel = CreatePanel(
+                new Point(30, 220),
+                new Size(820, 220));
+
+            mainPanel.Controls.Add(
+                infoPanel);
+
+            var lblInfoTitle = new Label
             {
-                Text = "LOOK UP",
-                Location = new Point(330, 34),
-                Size = new Size(120, 30),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
-            };
+                Text =
+                    "MECM COMPUTER INFORMATION",
 
-            _btnLookup.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
-
-            _btnLookup.Click += BtnLookup_Click;
-
-            lookupPanel.Controls.Add(_btnLookup);
-
-            // Computer information
-            var infoPanel = new Panel
-            {
-                Location = new Point(25, 185),
-                Size = new Size(850, 200),
-                BackColor = Color.FromArgb(20, 27, 40)
-            };
-
-            Controls.Add(infoPanel);
-
-            var infoTitle = new Label
-            {
-                Text = "MECM COMPUTER INFORMATION",
-                Location = new Point(15, 12),
                 AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    11F,
-                    FontStyle.Bold)
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        11F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        20,
+                        18)
             };
 
-            infoPanel.Controls.Add(infoTitle);
+            infoPanel.Controls.Add(
+                lblInfoTitle);
 
             _lblComputerName =
-                CreateInfoLabel(
-                    "Computer:",
-                    new Point(15, 45));
+                AddInfoRow(
+                    infoPanel,
+                    "Computer",
+                    55,
+                    out _,
+                    "—");
 
             _lblResourceId =
-                CreateInfoLabel(
-                    "Resource ID:",
-                    new Point(15, 75));
+                AddInfoRow(
+                    infoPanel,
+                    "Resource ID",
+                    85,
+                    out _,
+                    "—");
 
             _lblClient =
-                CreateInfoLabel(
-                    "MECM Client:",
-                    new Point(15, 105));
+                AddInfoRow(
+                    infoPanel,
+                    "MECM Client",
+                    115,
+                    out _,
+                    "—");
 
             _lblClientVersion =
-                CreateInfoLabel(
-                    "Client Version:",
-                    new Point(15, 135));
+                AddInfoRow(
+                    infoPanel,
+                    "Client Version",
+                    145,
+                    out _,
+                    "—");
 
             _lblOperatingSystem =
-                CreateInfoLabel(
-                    "Operating System:",
-                    new Point(15, 165));
+                AddInfoRow(
+                    infoPanel,
+                    "Operating System",
+                    175,
+                    out _,
+                    "—");
 
-            infoPanel.Controls.Add(_lblComputerName);
-            infoPanel.Controls.Add(_lblResourceId);
-            infoPanel.Controls.Add(_lblClient);
-            infoPanel.Controls.Add(_lblClientVersion);
-            infoPanel.Controls.Add(_lblOperatingSystem);
+            // =========================================================
+            // COLLECTION MANAGEMENT
+            // =========================================================
 
-            // Collection management
-            var collectionPanel = new Panel
+            var collectionPanel = CreatePanel(
+                new Point(30, 450),
+                new Size(820, 125));
+
+            mainPanel.Controls.Add(
+                collectionPanel);
+
+            var lblCollectionTitle = new Label
             {
-                Location = new Point(25, 405),
-                Size = new Size(850, 105),
-                BackColor = Color.FromArgb(20, 27, 40)
-            };
+                Text =
+                    "COLLECTION MANAGEMENT",
 
-            Controls.Add(collectionPanel);
-
-            var collectionTitle = new Label
-            {
-                Text = "COLLECTION MANAGEMENT",
-                Location = new Point(15, 12),
                 AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    11F,
-                    FontStyle.Bold)
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        11F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.White,
+
+                Location =
+                    new Point(
+                        20,
+                        18)
             };
 
-            collectionPanel.Controls.Add(collectionTitle);
+            collectionPanel.Controls.Add(
+                lblCollectionTitle);
 
-            var filterLabel = new Label
-            {
-                Text = "Filter",
-                Location = new Point(15, 45),
-                AutoSize = true
-            };
+            var lblFilter = CreateLabel(
+                "FILTER",
+                new Point(
+                    20,
+                    50));
 
-            collectionPanel.Controls.Add(filterLabel);
+            collectionPanel.Controls.Add(
+                lblFilter);
 
             _txtCollectionFilter = new TextBox
             {
-                Location = new Point(15, 68),
-                Size = new Size(220, 27),
-                BackColor = Color.FromArgb(30, 38, 52),
-                ForeColor = Color.White,
-                BorderStyle = BorderStyle.FixedSingle,
+                Location =
+                    new Point(
+                        20,
+                        72),
+
+                Size =
+                    new Size(
+                        220,
+                        30),
+
+                BackColor =
+                    Color.FromArgb(
+                        20,
+                        27,
+                        40),
+
+                ForeColor =
+                    Color.White,
+
+                BorderStyle =
+                    BorderStyle.FixedSingle,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
                 Enabled = false
             };
 
@@ -229,22 +405,42 @@ namespace AdminTrayTool
             collectionPanel.Controls.Add(
                 _txtCollectionFilter);
 
-            var collectionLabel = new Label
-            {
-                Text = "Collection",
-                Location = new Point(250, 45),
-                AutoSize = true
-            };
+            var lblCollection = CreateLabel(
+                "COLLECTION",
+                new Point(
+                    255,
+                    50));
 
-            collectionPanel.Controls.Add(collectionLabel);
+            collectionPanel.Controls.Add(
+                lblCollection);
 
             _cmbCollection = new ComboBox
             {
-                Location = new Point(250, 68),
-                Size = new Size(300, 30),
-                DropDownStyle = ComboBoxStyle.DropDownList,
-                BackColor = Color.FromArgb(30, 38, 52),
-                ForeColor = Color.White,
+                Location =
+                    new Point(
+                        255,
+                        72),
+
+                Size =
+                    new Size(
+                        310,
+                        30),
+
+                DropDownStyle =
+                    ComboBoxStyle.DropDownList,
+
+                BackColor =
+                    Color.FromArgb(
+                        20,
+                        27,
+                        40),
+
+                ForeColor =
+                    Color.White,
+
+                FlatStyle =
+                    FlatStyle.Flat,
+
                 Enabled = false
             };
 
@@ -254,19 +450,16 @@ namespace AdminTrayTool
             collectionPanel.Controls.Add(
                 _cmbCollection);
 
-            _btnAddToCollection = new Button
-            {
-                Text = "ADD",
-                Location = new Point(565, 67),
-                Size = new Size(110, 30),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Enabled = false
-            };
+            _btnAddToCollection = CreateButton(
+                "ADD",
+                new Point(
+                    580,
+                    70),
+                new Size(
+                    105,
+                    34));
 
-            _btnAddToCollection.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
+            _btnAddToCollection.Enabled = false;
 
             _btnAddToCollection.Click +=
                 BtnAddToCollection_Click;
@@ -274,19 +467,16 @@ namespace AdminTrayTool
             collectionPanel.Controls.Add(
                 _btnAddToCollection);
 
-            _btnRemoveFromCollection = new Button
-            {
-                Text = "REMOVE",
-                Location = new Point(690, 67),
-                Size = new Size(120, 30),
-                BackColor = Color.FromArgb(40, 50, 70),
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Enabled = false
-            };
+            _btnRemoveFromCollection = CreateButton(
+                "REMOVE",
+                new Point(
+                    695,
+                    70),
+                new Size(
+                    105,
+                    34));
 
-            _btnRemoveFromCollection.FlatAppearance.BorderColor =
-                Color.FromArgb(80, 100, 130);
+            _btnRemoveFromCollection.Enabled = false;
 
             _btnRemoveFromCollection.Click +=
                 BtnRemoveFromCollection_Click;
@@ -294,50 +484,129 @@ namespace AdminTrayTool
             collectionPanel.Controls.Add(
                 _btnRemoveFromCollection);
 
-            // Activity log
-            var logTitle = new Label
+            // =========================================================
+            // ACTIVITY LOG
+            // =========================================================
+
+            var logPanel = CreatePanel(
+                new Point(30, 590),
+                new Size(820, 110));
+
+            mainPanel.Controls.Add(
+                logPanel);
+
+            var lblLogTitle = new Label
             {
-                Text = "ACTIVITY LOG",
-                Location = new Point(25, 530),
+                Text =
+                    "ACTIVITY LOG",
+
                 AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    11F,
-                    FontStyle.Bold)
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150),
+
+                Location =
+                    new Point(
+                        20,
+                        10)
             };
 
-            Controls.Add(logTitle);
+            logPanel.Controls.Add(
+                lblLogTitle);
 
             _txtLog = new TextBox
             {
-                Location = new Point(25, 560),
-                Size = new Size(850, 85),
+                Location =
+                    new Point(
+                        20,
+                        32),
+
+                Size =
+                    new Size(
+                        780,
+                        60),
+
                 Multiline = true,
+
                 ReadOnly = true,
-                ScrollBars = ScrollBars.Vertical,
-                BackColor = Color.FromArgb(15, 20, 30),
-                ForeColor = Color.LightGray,
-                BorderStyle = BorderStyle.FixedSingle
+
+                ScrollBars =
+                    ScrollBars.Vertical,
+
+                BackColor =
+                    Color.FromArgb(
+                        6,
+                        10,
+                        18),
+
+                ForeColor =
+                    Color.FromArgb(
+                        150,
+                        160,
+                        175),
+
+                BorderStyle =
+                    BorderStyle.FixedSingle,
+
+                Font =
+                    new Font(
+                        "Consolas",
+                        8.5F)
             };
 
-            Controls.Add(_txtLog);
+            logPanel.Controls.Add(
+                _txtLog);
 
-            _txtComputerName.KeyDown +=
-                TxtComputerName_KeyDown;
+            _txtComputerName.Focus();
+                      
+            var actionsPanel =
+                CreatePanel(
+                    new Point(30, 715),
+                    new Size(820, 70));
+
+                        mainPanel.Controls.Add(actionsPanel);
+
+                        var lblActionsTitle = new Label
+                        {
+                            Text = "FORM ACTIONS",
+                            AutoSize = true,
+                            Font = new Font(
+                                "Segoe UI",
+                                8.5F,
+                                FontStyle.Bold),
+                            ForeColor = Color.FromArgb(140, 150, 165),
+                            Location = new Point(20, 15)
+                        };
+
+                        actionsPanel.Controls.Add(lblActionsTitle);
+
+                        var btnClose = new HudButton
+                        {
+                            Text = "CLOSE",
+                            Location = new Point(650, 13),
+                            Size = new Size(150, 32)
+                        };
+
+                        btnClose.Click +=
+                            (_, _) => Close();
+
+                        actionsPanel.Controls.Add(btnClose);
+
+
         }
 
-        private Label CreateInfoLabel(
-            string title,
-            Point location)
-        {
-            return new Label
-            {
-                Text = title,
-                Location = location,
-                AutoSize = true,
-                ForeColor = Color.LightGray
-            };
-        }
+        // =============================================================
+        // LOOKUP
+        // =============================================================
 
         private async void BtnLookup_Click(
             object? sender,
@@ -353,23 +622,26 @@ namespace AdminTrayTool
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
+
                 await LookupComputerAsync();
             }
         }
 
-        private async System.Threading.Tasks.Task
-            LookupComputerAsync()
+        private async Task LookupComputerAsync()
         {
             string computerName =
                 _txtComputerName.Text.Trim();
 
-            if (string.IsNullOrWhiteSpace(computerName))
+            if (string.IsNullOrWhiteSpace(
+                computerName))
             {
                 MessageBox.Show(
                     "Enter a computer name.",
                     "MECM",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
+
+                _txtComputerName.Focus();
 
                 return;
             }
@@ -380,6 +652,8 @@ namespace AdminTrayTool
 
                 ClearCollectionControls();
 
+                ClearComputerInformationOnly();
+
                 _currentComputerName =
                     computerName;
 
@@ -388,7 +662,8 @@ namespace AdminTrayTool
 
                 var result =
                     await _mecmManagementService
-                        .GetComputerAsync(computerName);
+                        .GetComputerAsync(
+                            computerName);
 
                 if (!result.Success)
                 {
@@ -433,7 +708,21 @@ namespace AdminTrayTool
                 WriteLog(
                     $"Client Version: {result.ClientVersion}");
 
+                WriteLog(
+                    $"Operating System: {result.OperatingSystem}");
+
                 await LoadCollectionsAsync();
+            }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    $"Lookup error: {ex.Message}");
+
+                MessageBox.Show(
+                    ex.Message,
+                    "MECM Lookup",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
             finally
             {
@@ -441,8 +730,11 @@ namespace AdminTrayTool
             }
         }
 
-        private async System.Threading.Tasks.Task
-            LoadCollectionsAsync()
+        // =============================================================
+        // COLLECTIONS
+        // =============================================================
+
+        private async Task LoadCollectionsAsync()
         {
             WriteLog(
                 "Loading MECM collections...");
@@ -471,6 +763,7 @@ namespace AdminTrayTool
             ApplyCollectionFilter();
 
             _txtCollectionFilter.Enabled = true;
+
             _cmbCollection.Enabled =
                 _cmbCollection.Items.Count > 0;
 
@@ -490,8 +783,8 @@ namespace AdminTrayTool
                 return;
 
             string filter =
-                _txtCollectionFilter?.Text.Trim() ??
-                string.Empty;
+                _txtCollectionFilter?.Text.Trim()
+                ?? string.Empty;
 
             string? selectedCollection =
                 _cmbCollection.SelectedItem
@@ -522,7 +815,7 @@ namespace AdminTrayTool
                 }
 
                 if (!string.IsNullOrWhiteSpace(
-                        selectedCollection))
+                    selectedCollection))
                 {
                     for (int i = 0;
                          i < _cmbCollection.Items.Count;
@@ -532,7 +825,9 @@ namespace AdminTrayTool
                                 ?.ToString() ==
                             selectedCollection)
                         {
-                            _cmbCollection.SelectedIndex = i;
+                            _cmbCollection.SelectedIndex =
+                                i;
+
                             break;
                         }
                     }
@@ -572,6 +867,10 @@ namespace AdminTrayTool
             _btnRemoveFromCollection.Enabled =
                 enabled;
         }
+
+        // =============================================================
+        // ADD TO COLLECTION
+        // =============================================================
 
         private async void BtnAddToCollection_Click(
             object? sender,
@@ -647,11 +946,26 @@ namespace AdminTrayTool
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    $"Add error: {ex.Message}");
+
+                MessageBox.Show(
+                    ex.Message,
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
             finally
             {
                 SetBusy(false);
             }
         }
+
+        // =============================================================
+        // REMOVE FROM COLLECTION
+        // =============================================================
 
         private async void BtnRemoveFromCollection_Click(
             object? sender,
@@ -727,11 +1041,26 @@ namespace AdminTrayTool
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
+            catch (Exception ex)
+            {
+                WriteLog(
+                    $"Remove error: {ex.Message}");
+
+                MessageBox.Show(
+                    ex.Message,
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
             finally
             {
                 SetBusy(false);
             }
         }
+
+        // =============================================================
+        // CLEAR COLLECTION CONTROLS
+        // =============================================================
 
         private void ClearCollectionControls()
         {
@@ -744,7 +1073,8 @@ namespace AdminTrayTool
 
             _cmbCollection.Items.Clear();
 
-            _cmbCollection.SelectedIndex = -1;
+            _cmbCollection.SelectedIndex =
+                -1;
 
             _cmbCollection.Enabled =
                 false;
@@ -756,22 +1086,31 @@ namespace AdminTrayTool
                 false;
         }
 
-        private void ClearComputerInformation()
+        // =============================================================
+        // CLEAR COMPUTER INFORMATION
+        // =============================================================
+
+        private void ClearComputerInformationOnly()
         {
             _lblComputerName.Text =
-                "Computer:";
+                "Computer: —";
 
             _lblResourceId.Text =
-                "Resource ID:";
+                "Resource ID: —";
 
             _lblClient.Text =
-                "MECM Client:";
+                "MECM Client: —";
 
             _lblClientVersion.Text =
-                "Client Version:";
+                "Client Version: —";
 
             _lblOperatingSystem.Text =
-                "Operating System:";
+                "Operating System: —";
+        }
+
+        private void ClearComputerInformation()
+        {
+            ClearComputerInformationOnly();
 
             _currentComputerName =
                 string.Empty;
@@ -779,10 +1118,17 @@ namespace AdminTrayTool
             ClearCollectionControls();
         }
 
+        // =============================================================
+        // BUSY STATE
+        // =============================================================
+
         private void SetBusy(bool busy)
         {
-            _btnLookup.Enabled = !busy;
-            _txtComputerName.Enabled = !busy;
+            _btnLookup.Enabled =
+                !busy;
+
+            _txtComputerName.Enabled =
+                !busy;
 
             _txtCollectionFilter.Enabled =
                 !busy &&
@@ -805,17 +1151,156 @@ namespace AdminTrayTool
                 UpdateCollectionButtons();
             }
 
-            Cursor = busy
-                ? Cursors.WaitCursor
-                : Cursors.Default;
+            Cursor =
+                busy
+                    ? Cursors.WaitCursor
+                    : Cursors.Default;
         }
 
-        private void WriteLog(string message)
+        // =============================================================
+        // ACTIVITY LOG
+        // =============================================================
+
+        private void WriteLog(
+            string message)
         {
+            if (_txtLog == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(message))
+                return;
+
             _txtLog.AppendText(
                 $"[{DateTime.Now:HH:mm:ss}] {message}" +
                 Environment.NewLine);
         }
+
+        // =============================================================
+        // UI HELPERS
+        // =============================================================
+
+        private Panel CreatePanel(
+            Point location,
+            Size size)
+        {
+            return new HudPanel
+            {
+                Location = location,
+                Size = size
+            };
+        }
+
+        private Label CreateLabel(
+            string text,
+            Point location)
+        {
+            return new Label
+            {
+                Text =
+                    text,
+
+                Location =
+                    location,
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        8.5F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.FromArgb(
+                        140,
+                        150,
+                        165)
+            };
+        }
+
+        private Label AddInfoRow(
+            Panel parent,
+            string name,
+            int y,
+            out Label valueLabel,
+            string defaultValue)
+        {
+            var nameLabel = new Label
+            {
+                Text =
+                    name.ToUpperInvariant(),
+
+                Location =
+                    new Point(
+                        20,
+                        y),
+
+                AutoSize = true,
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        8.5F,
+                        FontStyle.Bold),
+
+                ForeColor =
+                    Color.FromArgb(
+                        120,
+                        135,
+                        150)
+            };
+
+            parent.Controls.Add(
+                nameLabel);
+
+            valueLabel = new Label
+            {
+                Text =
+                    $"{name}: {defaultValue}",
+
+                Location =
+                    new Point(
+                        170,
+                        y - 1),
+
+                AutoSize = true,
+
+                MaximumSize =
+                    new Size(
+                        620,
+                        0),
+
+                Font =
+                    new Font(
+                        "Segoe UI",
+                        9.5F),
+
+                ForeColor =
+                    Color.White
+            };
+
+            parent.Controls.Add(
+                valueLabel);
+
+            return valueLabel;
+        }
+
+        private Button CreateButton(
+            string text,
+            Point location,
+            Size size)
+        {
+            return new HudButton
+            {
+                Text = text,
+                Location = location,
+                Size = size
+            };
+        }
+
+        // =============================================================
+        // COLLECTION DISPLAY ITEM
+        // =============================================================
 
         private class CollectionDisplayItem
         {
@@ -827,8 +1312,11 @@ namespace AdminTrayTool
                 MecmCollection collection,
                 string displayText)
             {
-                Collection = collection;
-                _displayText = displayText;
+                Collection =
+                    collection;
+
+                _displayText =
+                    displayText;
             }
 
             public override string ToString()

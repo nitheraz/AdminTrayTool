@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace AdminTrayTool
 {
@@ -462,19 +463,40 @@ namespace AdminTrayTool
 
         static void LaunchWebpage(string url, string profileDirectory)
         {
-            if (string.IsNullOrWhiteSpace(url)) return;
-            var browser = "chrome.exe";
-            var args = string.IsNullOrWhiteSpace(profileDirectory)
-                ? $"\"{url}\""
-                : $"--profile-directory=\"{profileDirectory}\" \"{url}\"";
+            if (string.IsNullOrWhiteSpace(url))
+                return;
 
             try
             {
-                Process.Start(new ProcessStartInfo { FileName = browser, Arguments = args, UseShellExecute = true });
+                string arguments = string.IsNullOrWhiteSpace(profileDirectory)
+                    ? $"\"{url}\""
+                    : $"--profile-directory=\"{profileDirectory}\" \"{url}\"";
+
+                // Ask the user's normal Explorer process to launch Chrome.
+                // This prevents the elevated AdminTrayTool process from
+                // launching Chrome as Administrator.
+                Type? shellType = Type.GetTypeFromProgID("Shell.Application");
+
+                if (shellType == null)
+                    throw new InvalidOperationException("Windows Shell.Application could not be found.");
+
+                dynamic shell = Activator.CreateInstance(shellType)
+                    ?? throw new InvalidOperationException("Could not create Windows Shell.Application.");
+
+                shell.ShellExecute(
+                    "chrome.exe",
+                    arguments,
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "open",
+                    1);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open URL: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Failed to open URL: {ex.Message}",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
