@@ -1,6 +1,4 @@
 ﻿using AdminTrayTool.UI;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace AdminTrayTool
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AdminTrayTool.Models
+﻿namespace AdminTrayTool.Models
 {
     public class GroupTemplate
     {

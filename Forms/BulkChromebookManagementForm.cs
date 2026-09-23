@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AdminTrayTool.Services;
+﻿using AdminTrayTool.Services;
 
 namespace AdminTrayTool
 {
@@ -353,7 +346,7 @@ namespace AdminTrayTool
                     HeaderText = "ASSET ID",
                     DataPropertyName = "AssetId"
                 });
-            
+
             _gridDevices.Columns.Add(
                 new DataGridViewTextBoxColumn
                 {
@@ -1427,7 +1420,7 @@ namespace AdminTrayTool
 
                     device.Result =
                         "PROCESSING...";
-                    
+
                     device.Error =
                         string.Empty;
 
@@ -1586,7 +1579,7 @@ namespace AdminTrayTool
             }
         }
     }
-    
+
     // =============================================================
     // BULK DEVICE MODEL
     // =============================================================

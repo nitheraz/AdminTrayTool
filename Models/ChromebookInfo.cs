@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AdminTrayTool.Models
+﻿namespace AdminTrayTool.Models
 {
     public class ChromebookInfo
     {

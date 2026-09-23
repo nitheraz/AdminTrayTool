@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AdminTrayTool.Services;
+﻿using AdminTrayTool.Services;
 
 namespace AdminTrayTool
 {

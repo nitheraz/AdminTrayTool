@@ -1,11 +1,4 @@
-﻿using AdminTrayTool;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using System.Xml.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
-
-namespace AdminTrayTool
+﻿namespace AdminTrayTool
 {
     public class WindowsManagementForm : Form
     {

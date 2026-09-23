@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -11,6 +11,7 @@
 
 		<!-- Application / EXE icon -->
 		<ApplicationIcon>adminTray.ico</ApplicationIcon>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 	</PropertyGroup>
 
 
@@ -21,6 +22,8 @@
 
 		<None Include=".github\workflows\docs.yml" />
 
+		<None Include="C:\Users\mdejesus\source\repos\AdminTrayTool\.editorconfig" />
+
 		<None Include="config.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
 
 		<!-- Copy tray icon to output and publish folders -->
@@ -29,6 +32,19 @@
 		<!-- Bundled GAM7 runtime -->
 		<Content Include="GAM7\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
 
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Roslynator.Analyzers" Version="5.0.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Roslynator.Formatting.Analyzers" Version="5.0.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Users\mdejesus\source\repos\AdminTrayTool\.editorconfig" />
 	</ItemGroup>
 
 </Project>

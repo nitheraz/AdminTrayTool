@@ -1,9 +1,5 @@
-﻿using System;
+﻿using AdminTrayTool.Models;
 using System.Diagnostics;
-using System.IO;
-using System.Threading.Tasks;
-using AdminTrayTool.Models;
-using System.Collections.Generic;
 
 namespace AdminTrayTool.Services
 {

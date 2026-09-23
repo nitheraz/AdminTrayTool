@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AdminTrayTool.Services;
+﻿using AdminTrayTool.Services;
 
 namespace AdminTrayTool
 {
@@ -567,39 +562,39 @@ namespace AdminTrayTool
                 _txtLog);
 
             _txtComputerName.Focus();
-                      
+
             var actionsPanel =
                 CreatePanel(
                     new Point(30, 715),
                     new Size(820, 70));
 
-                        mainPanel.Controls.Add(actionsPanel);
+            mainPanel.Controls.Add(actionsPanel);
 
-                        var lblActionsTitle = new Label
-                        {
-                            Text = "FORM ACTIONS",
-                            AutoSize = true,
-                            Font = new Font(
-                                "Segoe UI",
-                                8.5F,
-                                FontStyle.Bold),
-                            ForeColor = Color.FromArgb(140, 150, 165),
-                            Location = new Point(20, 15)
-                        };
+            var lblActionsTitle = new Label
+            {
+                Text = "FORM ACTIONS",
+                AutoSize = true,
+                Font = new Font(
+                    "Segoe UI",
+                    8.5F,
+                    FontStyle.Bold),
+                ForeColor = Color.FromArgb(140, 150, 165),
+                Location = new Point(20, 15)
+            };
 
-                        actionsPanel.Controls.Add(lblActionsTitle);
+            actionsPanel.Controls.Add(lblActionsTitle);
 
-                        var btnClose = new HudButton
-                        {
-                            Text = "CLOSE",
-                            Location = new Point(650, 13),
-                            Size = new Size(150, 32)
-                        };
+            var btnClose = new HudButton
+            {
+                Text = "CLOSE",
+                Location = new Point(650, 13),
+                Size = new Size(150, 32)
+            };
 
-                        btnClose.Click +=
-                            (_, _) => Close();
+            btnClose.Click +=
+                (_, _) => Close();
 
-                        actionsPanel.Controls.Add(btnClose);
+            actionsPanel.Controls.Add(btnClose);
 
 
         }

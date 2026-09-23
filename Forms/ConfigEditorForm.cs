@@ -1,9 +1,4 @@
 using AdminTrayTool.Models;
-using AdminTrayTool.Services;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace AdminTrayTool.Forms
 {

@@ -1,10 +1,6 @@
-﻿using AdminTrayTool.Services;
-using System;
+﻿using AdminTrayTool.Models;
+using AdminTrayTool.Services;
 using System.Diagnostics;
-using System.Drawing;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using AdminTrayTool.Models;
 
 namespace AdminTrayTool
 {
@@ -1391,7 +1387,7 @@ namespace AdminTrayTool
             _originalAssetId = assetId;
 
             SetAssetEditMode(false);
-           
+
             // ---------------------------------------------------------
             // GOOGLE DEVICE ID
             // ---------------------------------------------------------
@@ -2307,10 +2303,10 @@ namespace AdminTrayTool
 
             _lblOrgUnit.Text =
                 "—";
-            
+
             _lblRecentUser.Text =
                 "—";
-    
+
             _lblLastSync.Text =
                 "—";
 
@@ -2337,7 +2333,7 @@ namespace AdminTrayTool
 
             _btnReenable.Enabled =
                 false;
-            
+
             _btnPowerwash.Enabled =
                 false;
 
@@ -2378,7 +2374,7 @@ namespace AdminTrayTool
                 _btnDisable.Enabled = false;
 
                 _btnReenable.Enabled = false;
-                
+
                 _btnMoveOu.Enabled = false;
                 _btnPowerwash.Enabled = false;
                 _btnClearProfiles.Enabled = false;
