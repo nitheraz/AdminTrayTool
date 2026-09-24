@@ -1,19 +1,19 @@
 ﻿using AdminTrayTool.Models;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace AdminTrayTool.Forms
 {
-    public class GenericSectionEditor
+    public class GenericSectionEditor(SectionSchema schema, string configPath)
     {
-        private readonly SectionSchema _schema;
-        private readonly string _configPath;
+        private readonly SectionSchema _schema = schema ?? throw new ArgumentNullException(nameof(schema));
+        private readonly string _configPath = configPath ?? throw new ArgumentNullException(nameof(configPath));
         private DataGridView _dgv = null!;
-
-        public GenericSectionEditor(SectionSchema schema, string configPath)
+        private static readonly JsonSerializerOptions JsonSerializeOptions = new()
         {
-            _schema = schema ?? throw new ArgumentNullException(nameof(schema));
-            _configPath = configPath ?? throw new ArgumentNullException(nameof(configPath));
-        }
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
 
         // =============================================================
         // BUILD TAB
@@ -285,11 +285,9 @@ namespace AdminTrayTool.Forms
             {
                 var control = inputs[col.Name];
 
-                string value = control is CheckBox cb
+                result[col.Name] = control is CheckBox cb
                     ? cb.Checked.ToString()
                     : ((TextBox)control).Text.Trim();
-
-                result[col.Name] = value;
             }
 
             // Validate after collecting all values
@@ -400,8 +398,10 @@ namespace AdminTrayTool.Forms
             return el.GetString() ?? string.Empty;
         }
 
-        // For the grouped case, the "name" property in the JSON object is
-        // assumed to be called "name" (e.g. { "name": "Primary Staff", "groups": [...] }).
+        /// <summary>
+        /// For the grouped case, the "name" property in the JSON object is
+        /// assumed to be called "name" (e.g. { "name": "Primary Staff", "groups": [...] }).
+        /// </summary>
         private static string GetJsonPropertyNameForGroup()
         {
             return "name";
@@ -490,20 +490,23 @@ namespace AdminTrayTool.Forms
                     }
                 }
 
-                var sectionList = grouped.Select(kv => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
+                root[_schema.SectionKey] = grouped.Select(kv => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["name"] = kv.Key,
                     [nestedProp] = kv.Value
                 }).ToList();
-
-                root[_schema.SectionKey] = sectionList;
             }
 
             try
             {
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(root, options);
-                File.WriteAllText(_configPath, json);
+                string json =
+                    JsonSerializer.Serialize(
+                        root,
+                        JsonSerializeOptions);
+
+                File.WriteAllText(
+                    _configPath,
+                    json);
             }
             catch (Exception ex)
             {
@@ -514,9 +517,6 @@ namespace AdminTrayTool.Forms
                     MessageBoxIcon.Error);
             }
         }
-
-        // Helper: JsonElement -> plain Dictionary/List/string/bool tree,
-        // needed so we can merge sections without disturbing others in the same file.
         private static Dictionary<string, object> JsonElementToDictionary(JsonElement elem)
         {
             var dict = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);

@@ -4,8 +4,8 @@ namespace AdminTrayTool.Forms
 {
     public enum ConfigEditorMode
     {
-        AppConfig,
-        GroupTemplates
+        AppConfig = 0,
+        GroupTemplates = 1
     }
 
     public class ConfigEditorForm : Form

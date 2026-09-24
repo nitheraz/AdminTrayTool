@@ -346,10 +346,9 @@ namespace AdminTrayTool.Services
                         AppContext.BaseDirectory
                 };
 
-            Process process = Process.Start(startInfo) ?? throw new InvalidOperationException(
+            using Process? helper =
+                Process.Start(startInfo) ?? throw new InvalidOperationException(
                     "The update helper process could not be started.");
-            Process? helper =
-                process;
         }
 
         private static string EscapePowerShellString(

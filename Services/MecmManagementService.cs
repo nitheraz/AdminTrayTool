@@ -6,19 +6,14 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace AdminTrayTool.Services
 {
-    public class MecmManagementService
+    public class MecmManagementService(MecmConfig config)
     {
-        private readonly MecmConfig _config;
+        private readonly MecmConfig _config =
+                config ??
+                throw new ArgumentNullException(nameof(config));
 
         private string Namespace =>
             $@"root\sms\site_{_config.SiteCode}";
-
-        public MecmManagementService(MecmConfig config)
-        {
-            _config =
-                config ??
-                throw new ArgumentNullException(nameof(config));
-        }
 
         private MecmActionResult ValidateConfiguration()
         {
@@ -107,21 +102,22 @@ namespace AdminTrayTool.Services
             string escapedName =
                 EscapePowerShellString(computerName);
 
-            string script = $@"
+            string script = $$"""
+
 $ErrorActionPreference = 'Stop'
 
 $computer = Get-CimInstance `
-    -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-    -Namespace '{EscapePowerShellString(Namespace)}' `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_R_System `
-    -Filter ""Name = '{escapedName}'""
+    -Filter "Name = '{{escapedName}}'"
 
 if ($null -eq $computer)
-{{
-    throw ""Computer '{EscapePowerShellString(computerName)}' was not found in MECM.""
-}}
+{
+    throw "Computer '{{EscapePowerShellString(computerName)}}' was not found in MECM."
+}
 
-[PSCustomObject]@{{
+[PSCustomObject]@{
     ResourceID = $computer.ResourceID
     Name = $computer.Name
     ResourceType = $computer.ResourceType
@@ -131,8 +127,9 @@ if ($null -eq $computer)
     Manufacturer = $computer.Manufacturer
     Model = $computer.Model
     SerialNumber = $computer.SerialNumber
-}} | ConvertTo-Json -Compress
-";
+} | ConvertTo-Json -Compress
+
+""";
 
             PowerShellResult result =
                 await RunPowerShellAsync(script);
@@ -343,14 +340,15 @@ $collections = Get-CimInstance `
                 };
             }
 
-            string script = $@"
+            string script = $$"""
+
 $ErrorActionPreference = 'Stop'
 
 $memberships = Get-CimInstance `
-    -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-    -Namespace '{EscapePowerShellString(Namespace)}' `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_FullCollectionMembership `
-    -Filter ""ResourceID = {parsedResourceId}""
+    -Filter "ResourceID = {{parsedResourceId}}"
 
 $collectionIds = @(
     $memberships |
@@ -358,19 +356,20 @@ $collectionIds = @(
 )
 
 $collections = foreach ($collectionId in $collectionIds)
-{{
+{
     Get-CimInstance `
-        -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-        -Namespace '{EscapePowerShellString(Namespace)}' `
+        -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+        -Namespace '{{EscapePowerShellString(Namespace)}}' `
         -ClassName SMS_Collection `
-        -Filter ""CollectionID = '$collectionId'""
-}}
+        -Filter "CollectionID = '$collectionId'"
+}
 
 @($collections) |
     Select-Object CollectionID, Name, CollectionType |
     Sort-Object Name |
     ConvertTo-Json -Compress
-";
+
+""";
 
             PowerShellResult result =
                 await RunPowerShellAsync(script);
@@ -415,12 +414,11 @@ $collections = foreach ($collectionId in $collectionIds)
                 }
 
                 collections =
-                    collections
+                    [.. collections
                         .OrderBy(
                             collection =>
                                 collection.Name,
-                            StringComparer.OrdinalIgnoreCase)
-                        .ToList();
+                            StringComparer.OrdinalIgnoreCase)];
 
                 return new MecmCollectionResult
                 {
@@ -507,57 +505,59 @@ $collections = foreach ($collectionId in $collectionIds)
                 };
             }
 
-            string script = $@"
+            string script = $$"""
+
 $ErrorActionPreference = 'Stop'
 
 $collection = Get-CimInstance `
-    -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-    -Namespace '{EscapePowerShellString(Namespace)}' `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_Collection `
-    -Filter ""CollectionID = '{EscapePowerShellString(collectionId)}'""
+    -Filter "CollectionID = '{{EscapePowerShellString(collectionId)}}'"
 
 if ($null -eq $collection)
-{{
-    throw ""MECM collection '{EscapePowerShellString(collectionId)}' was not found.""
-}}
+{
+    throw "MECM collection '{{EscapePowerShellString(collectionId)}}' was not found."
+}
 
-if ('{EscapePowerShellString(collectionId)}' -like 'SMS*')
-{{
-    throw ""The collection '{EscapePowerShellString(collectionId)}' is a default MECM collection and cannot be modified with a direct membership rule.""
-}}
+if ('{{EscapePowerShellString(collectionId)}}' -like 'SMS*')
+{
+    throw "The collection '{{EscapePowerShellString(collectionId)}}' is a default MECM collection and cannot be modified with a direct membership rule."
+}
 
 $ruleClass = Get-CimClass `
-    -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-    -Namespace '{EscapePowerShellString(Namespace)}' `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_CollectionRuleDirect
 
 $rule = New-CimInstance `
     -CimClass $ruleClass `
     -ClientOnly `
-    -Property @{{
+    -Property @{
         ResourceClassName = 'SMS_R_System'
-        ResourceID = {resourceId}
-    }}
+        ResourceID = {{resourceId}}
+    }
 
 $result = Invoke-CimMethod `
     -InputObject $collection `
     -MethodName AddMembershipRule `
-    -Arguments @{{
+    -Arguments @{
         collectionRule = $rule
-    }}
+    }
 
 if ($null -eq $result)
-{{
-    throw ""MECM AddMembershipRule returned no result.""
-}}
+{
+    throw "MECM AddMembershipRule returned no result."
+}
 
 if ($result.ReturnValue -ne 0)
-{{
-    throw ""MECM AddMembershipRule failed with return value $($result.ReturnValue).""
-}}
+{
+    throw "MECM AddMembershipRule failed with return value $($result.ReturnValue)."
+}
 
 Write-Output 'Direct membership rule created.'
-";
+
+""";
 
             PowerShellResult result =
                 await RunPowerShellAsync(
@@ -661,54 +661,56 @@ Write-Output 'Direct membership rule created.'
                 };
             }
 
-            string script = $@"
+            string script = $$"""
+
 $ErrorActionPreference = 'Stop'
 
 $collection = Get-CimInstance `
-    -ComputerName '{EscapePowerShellString(_config.SmsProviderServer)}' `
-    -Namespace '{EscapePowerShellString(Namespace)}' `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_Collection `
-    -Filter ""CollectionID = '{EscapePowerShellString(collectionId)}'""
+    -Filter "CollectionID = '{{EscapePowerShellString(collectionId)}}'"
 
 if ($null -eq $collection)
-{{
-    throw ""MECM collection '{EscapePowerShellString(collectionId)}' was not found.""
-}}
+{
+    throw "MECM collection '{{EscapePowerShellString(collectionId)}}' was not found."
+}
 
 $rules = @(
     $collection.CollectionRules
 )
 
 $matchingRule = $rules |
-    Where-Object {{
-        $_.ResourceID -eq {resourceId}
-    }} |
+    Where-Object {
+        $_.ResourceID -eq {{resourceId}}
+    } |
     Select-Object -First 1
 
 if ($null -eq $matchingRule)
-{{
-    throw ""Computer '{EscapePowerShellString(computerName)}' is not a direct member of collection '{EscapePowerShellString(collectionId)}'.""
-}}
+{
+    throw "Computer '{{EscapePowerShellString(computerName)}}' is not a direct member of collection '{{EscapePowerShellString(collectionId)}}'."
+}
 
 $result = Invoke-CimMethod `
     -InputObject $collection `
     -MethodName DeleteMembershipRule `
-    -Arguments @{{
+    -Arguments @{
         collectionRule = $matchingRule
-    }}
+    }
 
 if ($null -eq $result)
-{{
-    throw ""MECM DeleteMembershipRule returned no result.""
-}}
+{
+    throw "MECM DeleteMembershipRule returned no result."
+}
 
 if ($result.ReturnValue -ne 0)
-{{
-    throw ""MECM DeleteMembershipRule failed with return value $($result.ReturnValue).""
-}}
+{
+    throw "MECM DeleteMembershipRule failed with return value $($result.ReturnValue)."
+}
 
 Write-Output 'Direct membership rule deleted.'
-";
+
+""";
 
             PowerShellResult result =
                 await RunPowerShellAsync(
@@ -783,7 +785,7 @@ Write-Output 'Direct membership rule deleted.'
         // POWERSHELL
         // =============================================================
 
-        private async Task<PowerShellResult>
+        private static async Task<PowerShellResult>
             RunPowerShellAsync(
                 string script)
         {
@@ -818,7 +820,7 @@ Write-Output 'Direct membership rule deleted.'
                     };
 
                 using Process process =
-                    new Process
+                    new()
                     {
                         StartInfo = startInfo
                     };

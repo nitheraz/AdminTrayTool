@@ -1,6 +1,6 @@
 ﻿using AdminTrayTool.Services;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class ActiveDirectoryManagementForm : Form
     {
@@ -366,7 +366,7 @@ namespace AdminTrayTool
         }
 
 
-        private Label CreateLabel(
+        private static Label CreateLabel(
             string text,
             Point location)
         {
@@ -383,7 +383,7 @@ namespace AdminTrayTool
             };
         }
 
-        private Label CreateInfoRow(
+        private static Label CreateInfoRow(
             Panel panel,
             string title,
             Point location)
@@ -421,16 +421,13 @@ namespace AdminTrayTool
             return valueLabel;
         }
 
-        private Panel CreatePanel(
+        private static HudPanel CreatePanel(
             Point location,
-            Size size)
-        {
-            return new HudPanel
+            Size size) => new()
             {
                 Location = location,
                 Size = size
             };
-        }
 
         private async void BtnLookup_Click(
             object? sender,
@@ -526,17 +523,17 @@ namespace AdminTrayTool
             WriteLog(
                 "Loading Active Directory organisational units...");
 
-            var result =
+            var (Success, OrganizationalUnits, Error) =
                 await _windowsManagementService
                     .GetOrganizationalUnitsAsync();
 
-            if (!result.Success)
+            if (!Success)
             {
                 WriteLog(
-                    $"Unable to load OUs: {result.Error}");
+                    $"Unable to load OUs: {Error}");
 
                 MessageBox.Show(
-                    result.Error,
+                    Error,
                     "Active Directory",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -545,7 +542,7 @@ namespace AdminTrayTool
             }
 
             _organizationalUnits =
-                result.OrganizationalUnits;
+                OrganizationalUnits;
 
             ApplyOuFilter();
 

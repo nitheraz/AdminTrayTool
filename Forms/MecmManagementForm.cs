@@ -504,7 +504,7 @@ namespace AdminTrayTool.Forms
             _lstCurrentCollections.Enabled = false;
         }
 
-        private Label CreatePanelTitle(
+        private static Label CreatePanelTitle(
             string text)
         {
             return new Label
@@ -526,7 +526,7 @@ namespace AdminTrayTool.Forms
             };
         }
 
-        private Label CreateInfoLabel(
+        private static Label CreateInfoLabel(
             string title,
             int left,
             int top)
@@ -856,7 +856,7 @@ namespace AdminTrayTool.Forms
             }
 
             AppendActivity(
-                $"Computer is currently a member of " +
+                "Computer is currently a member of " +
                 $"{result.Collections.Count} MECM collection(s).");
         }
 
@@ -866,11 +866,7 @@ namespace AdminTrayTool.Forms
 
         private async Task AddToCollectionAsync()
         {
-            CollectionItem? collection =
-                _cmbCollections.SelectedItem
-                    as CollectionItem;
-
-            if (collection == null)
+            if (_cmbCollections.SelectedItem is not CollectionItem collection)
             {
                 MessageBox.Show(
                     "Select a collection.",
@@ -940,11 +936,7 @@ namespace AdminTrayTool.Forms
 
         private async Task RemoveFromCollectionAsync()
         {
-            CollectionItem? collection =
-                _cmbCollections.SelectedItem
-                    as CollectionItem;
-
-            if (collection == null)
+            if (_cmbCollections.SelectedItem is not CollectionItem collection)
             {
                 MessageBox.Show(
                     "Select a collection.",
@@ -970,7 +962,7 @@ namespace AdminTrayTool.Forms
             DialogResult confirmation =
                 MessageBox.Show(
                     $"Remove '{_currentComputerName}' from " +
-                    $"the direct membership of " +
+                    "the direct membership of " +
                     $"'{collection.Name}'?",
                     "Confirm Removal",
                     MessageBoxButtons.YesNo,

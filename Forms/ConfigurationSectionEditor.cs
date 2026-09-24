@@ -13,6 +13,16 @@ namespace AdminTrayTool.Forms
 
         private Button _btnSave = null!;
 
+        private static readonly JsonSerializerOptions JsonDeserializeOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        private static readonly JsonSerializerOptions JsonSerializeOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         public ConfigurationSectionEditor(
             SectionSchema schema,
             string path)
@@ -286,10 +296,7 @@ namespace AdminTrayTool.Forms
                 var root =
                     JsonSerializer.Deserialize<Dictionary<string, object>>(
                         json,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        })
+                        JsonDeserializeOptions)
                     ?? [];
 
                 var section =
@@ -326,7 +333,7 @@ namespace AdminTrayTool.Forms
                 string output =
                     JsonSerializer.Serialize(
                         root,
-                        options);
+                        JsonSerializeOptions);
 
                 File.WriteAllText(
                     _path,

@@ -1,9 +1,8 @@
-﻿using AdminTrayTool.Forms;
-using AdminTrayTool.Models;
+﻿using AdminTrayTool.Models;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class WindowsManagementForm : Form
     {
@@ -171,10 +170,7 @@ namespace AdminTrayTool
                     actionsPanel.Width - _btnClose.Width,
                     5);
 
-            _btnClose.Click += (sender, e) =>
-            {
-                Close();
-            };
+            _btnClose.Click += (sender, e) => Close();
 
             actionsPanel.Controls.Add(_btnClose);
 
@@ -199,8 +195,7 @@ namespace AdminTrayTool
         private void UpdateMecmButtonState()
         {
             bool configured =
-                _config.Mecm != null &&
-                _config.Mecm.Enabled &&
+                _config.Mecm?.Enabled == true &&
                 !string.IsNullOrWhiteSpace(_config.Mecm.SiteCode) &&
                 !string.IsNullOrWhiteSpace(_config.Mecm.SmsProviderServer);
 
@@ -239,8 +234,7 @@ namespace AdminTrayTool
         {
             try
             {
-                if (_config.Mecm == null ||
-                    !_config.Mecm.Enabled)
+                if (_config.Mecm?.Enabled != true)
                 {
                     MessageBox.Show(
                         "MECM is not enabled in the AdminTrayTool configuration.",
