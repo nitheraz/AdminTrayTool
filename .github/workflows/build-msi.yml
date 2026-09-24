@@ -46,26 +46,36 @@ jobs:
       # ========================================
 
       - name: Determine version
-        shell: powershell
+        shell: pwsh
         run: |
+          $versionFile = Join-Path $env:GITHUB_WORKSPACE "VERSION.txt"
 
-          if ("${{ github.ref }}" -match "^refs/tags/v(.+)$") {
+          if (-not (Test-Path $versionFile)) {
+            throw "VERSION.txt was not found."
+          }
 
-              $version = $Matches[1]
+          $fileVersion = (Get-Content $versionFile -Raw).Trim()
 
+          if ($fileVersion -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Invalid version in VERSION.txt: '$fileVersion'. Expected MAJOR.MINOR.PATCH."
+          }
+
+          if ("${{ github.ref }}" -match '^refs/tags/v(.+)$') {
+            $tagVersion = $Matches[1]
+
+            if ($tagVersion -ne $fileVersion) {
+              throw "Version mismatch: Git tag is v$tagVersion but VERSION.txt contains $fileVersion."
+            }
+
+            $version = $tagVersion
+            Write-Host "Release version: $version"
           }
           else {
-
-              $version = "1.0.0"
-
+            $version = $fileVersion
+            Write-Host "Build version from VERSION.txt: $version"
           }
 
-          Write-Host "Version: $version"
-
-          "MSI_VERSION=$version" |
-            Out-File `
-              -FilePath $env:GITHUB_ENV `
-              -Encoding utf8
+          "MSI_VERSION=$version" >> $env:GITHUB_ENV
 
 
       # ========================================

@@ -5,10 +5,34 @@
 # =====================================================================
 
 param(
-    [string]$ProductVersion = "1.1.4",
+    [string]$ProductVersion = "",
     [string]$Configuration = "Release",
     [string]$OutputPath = ".\msi-output"
 )
+
+# VERSION.txt is the single source of truth when ProductVersion is not supplied
+if ([string]::IsNullOrWhiteSpace($ProductVersion)) {
+    $VersionFile = Join-Path $PSScriptRoot "VERSION.txt"
+
+    if (-not (Test-Path $VersionFile)) {
+        throw "VERSION.txt was not found at $VersionFile"
+    }
+
+    $ProductVersion = (Get-Content $VersionFile -Raw).Trim()
+
+    if ($ProductVersion -notmatch '^\d+\.\d+\.\d+$') {
+        throw "Invalid version in VERSION.txt: '$ProductVersion'. Expected format: MAJOR.MINOR.PATCH"
+    }
+
+    Write-Host "Using version from VERSION.txt: $ProductVersion" -ForegroundColor Cyan
+}
+else {
+    if ($ProductVersion -notmatch '^\d+\.\d+\.\d+$') {
+        throw "Invalid ProductVersion: '$ProductVersion'. Expected format: MAJOR.MINOR.PATCH"
+    }
+
+    Write-Host "Using supplied product version: $ProductVersion" -ForegroundColor Cyan
+}
 
 # =====================================================================
 # Configuration

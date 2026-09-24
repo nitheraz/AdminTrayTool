@@ -97,7 +97,7 @@ $(var.ProductVersion)
 When building manually, provide the version to `candle.exe`, for example:
 
 ```powershell
-candle.exe -dSourceDir="..\publish" -dProductVersion="1.5.1" Product.wxs
+candle.exe -dSourceDir="..\publish" -dProductVersion="<version>" Product.wxs
 ```
 
 Then link the resulting object:
@@ -353,7 +353,7 @@ $(var.ProductVersion)
 Provide the value when invoking `candle.exe`:
 
 ```powershell
--dProductVersion="1.5.1"
+-dProductVersion="<version>"
 ```
 
 or use the project's build script, which supplies the version automatically.
