@@ -26,10 +26,6 @@ namespace AdminTrayTool.Services
             return Path.Combine(GetCacheFolder(), "userEmailCache.json");
         }
 
-        /// <summary>
-        /// Loads a cached email list if it exists and is younger than maxAge.
-        /// Returns null if there's no cache, it's expired, or it can't be read.
-        /// </summary>
         public static List<string>? TryLoad(string path, TimeSpan maxAge)
         {
             try

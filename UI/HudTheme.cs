@@ -26,9 +26,6 @@ namespace AdminTrayTool.UI
         // CHAMFERED PANEL
         // ============================================================
 
-        /// <summary>
-        /// Builds a chamfered rectangle path used by HUD panels.
-        /// </summary>
         public static GraphicsPath BuildChamferedPath(
             Rectangle bounds,
             int chamfer)
@@ -85,10 +82,6 @@ namespace AdminTrayTool.UI
         // HUD PANEL
         // ============================================================
 
-        /// <summary>
-        /// Paints a chamfered panel background with a vertical gradient
-        /// and cyan border.
-        /// </summary>
         public static void PaintPanel(
             Graphics g,
             Rectangle bounds,
@@ -134,11 +127,6 @@ namespace AdminTrayTool.UI
         // 3D RECTANGULAR BUTTON
         // ============================================================
 
-        /// <summary>
-        /// Paints a clean rectangular 3D HUD button.
-        /// The button uses a radial-style centre gradient,
-        /// a subtle bevel and a small raised depth.
-        /// </summary>
         public static void PaintButton(
             Graphics g,
             Rectangle bounds,
@@ -165,7 +153,7 @@ namespace AdminTrayTool.UI
             int depth = isPressed ? 1 : 3;
 
             Rectangle faceRect =
-                new Rectangle(
+                new(
                     bounds.X + 1,
                     bounds.Y + 1,
                     bounds.Width - 3,
@@ -184,7 +172,7 @@ namespace AdminTrayTool.UI
             if (depth > 0)
             {
                 Rectangle depthRect =
-                    new Rectangle(
+                    new(
                         bounds.X + 2,
                         bounds.Y + depth + 1,
                         bounds.Width - 4,
@@ -286,15 +274,15 @@ namespace AdminTrayTool.UI
             faceBrush.CenterPoint =
                 new PointF(
                     faceRect.Left +
-                    faceRect.Width / 2f,
+                    (faceRect.Width / 2f),
                     faceRect.Top +
-                    faceRect.Height / 2f);
+                    (faceRect.Height / 2f));
 
             faceBrush.CenterColor =
                 centreColor;
 
             faceBrush.SurroundColors =
-                new[] { edgeColor };
+                [edgeColor];
 
             g.FillRectangle(
                 faceBrush,
@@ -372,17 +360,24 @@ namespace AdminTrayTool.UI
             // OUTER EDGE
             // --------------------------------------------------------
 
-            Color borderColor =
-                !isEnabled
-                    ? Color.FromArgb(
-                        60,
-                        80,
-                        100)
-                    : isHovered
-                        ? AccentCyan
-                        : Color.FromArgb(
-                            90,
-                            AccentCyan);
+            Color borderColor;
+            if (!isEnabled)
+            {
+                borderColor = Color.FromArgb(
+                                    60,
+                                    80,
+                                    100);
+            }
+            else if (isHovered)
+            {
+                borderColor = AccentCyan;
+            }
+            else
+            {
+                borderColor = Color.FromArgb(
+                                        90,
+                                        AccentCyan);
+            }
 
             using var borderPen =
                 new Pen(
@@ -390,7 +385,7 @@ namespace AdminTrayTool.UI
                     1f);
 
             Rectangle borderRect =
-                new Rectangle(
+                new(
                     bounds.X,
                     bounds.Y,
                     bounds.Width - 1,

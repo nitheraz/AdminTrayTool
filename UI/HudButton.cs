@@ -1,6 +1,4 @@
-﻿using AdminTrayTool.UI;
-
-namespace AdminTrayTool
+﻿namespace AdminTrayTool.UI
 {
     public class HudButton : Button
     {
@@ -92,7 +90,7 @@ namespace AdminTrayTool
             PaintEventArgs pevent)
         {
             using SolidBrush backgroundBrush =
-                new SolidBrush(HudTheme.GradientBottom);
+                new(HudTheme.GradientBottom);
 
             pevent.Graphics.FillRectangle(
                 backgroundBrush,

@@ -1,8 +1,9 @@
 ﻿using AdminTrayTool.Services;
 using System.Diagnostics;
 using System.Reflection;
+using AdminTrayTool.UI;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class AboutForm : Form
     {

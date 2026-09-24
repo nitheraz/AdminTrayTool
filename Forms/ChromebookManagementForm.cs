@@ -1,5 +1,6 @@
 ﻿using AdminTrayTool.Models;
 using AdminTrayTool.Services;
+using AdminTrayTool.UI;
 using System.Diagnostics;
 
 namespace AdminTrayTool.Forms
@@ -1021,8 +1022,8 @@ namespace AdminTrayTool.Forms
             try
             {
                 var (Success, Device, Error) = searchByAssetId
-                    ? await _gamService.GetChromebookInfoByAssetIdAsync(searchValue)
-                    : await _gamService.GetChromebookInfoAsync(searchValue);
+                    ? await GamService.GetChromebookInfoByAssetIdAsync(searchValue)
+                    : await GamService.GetChromebookInfoAsync(searchValue);
 
                 if (!Success ||
                     Device == null)
@@ -1096,8 +1097,7 @@ namespace AdminTrayTool.Forms
             try
             {
                 var (Success, Device, Error) =
-                    await _gamService
-                        .GetChromebookInfoAsync(
+                    await GamService.GetChromebookInfoAsync(
                             serial);
 
                 if (!Success ||
@@ -1362,8 +1362,7 @@ namespace AdminTrayTool.Forms
                     $"New Asset ID: {assetId}");
 
                 Services.GamResult result =
-                    await _gamService
-                        .UpdateAnnotatedAssetIdAsync(
+                    await GamService.UpdateAnnotatedAssetIdAsync(
                             serial,
                             assetId);
 
@@ -1626,8 +1625,7 @@ namespace AdminTrayTool.Forms
                     $"Disabling Chromebook {serial}...");
 
                 Services.GamResult result =
-                    await _gamService
-                        .DisableChromebookAsync(
+                    await GamService.DisableChromebookAsync(
                             serial);
 
                 WriteLog(
@@ -1693,8 +1691,7 @@ namespace AdminTrayTool.Forms
                     $"Re-enabling Chromebook {serial}...");
 
                 Services.GamResult result =
-                    await _gamService
-                        .ReenableChromebookAsync(
+                    await GamService.ReenableChromebookAsync(
                             serial);
 
                 WriteLog(
@@ -1801,8 +1798,7 @@ namespace AdminTrayTool.Forms
                     $"New OU: {newOu}");
 
                 Services.GamResult result =
-                    await _gamService
-                        .MoveChromebookToOuAsync(
+                    await GamService.MoveChromebookToOuAsync(
                             serial,
                             newOu);
 
@@ -1889,8 +1885,7 @@ namespace AdminTrayTool.Forms
                     $"Powerwashing Chromebook {serial}...");
 
                 Services.GamResult result =
-                    await _gamService
-                        .PowerwashChromebookAsync(serial);
+                    await GamService.PowerwashChromebookAsync(serial);
 
                 WriteLog(
                     result.CombinedOutput);
@@ -1968,8 +1963,7 @@ namespace AdminTrayTool.Forms
                     $"Clearing user profiles from Chromebook {serial}...");
 
                 Services.GamResult result =
-                    await _gamService
-                        .ClearChromebookProfilesAsync(serial);
+                    await GamService.ClearChromebookProfilesAsync(serial);
 
                 WriteLog(
                     result.CombinedOutput);

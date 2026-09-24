@@ -1,6 +1,7 @@
 ﻿using AdminTrayTool.Services;
+using AdminTrayTool.UI;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class MoveChromebookOuForm : Form
     {
@@ -13,25 +14,19 @@ namespace AdminTrayTool
 
         public string? SelectedOrgUnitPath { get; private set; }
 
-        public MoveChromebookOuForm(
-            string currentOrgUnit)
+        public MoveChromebookOuForm(string currentOu)
         {
             _gamService = new GamService();
 
-            InitializeForm(
-                currentOrgUnit);
+            InitializeForm();
 
             BuildInterface();
 
             Shown +=
-                async (s, e) =>
-                {
-                    await LoadOrgUnitsAsync();
-                };
+                async (s, e) => await LoadOrgUnitsAsync();
         }
 
-        private void InitializeForm(
-            string currentOrgUnit)
+        private void InitializeForm()
         {
             Text = "Move Chromebook";
 
@@ -252,17 +247,16 @@ namespace AdminTrayTool
         {
             try
             {
-                var result =
-                    await _gamService
-                        .GetAllOrgUnitPathsAsync();
+                var (Success, OrgUnitPaths, Error) =
+                    await GamService.GetAllOrgUnitPathsAsync();
 
-                if (!result.Success)
+                if (!Success)
                 {
                     _lblStatus.Text =
                         "Unable to load organisational units.";
 
                     MessageBox.Show(
-                        result.Error,
+                        Error,
                         "Load Organisational Units Failed",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
@@ -272,7 +266,7 @@ namespace AdminTrayTool
 
                 _cmbOrgUnits.Items.Clear();
 
-                foreach (string path in result.OrgUnitPaths)
+                foreach (string path in OrgUnitPaths)
                 {
                     _cmbOrgUnits.Items.Add(path);
                 }

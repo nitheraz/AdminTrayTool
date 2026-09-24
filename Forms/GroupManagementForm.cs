@@ -1,9 +1,10 @@
 ﻿using AdminTrayTool.Models;
 using AdminTrayTool.Services;
+using AdminTrayTool.UI;
 using System.Diagnostics;
 using System.Text;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Forms
 {
     public class GroupManagementForm : Form
     {
@@ -63,7 +64,7 @@ namespace AdminTrayTool
                     return;
                 }
 
-                var (success, groupEmails, error) = await _gamService.GetAllGroupEmailsAsync();
+                var (success, groupEmails, error) = await GamService.GetAllGroupEmailsAsync();
 
                 if (!success)
                 {
@@ -95,7 +96,7 @@ namespace AdminTrayTool
                     return;
                 }
 
-                var (success, userEmails, error) = await _gamService.GetAllUserEmailsAsync();
+                var (success, userEmails, error) = await GamService.GetAllUserEmailsAsync();
 
                 if (!success)
                 {
@@ -119,7 +120,7 @@ namespace AdminTrayTool
                 return;
 
             var source = new AutoCompleteStringCollection();
-            source.AddRange(emails.ToArray());
+            source.AddRange([.. emails]);
 
             _txtGroupEmail.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             _txtGroupEmail.AutoCompleteSource = AutoCompleteSource.CustomSource;
@@ -132,7 +133,7 @@ namespace AdminTrayTool
                 return;
 
             var source = new AutoCompleteStringCollection();
-            source.AddRange(emails.ToArray());
+            source.AddRange([.. emails]);
 
             _txtStaffEmail.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             _txtStaffEmail.AutoCompleteSource = AutoCompleteSource.CustomSource;
@@ -563,7 +564,7 @@ namespace AdminTrayTool
                     return;
                 }
 
-                groupsToAdd = new[] { customGroup };
+                groupsToAdd = [customGroup];
             }
             else
             {
@@ -581,13 +582,13 @@ namespace AdminTrayTool
                     return;
                 }
 
-                groupsToAdd = template.Groups.ToArray();
+                groupsToAdd = [.. template.Groups];
             }
 
             string groupListDisplay = string.Join("\n", groupsToAdd);
 
             DialogResult confirmation = MessageBox.Show(
-                $"Add this staff member to the following group(s)?\n\n" +
+                "Add this staff member to the following group(s)?\n\n" +
                 $"Staff:\n{staffEmail}\n\n" +
                 $"Group(s):\n{groupListDisplay}",
                 "Confirm Add to Group(s)",
@@ -609,7 +610,7 @@ namespace AdminTrayTool
 
                 try
                 {
-                    Services.GamResult result = await _gamService.AddUserToGroupAsync(group, staffEmail);
+                    Services.GamResult result = await GamService.AddUserToGroupAsync(group, staffEmail);
                     WriteLog(result.CombinedOutput);
 
                     if (result.Success)
@@ -633,11 +634,19 @@ namespace AdminTrayTool
 
             SetBusy(false);
 
-            MessageBoxIcon icon = failCount == 0
-                ? MessageBoxIcon.Information
-                : successCount == 0
-                    ? MessageBoxIcon.Error
-                    : MessageBoxIcon.Warning;
+            MessageBoxIcon icon;
+            if (failCount == 0)
+            {
+                icon = MessageBoxIcon.Information;
+            }
+            else if (successCount == 0)
+            {
+                icon = MessageBoxIcon.Error;
+            }
+            else
+            {
+                icon = MessageBoxIcon.Warning;
+            }
 
             MessageBox.Show(
                 $"Finished adding {staffEmail}.\n\n{summary}",
@@ -681,16 +690,13 @@ namespace AdminTrayTool
         // UI HELPERS
         // =============================================================
 
-        private Panel CreatePanel(Point location, Size size)
+        private static HudPanel CreatePanel(Point location, Size size) => new()
         {
-            return new HudPanel
-            {
-                Location = location,
-                Size = size
-            };
-        }
+            Location = location,
+            Size = size
+        };
 
-        private Label CreateLabel(string text, Point location)
+        private static Label CreateLabel(string text, Point location)
         {
             return new Label
             {
@@ -702,14 +708,11 @@ namespace AdminTrayTool
             };
         }
 
-        private Button CreateButton(string text, Point location, Size size)
+        private static HudButton CreateButton(string text, Point location, Size size) => new()
         {
-            return new HudButton
-            {
-                Text = text,
-                Location = location,
-                Size = size
-            };
-        }
+            Text = text,
+            Location = location,
+            Size = size
+        };
     }
 }

@@ -1,6 +1,4 @@
-﻿using AdminTrayTool.UI;
-
-namespace AdminTrayTool
+﻿namespace AdminTrayTool.UI
 {
     public class HudPanel : Panel
     {

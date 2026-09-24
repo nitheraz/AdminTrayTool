@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace AdminTrayTool.Services
 {
-    public class GamService
+    public static class GamService
     {
         private static string? SelectedGamPath;
 
@@ -14,7 +14,7 @@ namespace AdminTrayTool.Services
         // GAM INSTALLATION CHECK
         // ============================================================
 
-        public async Task<bool> IsGamInstalledAsync()
+        public static async Task<bool> IsGamInstalledAsync()
         {
             SelectedGamPath = await GetGamExecutablePathAsync();
 
@@ -22,12 +22,12 @@ namespace AdminTrayTool.Services
                    File.Exists(SelectedGamPath);
         }
 
-        public async Task<string?> GetGamPathAsync()
+        public static async Task<string?> GetGamPathAsync()
         {
             return await GetGamExecutablePathAsync();
         }
 
-        public async Task<GamResult> CheckGamHealthAsync()
+        public static async Task<GamResult> CheckGamHealthAsync()
         {
             if (!await IsGamInstalledAsync())
             {
@@ -46,7 +46,7 @@ namespace AdminTrayTool.Services
         // GET CHROMEBOOK INFORMATION
         // ============================================================
 
-        public async Task<(bool Success, ChromebookInfo? Device, string Error)>
+        public static async Task<(bool Success, ChromebookInfo? Device, string Error)>
             GetChromebookInfoAsync(string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
@@ -122,7 +122,7 @@ namespace AdminTrayTool.Services
         // GET CHROMEBOOK BY ASSET ID
         // ============================================================
 
-        public async Task<(bool Success, ChromebookInfo? Device, string Error)>
+        public static async Task<(bool Success, ChromebookInfo? Device, string Error)>
             GetChromebookInfoByAssetIdAsync(
                 string assetId,
                 bool forceRefresh = false)
@@ -260,7 +260,7 @@ namespace AdminTrayTool.Services
         // UPDATE ANNOTATED ASSET ID
         // ============================================================
 
-        public async Task<GamResult> UpdateAnnotatedAssetIdAsync(
+        public static async Task<GamResult> UpdateAnnotatedAssetIdAsync(
             string serialNumber,
             string assetId)
         {
@@ -294,7 +294,7 @@ namespace AdminTrayTool.Services
         // DISABLE / ENABLE CHROMEBOOK
         // ============================================================
 
-        public async Task<GamResult> DisableChromebookAsync(
+        public static async Task<GamResult> DisableChromebookAsync(
             string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
@@ -313,7 +313,7 @@ namespace AdminTrayTool.Services
                 "action disable");
         }
 
-        public async Task<GamResult> ReenableChromebookAsync(
+        public static async Task<GamResult> ReenableChromebookAsync(
             string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
@@ -332,7 +332,7 @@ namespace AdminTrayTool.Services
                 "action reenable");
         }
 
-        public async Task<GamResult> PowerwashChromebookAsync(
+        public static async Task<GamResult> PowerwashChromebookAsync(
             string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
@@ -351,7 +351,7 @@ namespace AdminTrayTool.Services
                 "command remote_powerwash doit");
         }
 
-        public async Task<GamResult> ClearChromebookProfilesAsync(
+        public static async Task<GamResult> ClearChromebookProfilesAsync(
             string serialNumber)
         {
             if (string.IsNullOrWhiteSpace(serialNumber))
@@ -370,7 +370,7 @@ namespace AdminTrayTool.Services
                 "command wipe_users doit");
         }
 
-        public async Task<GamResult> MoveChromebookToOuAsync(
+        public static async Task<GamResult> MoveChromebookToOuAsync(
             string serialNumber,
             string orgUnitPath)
         {
@@ -404,7 +404,7 @@ namespace AdminTrayTool.Services
         // GET ORGANISATIONAL UNITS
         // ============================================================
 
-        public async Task<(bool Success, List<string> OrgUnitPaths, string Error)>
+        public static async Task<(bool Success, List<string> OrgUnitPaths, string Error)>
             GetAllOrgUnitPathsAsync()
         {
             GamResult result =
@@ -438,7 +438,7 @@ namespace AdminTrayTool.Services
         // ADD USER TO GROUP
         // ============================================================
 
-        public async Task<GamResult> AddUserToGroupAsync(
+        public static async Task<GamResult> AddUserToGroupAsync(
             string groupEmail,
             string userEmail)
         {
@@ -468,7 +468,7 @@ namespace AdminTrayTool.Services
                 $"add member {QuoteArgument(userEmail)}");
         }
 
-        public async Task<(bool Success, List<string> GroupEmails, string Error)>
+        public static async Task<(bool Success, List<string> GroupEmails, string Error)>
             GetAllGroupEmailsAsync()
         {
             GamResult result =
@@ -502,7 +502,7 @@ namespace AdminTrayTool.Services
         // LIST ALL USERS
         // ============================================================
 
-        public async Task<(bool Success, List<string> UserEmails, string Error)>
+        public static async Task<(bool Success, List<string> UserEmails, string Error)>
             GetAllUserEmailsAsync()
         {
             GamResult result =
@@ -592,7 +592,7 @@ namespace AdminTrayTool.Services
         // RUN GAM
         // ============================================================
 
-        private async Task<GamResult> RunGamAsync(
+        private static async Task<GamResult> RunGamAsync(
             string arguments)
         {
             string? gamPath =
@@ -689,11 +689,8 @@ namespace AdminTrayTool.Services
         private static async Task<string?>
             GetGamExecutablePathAsync()
         {
-            if (SelectedGamPath == null)
-            {
-                SelectedGamPath =
+            SelectedGamPath ??=
                     await GamLocator.LocateGam();
-            }
 
             return SelectedGamPath;
         }
