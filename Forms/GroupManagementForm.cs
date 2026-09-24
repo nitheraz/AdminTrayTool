@@ -64,7 +64,7 @@ namespace AdminTrayTool.Forms
                     return;
                 }
 
-                var (success, groupEmails, error) = await GamService.GetAllGroupEmailsAsync();
+                var (success, groupEmails, error) = await _gamService.GetAllGroupEmailsAsync();
 
                 if (!success)
                 {
@@ -96,7 +96,7 @@ namespace AdminTrayTool.Forms
                     return;
                 }
 
-                var (success, userEmails, error) = await GamService.GetAllUserEmailsAsync();
+                var (success, userEmails, error) = await _gamService.GetAllUserEmailsAsync();
 
                 if (!success)
                 {
@@ -610,7 +610,7 @@ namespace AdminTrayTool.Forms
 
                 try
                 {
-                    Services.GamResult result = await GamService.AddUserToGroupAsync(group, staffEmail);
+                    Services.GamResult result = await _gamService.AddUserToGroupAsync(group, staffEmail);
                     WriteLog(result.CombinedOutput);
 
                     if (result.Success)

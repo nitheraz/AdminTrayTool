@@ -248,7 +248,8 @@ namespace AdminTrayTool.Forms
             try
             {
                 var (Success, OrgUnitPaths, Error) =
-                    await GamService.GetAllOrgUnitPathsAsync();
+                    await _gamService
+                        .GetAllOrgUnitPathsAsync();
 
                 if (!Success)
                 {

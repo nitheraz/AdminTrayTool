@@ -764,7 +764,8 @@ namespace AdminTrayTool.Forms
                     "Loading organisational units...";
 
                 var (Success, OrgUnitPaths, Error) =
-                    await GamService.GetAllOrgUnitPathsAsync();
+                    await _gamService
+                        .GetAllOrgUnitPathsAsync();
 
                 _cmbBulkOrgUnit.Items.Clear();
 
@@ -1611,7 +1612,7 @@ namespace AdminTrayTool.Forms
                             case "Disable Chromebook":
                                 {
                                     var result =
-                                        await GamService.DisableChromebookAsync(
+                                        await _gamService.DisableChromebookAsync(
                                             device.SerialNumber);
 
                                     if (result.Success)
@@ -1638,7 +1639,7 @@ namespace AdminTrayTool.Forms
                             case "Re-enable Chromebook":
                                 {
                                     var result =
-                                        await GamService.ReenableChromebookAsync(
+                                        await _gamService.ReenableChromebookAsync(
                                             device.SerialNumber);
 
                                     if (result.Success)
@@ -1665,7 +1666,7 @@ namespace AdminTrayTool.Forms
                             case "Move to OU":
                                 {
                                     var result =
-                                        await GamService.MoveChromebookToOuAsync(
+                                        await _gamService.MoveChromebookToOuAsync(
                                             device.SerialNumber,
                                             selectedOu!);
 
@@ -1693,7 +1694,7 @@ namespace AdminTrayTool.Forms
                             case "Powerwash":
                                 {
                                     var result =
-                                        await GamService.PowerwashChromebookAsync(
+                                        await _gamService.PowerwashChromebookAsync(
                                             device.SerialNumber);
 
                                     if (result.Success)
@@ -1720,7 +1721,7 @@ namespace AdminTrayTool.Forms
                             case "Clear Profiles":
                                 {
                                     var result =
-                                        await GamService.ClearChromebookProfilesAsync(
+                                        await _gamService.ClearChromebookProfilesAsync(
                                             device.SerialNumber);
 
                                     if (result.Success)
@@ -1750,7 +1751,7 @@ namespace AdminTrayTool.Forms
                                         device.RequestedAssetId ?? string.Empty;
 
                                     var result =
-                                        await GamService.UpdateAnnotatedAssetIdAsync(
+                                        await _gamService.UpdateAnnotatedAssetIdAsync(
                                             device.SerialNumber,
                                             requestedAssetId);
 
