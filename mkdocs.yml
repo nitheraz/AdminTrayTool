@@ -6,6 +6,10 @@ repo_name: nitheraz/AdminTrayTool
 
 theme:
   name: material
+
+  icon:
+    logo: material/home
+
   palette:
     - scheme: slate
       primary: indigo
@@ -13,42 +17,92 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
     - scheme: default
       primary: indigo
       accent: cyan
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
+
   features:
     - navigation.tabs
+    - navigation.sections
+    - navigation.expand
     - navigation.top
+    - navigation.instant
+    - navigation.tracking
     - search.suggest
     - search.highlight
+    - search.share
     - content.code.copy
+    - content.code.annotate
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  favicon: assets/favicon.png
+
+  logo: assets/logo.png
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/nitheraz/AdminTrayTool
+
+  generator: false
+
+copyright: >
+  AdminTrayTool documentation
 
 nav:
   - Home: index.md
+
   - Getting Started: getting-started.md
+
   - Guides:
       - Chromebook Management: guides/chromebook-management.md
-      - Bulk Chromebook Management: guides/bulk-chromebook-management.md
+
+      - Bulk Chromebook Management:
+          guides/bulk-chromebook-management.md
+
       - Windows Management:
-          - Windows Management Setup: guides/windows-management-setup.md
-          - Windows Management Guide: guides/windows-management.md
-      - Active Directory Management: guides/active-directory-management.md
-      - MECM / SCCM Management: guides/mecm-management.md
-      - Group Management: guides/group-management.md
-      - Config Settings: guides/config-settings.md
+          - Windows Management Setup:
+              guides/windows-management-setup.md
+          - Windows Management Guide:
+              guides/windows-management.md
+
+      - Active Directory Management:
+          guides/active-directory-management.md
+
+      - MECM / SCCM Management:
+          guides/mecm-management.md
+
+      - Group Management:
+          guides/group-management.md
+
+      - Config Settings:
+          guides/config-settings.md
+
   - GAM7 Setup & Troubleshooting: gam-setup.md
+
   - FAQ: faq.md
+
   - About & Versioning: about.md
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
   - pymdownx.details
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
   - tables
   - toc:
       permalink: true
+
