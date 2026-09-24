@@ -2,12 +2,14 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace AdminTrayTool
+namespace AdminTrayTool.Services
 {
     public static class UpdateCheckService
     {
         private const string LatestReleaseApiUrl =
             "https://api.github.com/repos/nitheraz/AdminTrayTool/releases/latest";
+
+        private const string UpdateCompletedArgument = "--update-complete";
 
         public static async Task CheckForUpdateAsync(
             string currentVersion,
@@ -111,7 +113,7 @@ namespace AdminTrayTool
 
                 DialogResult result =
                     MessageBox.Show(
-                        $"A newer version of AdminTrayTool is available.\n\n" +
+                        "A newer version of AdminTrayTool is available.\n\n" +
                         $"Installed version: {currentVersion}\n" +
                         $"Latest version: {latestVersion}\n\n" +
                         "Would you like to download and install it now?",
@@ -190,13 +192,12 @@ namespace AdminTrayTool
             return null;
         }
 
-        private static async Task
-            DownloadAndInstallAsync(
-                HttpClient client,
-                string downloadUrl,
-                string assetName,
-                string? digest,
-                string latestVersion)
+        private static async Task DownloadAndInstallAsync(
+            HttpClient client,
+            string downloadUrl,
+            string assetName,
+            string? digest,
+            string latestVersion)
         {
             string tempDirectory =
                 Path.Combine(
@@ -268,7 +269,8 @@ namespace AdminTrayTool
                 var startInfo = new ProcessStartInfo
                 {
                     FileName = "msiexec.exe",
-                    Arguments = $"/i \"{msiPath}\" /passive /norestart",
+                    Arguments =
+                        $"/i \"{msiPath}\" /passive /norestart",
                     UseShellExecute = true
                 };
 
@@ -294,10 +296,9 @@ namespace AdminTrayTool
             }
         }
 
-        private static async Task<bool>
-            VerifySha256Async(
-                string filePath,
-                string digest)
+        private static async Task<bool> VerifySha256Async(
+            string filePath,
+            string digest)
         {
             string expectedHash =
                 digest;
@@ -307,8 +308,8 @@ namespace AdminTrayTool
                     StringComparison.OrdinalIgnoreCase))
             {
                 expectedHash =
-                    expectedHash.Substring(
-                        "sha256:".Length);
+                    expectedHash[
+                        "sha256:".Length..];
             }
 
             expectedHash =

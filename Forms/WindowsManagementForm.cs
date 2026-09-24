@@ -474,14 +474,11 @@ namespace AdminTrayTool
         private Button CreateButton(
             string text,
             Point location,
-            Size size)
-        {
-            return new HudButton
+            Size size) => new HudButton
             {
                 Text = text,
                 Location = location,
                 Size = size
             };
-        }
     }
 }
