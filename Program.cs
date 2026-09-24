@@ -1,7 +1,7 @@
 using AdminTrayTool.Forms;
+using AdminTrayTool.Models;
 using AdminTrayTool.Services;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace AdminTrayTool
@@ -41,37 +41,36 @@ namespace AdminTrayTool
 
             ApplicationConfiguration.Initialize();
 
-            var trayMenu = new ContextMenuStrip();
+            var trayMenu =
+                new ContextMenuStrip();
 
-            // ProgramData migration:
-            // Prefer machine-wide config in %PROGRAMDATA%\AdminTrayTool\config.json.
-            string programDataDir = Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.CommonApplicationData),
-                "AdminTrayTool");
+            string programDataDir =
+                Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.CommonApplicationData),
+                    "AdminTrayTool");
 
-            string programConfigPath = Path.Combine(
-                programDataDir,
-                "config.json");
+            string programConfigPath =
+                Path.Combine(
+                    programDataDir,
+                    "config.json");
 
-            // Ensure program data directory exists.
             try
             {
-                Directory.CreateDirectory(programDataDir);
+                Directory.CreateDirectory(
+                    programDataDir);
             }
             catch
             {
                 // Ignore.
-                // LoadConfig will handle any subsequent file access failure.
             }
 
-            // If no program-wide config exists, but a per-user config exists,
-            // try to migrate it.
-            string userConfigPath = Path.Combine(
-                Environment.GetFolderPath(
-                    Environment.SpecialFolder.ApplicationData),
-                "AdminTrayTool",
-                "config.json");
+            string userConfigPath =
+                Path.Combine(
+                    Environment.GetFolderPath(
+                        Environment.SpecialFolder.ApplicationData),
+                    "AdminTrayTool",
+                    "config.json");
 
             if (!File.Exists(programConfigPath) &&
                 File.Exists(userConfigPath))
@@ -85,33 +84,35 @@ namespace AdminTrayTool
                 catch
                 {
                     // Ignore migration failure.
-                    // The program-wide config will be created if possible.
                 }
             }
 
-            // Load configuration.
-            AppConfig cfg = LoadConfig(programConfigPath);
+            AppConfig cfg =
+                LoadConfig(
+                    programConfigPath);
 
-            // Build tray menu.
             BuildMenuFromConfig(
                 trayMenu,
                 cfg,
                 programConfigPath);
 
-            // Create tray icon.
-            trayIcon = new NotifyIcon
-            {
-                Text = "IT Admin Quick Tools",
-                Icon = new Icon(
-                    Path.Combine(
-                        AppContext.BaseDirectory,
-                        "adminTray.ico")),
-                ContextMenuStrip = trayMenu,
-                Visible = true
-            };
+            trayIcon =
+                new NotifyIcon
+                {
+                    Text = "IT Admin Quick Tools",
 
-            // Show update completion message only when the updater
-            // intentionally restarted AdminTrayTool with --update-complete.
+                    Icon =
+                        new Icon(
+                            Path.Combine(
+                                AppContext.BaseDirectory,
+                                "adminTray.ico")),
+
+                    ContextMenuStrip =
+                        trayMenu,
+
+                    Visible = true
+                };
+
             if (updateCompleted)
             {
                 trayIcon.BalloonTipTitle =
@@ -125,8 +126,6 @@ namespace AdminTrayTool
 
                 trayIcon.ShowBalloonTip(5000);
 
-                // Also display a normal message box so the completion
-                // message is reliably visible after the update.
                 MessageBox.Show(
                     $"AdminTrayTool has been successfully updated to version {GetApplicationVersion()}.",
                     "Update Complete",
@@ -134,7 +133,6 @@ namespace AdminTrayTool
                     MessageBoxIcon.Information);
             }
 
-            // Silent background update check on startup.
             string startupVersionString =
                 GetApplicationVersion();
 
@@ -144,6 +142,10 @@ namespace AdminTrayTool
 
             Application.Run();
         }
+
+        // ============================================================
+        // APPLICATION VERSION
+        // ============================================================
 
         private static string GetApplicationVersion()
         {
@@ -158,79 +160,25 @@ namespace AdminTrayTool
                 : "0.0.0";
         }
 
-        private static readonly JsonSerializerOptions JsonOptions = new()
+        // ============================================================
+        // JSON CONFIGURATION
+        // ============================================================
+
+        private static readonly JsonSerializerOptions JsonOptions =
+            new()
+            {
+                WriteIndented = true,
+                PropertyNamingPolicy =
+                    JsonNamingPolicy.CamelCase
+            };
+
+        private static AppConfig LoadConfig(
+            string path)
         {
-            WriteIndented = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
-        /// <summary>
-        /// Represents the application configuration.
-        /// </summary>
-        class AppConfig
-        {
-            public string Editor { get; set; } = "notepad.exe";
-
-            public List<WebPortal> WebPortals { get; set; } = [];
-
-            public List<RdpEntry> RdpServers { get; set; } = [];
-
-            public List<AdminTool> AdminTools { get; set; } = [];
-        }
-
-        /// <summary>
-        /// Represents a web portal available from the AdminTrayTool tray menu.
-        /// </summary>
-        class WebPortal
-        {
-            public string Name { get; set; } = string.Empty;
-
-            public string Url { get; set; } = string.Empty;
-
-            public string Profile { get; set; } = string.Empty;
-        }
-
-        /// <summary>
-        /// Represents a Remote Desktop connection available from the AdminTrayTool tray menu.
-        /// </summary>
-        class RdpEntry
-        {
-            public string Name { get; set; } = string.Empty;
-
-            public string Host { get; set; } = string.Empty;
-        }
-
-        /// <summary>
-        /// Represents a locally installed administrative tool that can be launched
-        /// from the AdminTrayTool tray menu.
-        /// </summary>
-        class AdminTool
-        {
-            public string Name { get; set; } = string.Empty;
-
-            public string Exe { get; set; } = string.Empty;
-
-            public string Args { get; set; } = string.Empty;
-
-            public string Category { get; set; } = "Other";
-
-            public bool Elevated { get; set; }
-        }
-
-        static AppConfig LoadConfig(string path)
-        {
-            // If config doesn't exist, create one with defaults.
             if (!File.Exists(path))
             {
-                var def = new AppConfig
-                {
-                    Editor = "notepad.exe",
-                    WebPortals = [],
-                    RdpServers = [],
-                    AdminTools = []
-                };
-
-                AppendDefaultEntries(def);
+                var def =
+                    CreateDefaultConfig();
 
                 string json =
                     JsonSerializer.Serialize(
@@ -255,50 +203,110 @@ namespace AdminTrayTool
                         JsonOptions)
                     ?? new AppConfig();
 
-                AppendDefaultEntries(cfg);
+                ApplyConfigDefaults(cfg);
 
                 return cfg;
             }
             catch
             {
-                return new AppConfig();
+                return CreateDefaultConfig();
             }
         }
 
-        static void AppendDefaultEntries(AppConfig cfg)
+        private static AppConfig CreateDefaultConfig()
         {
-            if (cfg == null)
-                return;
+            var config =
+                new AppConfig
+                {
+                    Editor = "notepad.exe",
 
+                    WebPortals = [],
+
+                    RdpServers = [],
+
+                    AdminTools = [],
+
+                    ActiveDirectory =
+                        new ActiveDirectoryConfig
+                        {
+                            Enabled = true
+                        },
+
+                    Mecm =
+                        new MecmConfig
+                        {
+                            Enabled = false,
+                            SiteCode = string.Empty,
+                            SmsProviderServer = string.Empty
+                        }
+                };
+
+            AddDefaultWebPortals(config);
+            AddDefaultRdpServers(config);
+            AddDefaultAdminTools(config);
+
+            return config;
+        }
+
+        private static void ApplyConfigDefaults(
+            AppConfig cfg)
+        {
             cfg.WebPortals ??= [];
             cfg.RdpServers ??= [];
             cfg.AdminTools ??= [];
+
+            cfg.ActiveDirectory ??=
+                new ActiveDirectoryConfig
+                {
+                    Enabled = true
+                };
+
+            cfg.Mecm ??=
+                new MecmConfig
+                {
+                    Enabled = false,
+                    SiteCode = string.Empty,
+                    SmsProviderServer = string.Empty
+                };
+
+            cfg.Mecm.SiteCode ??=
+                string.Empty;
+
+            cfg.Mecm.SmsProviderServer ??=
+                string.Empty;
 
             AddDefaultWebPortals(cfg);
             AddDefaultRdpServers(cfg);
             AddDefaultAdminTools(cfg);
         }
 
-        static void AddDefaultWebPortals(AppConfig cfg)
+        // ============================================================
+        // DEFAULT WEB PORTALS
+        // ============================================================
+
+        private static void AddDefaultWebPortals(
+            AppConfig cfg)
         {
             if (cfg.WebPortals.Count > 0)
                 return;
 
-            var defaults = new[]
-            {
-                new WebPortal
+            var defaults =
+                new[]
                 {
-                    Name = "Admin Console",
-                    Url = "https://admin.google.com",
-                    Profile = AdminProfile
-                },
-                new WebPortal
-                {
-                    Name = "Dashboard",
-                    Url = "https://dashboard.example.com",
-                    Profile = AdminProfile
-                }
-            };
+                    new WebPortal
+                    {
+                        Name = "Admin Console",
+                        Url = "https://admin.google.com",
+                        Profile = AdminProfile
+                    },
+
+                    new WebPortal
+                    {
+                        Name = "Dashboard",
+                        Url = "https://dashboard.example.com",
+                        Profile = AdminProfile
+                    }
+                };
 
             foreach (var web in defaults)
             {
@@ -313,24 +321,31 @@ namespace AdminTrayTool
             }
         }
 
-        static void AddDefaultRdpServers(AppConfig cfg)
+        // ============================================================
+        // DEFAULT RDP SERVERS
+        // ============================================================
+
+        private static void AddDefaultRdpServers(
+            AppConfig cfg)
         {
             if (cfg.RdpServers.Count > 0)
                 return;
 
-            var defaults = new[]
-            {
-                new RdpEntry
+            var defaults =
+                new[]
                 {
-                    Name = "Server 1",
-                    Host = "Server 1"
-                },
-                new RdpEntry
-                {
-                    Name = "Server 2",
-                    Host = "Server 2"
-                }
-            };
+                    new RdpEntry
+                    {
+                        Name = "Server 1",
+                        Host = "Server 1"
+                    },
+
+                    new RdpEntry
+                    {
+                        Name = "Server 2",
+                        Host = "Server 2"
+                    }
+                };
 
             foreach (var rdp in defaults)
             {
@@ -345,28 +360,35 @@ namespace AdminTrayTool
             }
         }
 
-        static void AddDefaultAdminTools(AppConfig cfg)
+        // ============================================================
+        // DEFAULT ADMIN TOOLS
+        // ============================================================
+
+        private static void AddDefaultAdminTools(
+            AppConfig cfg)
         {
             if (cfg.AdminTools.Count > 0)
                 return;
 
-            var defaults = new[]
-            {
-                new AdminTool
+            var defaults =
+                new[]
                 {
-                    Name = "PuTTY",
-                    Exe = "putty.exe",
-                    Args = "",
-                    Elevated = true
-                },
-                new AdminTool
-                {
-                    Name = "PowerShell (Admin)",
-                    Exe = "powershell.exe",
-                    Args = "-NoExit",
-                    Elevated = true
-                }
-            };
+                    new AdminTool
+                    {
+                        Name = "PuTTY",
+                        Exe = "putty.exe",
+                        Args = "",
+                        Elevated = true
+                    },
+
+                    new AdminTool
+                    {
+                        Name = "PowerShell (Admin)",
+                        Exe = "powershell.exe",
+                        Args = "-NoExit",
+                        Elevated = true
+                    }
+                };
 
             foreach (var tool in defaults)
             {
@@ -381,20 +403,33 @@ namespace AdminTrayTool
             }
         }
 
-        static void BuildMenuFromConfig(
+        // ============================================================
+        // MENU
+        // ============================================================
+
+        private static void BuildMenuFromConfig(
             ContextMenuStrip menu,
             AppConfig cfg,
             string configPath)
         {
-            AddWebPortalMenu(menu, cfg);
-            AddRdpMenu(menu, cfg);
-            AddAdminToolsMenu(menu, cfg);
+            AddWebPortalMenu(
+                menu,
+                cfg);
+
+            AddRdpMenu(
+                menu,
+                cfg);
+
+            AddAdminToolsMenu(
+                menu,
+                cfg);
 
             menu.Items.Add(
                 new ToolStripSeparator());
 
             AddManagementMenuItems(
-                menu);
+                menu,
+                cfg);
 
             AddConfigSettingsMenu(
                 menu,
@@ -404,7 +439,11 @@ namespace AdminTrayTool
                 menu);
         }
 
-        static void AddWebPortalMenu(
+        // ============================================================
+        // WEB PORTALS
+        // ============================================================
+
+        private static void AddWebPortalMenu(
             ContextMenuStrip menu,
             AppConfig cfg)
         {
@@ -441,7 +480,11 @@ namespace AdminTrayTool
                 new ToolStripSeparator());
         }
 
-        static void AddRdpMenu(
+        // ============================================================
+        // RDP
+        // ============================================================
+
+        private static void AddRdpMenu(
             ContextMenuStrip menu,
             AppConfig cfg)
         {
@@ -471,8 +514,13 @@ namespace AdminTrayTool
                 new ToolStripSeparator());
         }
 
-        static void AddManagementMenuItems(
-            ContextMenuStrip menu)
+        // ============================================================
+        // MANAGEMENT MENU
+        // ============================================================
+
+        private static void AddManagementMenuItems(
+            ContextMenuStrip menu,
+            AppConfig cfg)
         {
             menu.Items.Add(
                 "Chromebook Management",
@@ -492,14 +540,35 @@ namespace AdminTrayTool
                 "Windows Management",
                 null,
                 (s, e) =>
-                    OpenManagementForm<WindowsManagementForm>(
-                        "Windows Management"));
+                    OpenWindowsManagementForm(
+                        cfg));
 
             menu.Items.Add(
                 new ToolStripSeparator());
         }
 
-        static void OpenManagementForm<TForm>(
+        private static void OpenWindowsManagementForm(
+            AppConfig cfg)
+        {
+            try
+            {
+                using var form =
+                    new WindowsManagementForm(
+                        cfg);
+
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Failed to open Windows Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "Windows Management",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private static void OpenManagementForm<TForm>(
             string formName)
             where TForm : Form, new()
         {
@@ -520,7 +589,11 @@ namespace AdminTrayTool
             }
         }
 
-        static void AddAppConfigItems(
+        // ============================================================
+        // CONFIGURATION SETTINGS
+        // ============================================================
+
+        private static void AddAppConfigItems(
             ToolStripMenuItem configMenu,
             ContextMenuStrip menu,
             string configPath)
@@ -564,7 +637,7 @@ namespace AdminTrayTool
                         "config folder"));
         }
 
-        static void AddGroupTemplateItems(
+        private static void AddGroupTemplateItems(
             ToolStripMenuItem configMenu)
         {
             configMenu.DropDownItems.Add(
@@ -601,7 +674,11 @@ namespace AdminTrayTool
                         "group templates folder"));
         }
 
-        static void OpenFile(
+        // ============================================================
+        // FILE / FOLDER HELPERS
+        // ============================================================
+
+        private static void OpenFile(
             string filePath,
             string description)
         {
@@ -624,7 +701,7 @@ namespace AdminTrayTool
             }
         }
 
-        static void OpenFolder(
+        private static void OpenFolder(
             string? folder,
             string description)
         {
@@ -638,7 +715,8 @@ namespace AdminTrayTool
 
                 if (!Directory.Exists(folder))
                 {
-                    Directory.CreateDirectory(folder);
+                    Directory.CreateDirectory(
+                        folder);
                 }
 
                 Process.Start(
@@ -659,7 +737,11 @@ namespace AdminTrayTool
             }
         }
 
-        static void ReloadMenu(
+        // ============================================================
+        // RELOAD CONFIGURATION
+        // ============================================================
+
+        private static void ReloadMenu(
             ContextMenuStrip menu,
             string configPath)
         {
@@ -686,7 +768,11 @@ namespace AdminTrayTool
             }
         }
 
-        static void AddAboutAndExitItems(
+        // ============================================================
+        // ABOUT / EXIT
+        // ============================================================
+
+        private static void AddAboutAndExitItems(
             ContextMenuStrip menu)
         {
             menu.Items.Add(
@@ -710,7 +796,11 @@ namespace AdminTrayTool
                     Application.Exit());
         }
 
-        static void AddConfigSettingsMenu(
+        // ============================================================
+        // CONFIG MENU
+        // ============================================================
+
+        private static void AddConfigSettingsMenu(
             ContextMenuStrip menu,
             string configPath)
         {
@@ -736,7 +826,11 @@ namespace AdminTrayTool
                 new ToolStripSeparator());
         }
 
-        static void AddAdminToolsMenu(
+        // ============================================================
+        // ADMIN TOOLS
+        // ============================================================
+
+        private static void AddAdminToolsMenu(
             ContextMenuStrip menu,
             AppConfig cfg)
         {
@@ -748,7 +842,8 @@ namespace AdminTrayTool
             {
                 foreach (var tool in cfg.AdminTools)
                 {
-                    var capture = tool;
+                    var capture =
+                        tool;
 
                     toolsMenu.DropDownItems.Add(
                         capture.Name,
@@ -761,10 +856,15 @@ namespace AdminTrayTool
                 }
             }
 
-            menu.Items.Add(toolsMenu);
+            menu.Items.Add(
+                toolsMenu);
         }
 
-        static void LaunchProcess(
+        // ============================================================
+        // PROCESS LAUNCHING
+        // ============================================================
+
+        private static void LaunchProcess(
             string exe,
             string? args = null,
             bool elevated = false)
@@ -774,8 +874,12 @@ namespace AdminTrayTool
                 var psi =
                     new ProcessStartInfo
                     {
-                        FileName = exe ?? string.Empty,
-                        Arguments = args ?? string.Empty,
+                        FileName =
+                            exe ?? string.Empty,
+
+                        Arguments =
+                            args ?? string.Empty,
+
                         UseShellExecute = true
                     };
 
@@ -796,7 +900,11 @@ namespace AdminTrayTool
             }
         }
 
-        static void LaunchWebpage(
+        // ============================================================
+        // WEB BROWSER
+        // ============================================================
+
+        private static void LaunchWebpage(
             string url,
             string profileDirectory)
         {
@@ -841,7 +949,11 @@ namespace AdminTrayTool
             }
         }
 
-        static void LaunchRdp(
+        // ============================================================
+        // RDP
+        // ============================================================
+
+        private static void LaunchRdp(
             string host)
         {
             if (string.IsNullOrWhiteSpace(host))

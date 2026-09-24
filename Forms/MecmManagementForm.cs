@@ -1,10 +1,12 @@
-﻿using AdminTrayTool.Services;
+﻿using AdminTrayTool.Models;
+using AdminTrayTool.Services;
 
 namespace AdminTrayTool.Forms
 {
     public class MecmManagementForm : Form
     {
-        private readonly MecmManagementService _mecmManagementService;
+        private readonly MecmManagementService
+            _mecmManagementService;
 
         private TextBox _txtComputerName = null!;
         private Button _btnLookup = null!;
@@ -14,49 +16,52 @@ namespace AdminTrayTool.Forms
         private Label _lblClient = null!;
         private Label _lblClientVersion = null!;
         private Label _lblOperatingSystem = null!;
+        private Label _lblManufacturer = null!;
+        private Label _lblModel = null!;
+        private Label _lblSerialNumber = null!;
+
+        private ListBox _lstCurrentCollections = null!;
 
         private TextBox _txtCollectionFilter = null!;
-        private ComboBox _cmbCollection = null!;
-        private Button _btnAddToCollection = null!;
-        private Button _btnRemoveFromCollection = null!;
+        private ComboBox _cmbCollections = null!;
+        private Button _btnAdd = null!;
+        private Button _btnRemove = null!;
 
-        private TextBox _txtLog = null!;
+        private TextBox _txtActivity = null!;
 
-        private List<MecmCollection> _collections = [];
+        private readonly List<CollectionItem> _allCollections = [];
 
-        private string _currentComputerName = string.Empty;
+        private string _currentComputerName =
+            string.Empty;
 
-        public MecmManagementForm()
+        private string _currentResourceId =
+            string.Empty;
+
+        public MecmManagementForm(
+            MecmConfig config)
         {
             _mecmManagementService =
-                new MecmManagementService();
+                new MecmManagementService(config);
 
             InitializeForm();
             BuildInterface();
         }
-
-        // =============================================================
-        // FORM INITIALISATION
-        // =============================================================
 
         private void InitializeForm()
         {
             Text = "MECM Management";
 
             StartPosition =
-                FormStartPosition.CenterScreen;
+                FormStartPosition.CenterParent;
 
             ClientSize =
-                new Size(890, 800);
+                new Size(1000, 760);
 
             MinimumSize =
-                new Size(820, 700);
+                new Size(900, 650);
 
             BackColor =
-                Color.FromArgb(
-                    10,
-                    15,
-                    25);
+                Color.FromArgb(10, 15, 25);
 
             ForeColor =
                 Color.White;
@@ -66,274 +71,449 @@ namespace AdminTrayTool.Forms
                     "Segoe UI",
                     10F,
                     FontStyle.Regular);
-
-            FormBorderStyle =
-                FormBorderStyle.FixedSingle;
-
-            MaximizeBox = false;
         }
-
-        // =============================================================
-        // BUILD INTERFACE
-        // =============================================================
 
         private void BuildInterface()
         {
-            var mainPanel = new Panel
-            {
-                Dock = DockStyle.Fill,
-
-                Padding =
-                    new Padding(30),
-
-                BackColor =
-                    Color.FromArgb(
-                        10,
-                        15,
-                        25)
-            };
+            var mainPanel =
+                new Panel
+                {
+                    Dock = DockStyle.Fill,
+                    Padding = new Padding(15),
+                    BackColor =
+                        Color.FromArgb(10, 15, 25)
+                };
 
             Controls.Add(mainPanel);
 
-            // =========================================================
+            // ========================================================
             // HEADER
-            // =========================================================
+            // ========================================================
 
-            var lblTitle = new Label
-            {
-                Text =
-                    "MECM / SCCM",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        20F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        30,
-                        25)
-            };
-
-            mainPanel.Controls.Add(lblTitle);
-
-            var lblSubtitle = new Label
-            {
-                Text =
-                    "Find Windows computers and manage MECM collection membership",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
-
-                Location =
-                    new Point(
-                        33,
-                        62)
-            };
-
-            mainPanel.Controls.Add(lblSubtitle);
-
-            var headerLine = new Panel
-            {
-                Location =
-                    new Point(
-                        30,
-                        90),
-
-                Size =
-                    new Size(
-                        820,
-                        1),
-
-                BackColor =
-                    Color.FromArgb(
-                        45,
-                        55,
-                        70)
-            };
-
-            mainPanel.Controls.Add(headerLine);
-
-            // =========================================================
-            // COMPUTER LOOKUP
-            // =========================================================
-
-            var lookupPanel = CreatePanel(
-                new Point(30, 105),
-                new Size(820, 105));
+            var headerLabel =
+                new Label
+                {
+                    Text = "MECM MANAGEMENT",
+                    Left = 15,
+                    Top = 10,
+                    Width = 400,
+                    Height = 32,
+                    Font =
+                        new Font(
+                            "Segoe UI",
+                            16F,
+                            FontStyle.Bold),
+                    ForeColor = Color.White
+                };
 
             mainPanel.Controls.Add(
-                lookupPanel);
+                headerLabel);
 
-            var lblComputerName = CreateLabel(
-                "COMPUTER NAME",
-                new Point(
-                    20,
-                    18));
+            // ========================================================
+            // COMPUTER LOOKUP PANEL
+            // ========================================================
+
+            var lookupPanel =
+                new HudPanel
+                {
+                    Left = 15,
+                    Top = 50,
+                    Width = 940,
+                    Height = 75
+                };
+
+            var lblComputer =
+                new Label
+                {
+                    Text = "Computer Name:",
+                    Left = 20,
+                    Top = 22,
+                    Width = 130,
+                    ForeColor = Color.White
+                };
+
+            _txtComputerName =
+                new TextBox
+                {
+                    Left = 150,
+                    Top = 18,
+                    Width = 350,
+                    Height = 30
+                };
+
+            _btnLookup =
+                new HudButton
+                {
+                    Text = "LOOKUP",
+                    Left = 520,
+                    Top = 16,
+                    Width = 120,
+                    Height = 34
+                };
+
+            _btnLookup.Click +=
+                async (s, e) =>
+                    await LookupComputerAsync();
 
             lookupPanel.Controls.Add(
-                lblComputerName);
-
-            _txtComputerName = new TextBox
-            {
-                Location =
-                    new Point(
-                        20,
-                        45),
-
-                Size =
-                    new Size(
-                        400,
-                        32),
-
-                BackColor =
-                    Color.FromArgb(
-                        20,
-                        27,
-                        40),
-
-                ForeColor =
-                    Color.White,
-
-                BorderStyle =
-                    BorderStyle.FixedSingle,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        10.5F)
-            };
-
-            _txtComputerName.KeyDown +=
-                TxtComputerName_KeyDown;
+                lblComputer);
 
             lookupPanel.Controls.Add(
                 _txtComputerName);
 
-            _btnLookup = CreateButton(
-                "LOOK UP",
-                new Point(
-                    610,
-                    43),
-                new Size(
-                    180,
-                    36));
-
-            _btnLookup.Click +=
-                BtnLookup_Click;
-
             lookupPanel.Controls.Add(
                 _btnLookup);
 
-            // =========================================================
-            // COMPUTER INFORMATION
-            // =========================================================
-
-            var infoPanel = CreatePanel(
-                new Point(30, 220),
-                new Size(820, 220));
-
             mainPanel.Controls.Add(
-                infoPanel);
+                lookupPanel);
 
-            var lblInfoTitle = new Label
-            {
-                Text =
-                    "MECM COMPUTER INFORMATION",
+            // ========================================================
+            // COMPUTER INFORMATION PANEL
+            // ========================================================
 
-                AutoSize = true,
+            var computerPanel =
+                new HudPanel
+                {
+                    Left = 15,
+                    Top = 140,
+                    Width = 455,
+                    Height = 285
+                };
 
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        11F,
-                        FontStyle.Bold),
+            var computerTitle =
+                CreatePanelTitle(
+                    "COMPUTER INFORMATION");
 
-                ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        20,
-                        18)
-            };
-
-            infoPanel.Controls.Add(
-                lblInfoTitle);
+            computerPanel.Controls.Add(
+                computerTitle);
 
             _lblComputerName =
-                AddInfoRow(
-                    infoPanel,
-                    "Computer",
-                    55,
-                    out _,
-                    "—");
+                CreateInfoLabel(
+                    "Computer:",
+                    20,
+                    50);
 
             _lblResourceId =
-                AddInfoRow(
-                    infoPanel,
-                    "Resource ID",
-                    85,
-                    out _,
-                    "—");
+                CreateInfoLabel(
+                    "Resource ID:",
+                    20,
+                    78);
 
             _lblClient =
-                AddInfoRow(
-                    infoPanel,
-                    "MECM Client",
-                    115,
-                    out _,
-                    "—");
+                CreateInfoLabel(
+                    "Client:",
+                    20,
+                    106);
 
             _lblClientVersion =
-                AddInfoRow(
-                    infoPanel,
-                    "Client Version",
-                    145,
-                    out _,
-                    "—");
+                CreateInfoLabel(
+                    "Client Version:",
+                    20,
+                    134);
 
             _lblOperatingSystem =
-                AddInfoRow(
-                    infoPanel,
-                    "Operating System",
-                    175,
-                    out _,
-                    "—");
+                CreateInfoLabel(
+                    "Operating System:",
+                    20,
+                    162);
 
-            // =========================================================
-            // COLLECTION MANAGEMENT
-            // =========================================================
+            _lblManufacturer =
+                CreateInfoLabel(
+                    "Manufacturer:",
+                    20,
+                    190);
 
-            var collectionPanel = CreatePanel(
-                new Point(30, 450),
-                new Size(820, 125));
+            _lblModel =
+                CreateInfoLabel(
+                    "Model:",
+                    20,
+                    218);
+
+            _lblSerialNumber =
+                CreateInfoLabel(
+                    "Serial Number:",
+                    20,
+                    246);
+
+            computerPanel.Controls.Add(
+                _lblComputerName);
+
+            computerPanel.Controls.Add(
+                _lblResourceId);
+
+            computerPanel.Controls.Add(
+                _lblClient);
+
+            computerPanel.Controls.Add(
+                _lblClientVersion);
+
+            computerPanel.Controls.Add(
+                _lblOperatingSystem);
+
+            computerPanel.Controls.Add(
+                _lblManufacturer);
+
+            computerPanel.Controls.Add(
+                _lblModel);
+
+            computerPanel.Controls.Add(
+                _lblSerialNumber);
 
             mainPanel.Controls.Add(
-                collectionPanel);
+                computerPanel);
 
-            var lblCollectionTitle = new Label
+            // ========================================================
+            // CURRENT COLLECTION MEMBERSHIP PANEL
+            // ========================================================
+
+            var membershipPanel =
+                new HudPanel
+                {
+                    Left = 485,
+                    Top = 140,
+                    Width = 470,
+                    Height = 285
+                };
+
+            var membershipTitle =
+                CreatePanelTitle(
+                    "CURRENT COLLECTION MEMBERSHIP");
+
+            membershipPanel.Controls.Add(
+                membershipTitle);
+
+            _lstCurrentCollections =
+                new ListBox
+                {
+                    Left = 20,
+                    Top = 52,
+                    Width = 425,
+                    Height = 210,
+
+                    BackColor =
+                        Color.FromArgb(
+                            16,
+                            23,
+                            36),
+
+                    ForeColor =
+                        Color.White,
+
+                    BorderStyle =
+                        BorderStyle.FixedSingle
+                };
+
+            membershipPanel.Controls.Add(
+                _lstCurrentCollections);
+
+            mainPanel.Controls.Add(
+                membershipPanel);
+
+            // ========================================================
+            // COLLECTION ACTION PANEL
+            // ========================================================
+
+            var actionPanel =
+                new HudPanel
+                {
+                    Left = 15,
+                    Top = 440,
+                    Width = 940,
+                    Height = 105
+                };
+
+            var actionTitle =
+                CreatePanelTitle(
+                    "COLLECTION ACTIONS");
+
+            actionPanel.Controls.Add(
+                actionTitle);
+
+            // ========================================================
+            // COLLECTION FILTER
+            // ========================================================
+
+            var lblFilter =
+                new Label
+                {
+                    Text = "Filter:",
+                    Left = 20,
+                    Top = 52,
+                    Width = 55,
+                    ForeColor = Color.White
+                };
+
+            _txtCollectionFilter =
+                new TextBox
+                {
+                    Left = 75,
+                    Top = 48,
+                    Width = 250,
+                    Height = 28
+                };
+
+            _txtCollectionFilter.TextChanged +=
+                (s, e) =>
+                    FilterCollections();
+
+            actionPanel.Controls.Add(
+                lblFilter);
+
+            actionPanel.Controls.Add(
+                _txtCollectionFilter);
+
+            // ========================================================
+            // COLLECTION
+            // ========================================================
+
+            var lblCollections =
+                new Label
+                {
+                    Text = "Collection:",
+                    Left = 340,
+                    Top = 52,
+                    Width = 80,
+                    ForeColor = Color.White
+                };
+
+            _cmbCollections =
+                new ComboBox
+                {
+                    Left = 420,
+                    Top = 48,
+                    Width = 280,
+
+                    DropDownStyle =
+                        ComboBoxStyle.DropDownList,
+
+                    BackColor =
+                        Color.FromArgb(
+                            25,
+                            35,
+                            50),
+
+                    ForeColor =
+                        Color.White
+                };
+
+            _btnAdd =
+                new HudButton
+                {
+                    Text = "ADD TO COLLECTION",
+                    Left = 715,
+                    Top = 46,
+                    Width = 125,
+                    Height = 34
+                };
+
+            _btnRemove =
+                new HudButton
+                {
+                    Text = "REMOVE",
+                    Left = 850,
+                    Top = 46,
+                    Width = 80,
+                    Height = 34
+                };
+
+            _btnAdd.Click +=
+                async (s, e) =>
+                    await AddToCollectionAsync();
+
+            _btnRemove.Click +=
+                async (s, e) =>
+                    await RemoveFromCollectionAsync();
+
+            actionPanel.Controls.Add(
+                lblCollections);
+
+            actionPanel.Controls.Add(
+                _cmbCollections);
+
+            actionPanel.Controls.Add(
+                _btnAdd);
+
+            actionPanel.Controls.Add(
+                _btnRemove);
+
+            mainPanel.Controls.Add(
+                actionPanel);
+
+            // ========================================================
+            // ACTIVITY PANEL
+            // ========================================================
+
+            var activityPanel =
+                new HudPanel
+                {
+                    Left = 15,
+                    Top = 560,
+                    Width = 940,
+                    Height = 145
+                };
+
+            var activityTitle =
+                CreatePanelTitle(
+                    "ACTIVITY");
+
+            activityPanel.Controls.Add(
+                activityTitle);
+
+            _txtActivity =
+                new TextBox
+                {
+                    Left = 20,
+                    Top = 48,
+                    Width = 900,
+                    Height = 80,
+
+                    Multiline = true,
+
+                    ScrollBars =
+                        ScrollBars.Vertical,
+
+                    ReadOnly = true,
+
+                    BackColor =
+                        Color.FromArgb(
+                            16,
+                            23,
+                            36),
+
+                    ForeColor =
+                        Color.White,
+
+                    BorderStyle =
+                        BorderStyle.FixedSingle
+                };
+
+            activityPanel.Controls.Add(
+                _txtActivity);
+
+            mainPanel.Controls.Add(
+                activityPanel);
+
+            // ========================================================
+            // INITIAL STATE
+            // ========================================================
+
+            _btnAdd.Enabled = false;
+            _btnRemove.Enabled = false;
+            _cmbCollections.Enabled = false;
+            _txtCollectionFilter.Enabled = false;
+            _lstCurrentCollections.Enabled = false;
+        }
+
+        private Label CreatePanelTitle(
+            string text)
+        {
+            return new Label
             {
-                Text =
-                    "COLLECTION MANAGEMENT",
-
-                AutoSize = true,
+                Text = text,
+                Left = 20,
+                Top = 15,
+                Width = 500,
+                Height = 28,
 
                 Font =
                     new Font(
@@ -342,285 +522,29 @@ namespace AdminTrayTool.Forms
                         FontStyle.Bold),
 
                 ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        20,
-                        18)
+                    Color.White
             };
-
-            collectionPanel.Controls.Add(
-                lblCollectionTitle);
-
-            var lblFilter = CreateLabel(
-                "FILTER",
-                new Point(
-                    20,
-                    50));
-
-            collectionPanel.Controls.Add(
-                lblFilter);
-
-            _txtCollectionFilter = new TextBox
-            {
-                Location =
-                    new Point(
-                        20,
-                        72),
-
-                Size =
-                    new Size(
-                        220,
-                        30),
-
-                BackColor =
-                    Color.FromArgb(
-                        20,
-                        27,
-                        40),
-
-                ForeColor =
-                    Color.White,
-
-                BorderStyle =
-                    BorderStyle.FixedSingle,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                Enabled = false
-            };
-
-            _txtCollectionFilter.TextChanged +=
-                TxtCollectionFilter_TextChanged;
-
-            collectionPanel.Controls.Add(
-                _txtCollectionFilter);
-
-            var lblCollection = CreateLabel(
-                "COLLECTION",
-                new Point(
-                    255,
-                    50));
-
-            collectionPanel.Controls.Add(
-                lblCollection);
-
-            _cmbCollection = new ComboBox
-            {
-                Location =
-                    new Point(
-                        255,
-                        72),
-
-                Size =
-                    new Size(
-                        310,
-                        30),
-
-                DropDownStyle =
-                    ComboBoxStyle.DropDownList,
-
-                BackColor =
-                    Color.FromArgb(
-                        20,
-                        27,
-                        40),
-
-                ForeColor =
-                    Color.White,
-
-                FlatStyle =
-                    FlatStyle.Flat,
-
-                Enabled = false
-            };
-
-            _cmbCollection.SelectedIndexChanged +=
-                CmbCollection_SelectedIndexChanged;
-
-            collectionPanel.Controls.Add(
-                _cmbCollection);
-
-            _btnAddToCollection = CreateButton(
-                "ADD",
-                new Point(
-                    580,
-                    70),
-                new Size(
-                    105,
-                    34));
-
-            _btnAddToCollection.Enabled = false;
-
-            _btnAddToCollection.Click +=
-                BtnAddToCollection_Click;
-
-            collectionPanel.Controls.Add(
-                _btnAddToCollection);
-
-            _btnRemoveFromCollection = CreateButton(
-                "REMOVE",
-                new Point(
-                    695,
-                    70),
-                new Size(
-                    105,
-                    34));
-
-            _btnRemoveFromCollection.Enabled = false;
-
-            _btnRemoveFromCollection.Click +=
-                BtnRemoveFromCollection_Click;
-
-            collectionPanel.Controls.Add(
-                _btnRemoveFromCollection);
-
-            // =========================================================
-            // ACTIVITY LOG
-            // =========================================================
-
-            var logPanel = CreatePanel(
-                new Point(30, 590),
-                new Size(820, 110));
-
-            mainPanel.Controls.Add(
-                logPanel);
-
-            var lblLogTitle = new Label
-            {
-                Text =
-                    "ACTIVITY LOG",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150),
-
-                Location =
-                    new Point(
-                        20,
-                        10)
-            };
-
-            logPanel.Controls.Add(
-                lblLogTitle);
-
-            _txtLog = new TextBox
-            {
-                Location =
-                    new Point(
-                        20,
-                        32),
-
-                Size =
-                    new Size(
-                        780,
-                        60),
-
-                Multiline = true,
-
-                ReadOnly = true,
-
-                ScrollBars =
-                    ScrollBars.Vertical,
-
-                BackColor =
-                    Color.FromArgb(
-                        6,
-                        10,
-                        18),
-
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
-
-                BorderStyle =
-                    BorderStyle.FixedSingle,
-
-                Font =
-                    new Font(
-                        "Consolas",
-                        8.5F)
-            };
-
-            logPanel.Controls.Add(
-                _txtLog);
-
-            _txtComputerName.Focus();
-
-            var actionsPanel =
-                CreatePanel(
-                    new Point(30, 715),
-                    new Size(820, 70));
-
-            mainPanel.Controls.Add(actionsPanel);
-
-            var lblActionsTitle = new Label
-            {
-                Text = "FORM ACTIONS",
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    8.5F,
-                    FontStyle.Bold),
-                ForeColor = Color.FromArgb(140, 150, 165),
-                Location = new Point(20, 15)
-            };
-
-            actionsPanel.Controls.Add(lblActionsTitle);
-
-            var btnClose = new HudButton
-            {
-                Text = "CLOSE",
-                Location = new Point(650, 13),
-                Size = new Size(150, 32)
-            };
-
-            btnClose.Click +=
-                (_, _) => Close();
-
-            actionsPanel.Controls.Add(btnClose);
-
-
         }
 
-        // =============================================================
+        private Label CreateInfoLabel(
+            string title,
+            int left,
+            int top)
+        {
+            return new Label
+            {
+                Text = title,
+                Left = left,
+                Top = top,
+                Width = 410,
+                Height = 24,
+                ForeColor = Color.White
+            };
+        }
+
+        // ============================================================
         // LOOKUP
-        // =============================================================
-
-        private async void BtnLookup_Click(
-            object? sender,
-            EventArgs e)
-        {
-            await LookupComputerAsync();
-        }
-
-        private async void TxtComputerName_KeyDown(
-            object? sender,
-            KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                e.SuppressKeyPress = true;
-
-                await LookupComputerAsync();
-            }
-        }
+        // ============================================================
 
         private async Task LookupComputerAsync()
         {
@@ -628,43 +552,34 @@ namespace AdminTrayTool.Forms
                 _txtComputerName.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(
-                computerName))
+                    computerName))
             {
                 MessageBox.Show(
                     "Enter a computer name.",
-                    "MECM",
+                    "MECM Lookup",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                _txtComputerName.Focus();
+                    MessageBoxIcon.Information);
 
                 return;
             }
 
+            SetBusy(true);
+
             try
             {
-                SetBusy(true);
+                ClearComputerInformation();
 
-                ClearCollectionControls();
+                AppendActivity(
+                    $"Looking up computer '{computerName}'...");
 
-                ClearComputerInformationOnly();
-
-                _currentComputerName =
-                    computerName;
-
-                WriteLog(
-                    $"Looking up '{computerName}' in MECM...");
-
-                var result =
+                MecmComputerResult result =
                     await _mecmManagementService
                         .GetComputerAsync(
                             computerName);
 
                 if (!result.Success)
                 {
-                    ClearComputerInformation();
-
-                    WriteLog(
+                    AppendActivity(
                         $"Lookup failed: {result.Error}");
 
                     MessageBox.Show(
@@ -676,48 +591,43 @@ namespace AdminTrayTool.Forms
                     return;
                 }
 
+                _currentComputerName =
+                    result.Name;
+
+                _currentResourceId =
+                    result.ResourceId;
+
                 _lblComputerName.Text =
-                    $"Computer: {result.Name}";
+                    $"Computer: {DisplayValue(result.Name)}";
 
                 _lblResourceId.Text =
-                    $"Resource ID: {result.ResourceId}";
+                    $"Resource ID: {DisplayValue(result.ResourceId)}";
 
                 _lblClient.Text =
-                    $"MECM Client: {result.Client}";
+                    $"Client: {DisplayValue(result.Client)}";
 
                 _lblClientVersion.Text =
-                    $"Client Version: {result.ClientVersion}";
+                    $"Client Version: {DisplayValue(result.ClientVersion)}";
 
                 _lblOperatingSystem.Text =
-                    $"Operating System: {result.OperatingSystem}";
+                    $"Operating System: {DisplayValue(result.OperatingSystem)}";
 
-                WriteLog(
-                    $"Computer found: {result.Name}");
+                _lblManufacturer.Text =
+                    $"Manufacturer: {DisplayValue(result.Manufacturer)}";
 
-                WriteLog(
+                _lblModel.Text =
+                    $"Model: {DisplayValue(result.Model)}";
+
+                _lblSerialNumber.Text =
+                    $"Serial Number: {DisplayValue(result.SerialNumber)}";
+
+                AppendActivity(
+                    $"Computer '{result.Name}' found. " +
                     $"Resource ID: {result.ResourceId}");
 
-                WriteLog(
-                    $"MECM Client: {result.Client}");
-
-                WriteLog(
-                    $"Client Version: {result.ClientVersion}");
-
-                WriteLog(
-                    $"Operating System: {result.OperatingSystem}");
-
                 await LoadCollectionsAsync();
-            }
-            catch (Exception ex)
-            {
-                WriteLog(
-                    $"Lookup error: {ex.Message}");
 
-                MessageBox.Show(
-                    ex.Message,
-                    "MECM Lookup",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                await LoadCurrentCollectionsAsync();
             }
             finally
             {
@@ -725,228 +635,298 @@ namespace AdminTrayTool.Forms
             }
         }
 
-        // =============================================================
-        // COLLECTIONS
-        // =============================================================
+        // ============================================================
+        // LOAD ALL COLLECTIONS
+        // ============================================================
 
         private async Task LoadCollectionsAsync()
         {
-            WriteLog(
+            AppendActivity(
                 "Loading MECM collections...");
 
-            var result =
+            MecmCollectionResult result =
                 await _mecmManagementService
                     .GetCollectionsAsync();
 
             if (!result.Success)
             {
-                WriteLog(
-                    $"Unable to load collections: {result.Error}");
+                AppendActivity(
+                    $"Failed to load collections: {result.Error}");
 
                 MessageBox.Show(
                     result.Error,
-                    "MECM",
+                    "MECM Collections",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 
                 return;
             }
 
-            _collections =
-                result.Collections;
+            _allCollections.Clear();
 
-            ApplyCollectionFilter();
-
-            _txtCollectionFilter.Enabled = true;
-
-            _cmbCollection.Enabled =
-                _cmbCollection.Items.Count > 0;
-
-            WriteLog(
-                $"Loaded {_collections.Count} MECM collections.");
-
-            if (_collections.Count == 0)
+            foreach (MecmCollection collection
+                in result.Collections)
             {
-                WriteLog(
-                    "No MECM collections were returned.");
+                _allCollections.Add(
+                    new CollectionItem
+                    {
+                        CollectionId =
+                            collection.CollectionId,
+
+                        Name =
+                            collection.Name
+                    });
             }
+
+            FilterCollections();
+
+            AppendActivity(
+                $"Loaded {result.Collections.Count} MECM collections.");
         }
 
-        private void ApplyCollectionFilter()
+        // ============================================================
+        // FILTER COLLECTIONS
+        // ============================================================
+
+        private void FilterCollections()
         {
-            if (_cmbCollection == null)
+            if (_cmbCollections == null)
+            {
                 return;
+            }
 
             string filter =
                 _txtCollectionFilter?.Text.Trim()
                 ?? string.Empty;
 
-            string? selectedCollection =
-                _cmbCollection.SelectedItem
-                    ?.ToString();
+            CollectionItem? selectedCollection =
+                _cmbCollections.SelectedItem
+                    as CollectionItem;
 
-            _cmbCollection.BeginUpdate();
+            _cmbCollections.BeginUpdate();
 
             try
             {
-                _cmbCollection.Items.Clear();
+                _cmbCollections.Items.Clear();
 
-                foreach (MecmCollection collection
-                    in _collections)
-                {
-                    string displayText =
-                        $"{collection.Name} ({collection.CollectionId})";
-
-                    if (string.IsNullOrWhiteSpace(filter) ||
-                        displayText.Contains(
-                            filter,
-                            StringComparison.OrdinalIgnoreCase))
-                    {
-                        _cmbCollection.Items.Add(
-                            new CollectionDisplayItem(
-                                collection,
-                                displayText));
-                    }
-                }
+                IEnumerable<CollectionItem> filtered =
+                    _allCollections;
 
                 if (!string.IsNullOrWhiteSpace(
-                    selectedCollection))
+                        filter))
                 {
-                    for (int i = 0;
-                         i < _cmbCollection.Items.Count;
-                         i++)
-                    {
-                        if (_cmbCollection.Items[i]
-                                ?.ToString() ==
-                            selectedCollection)
-                        {
-                            _cmbCollection.SelectedIndex =
-                                i;
-
-                            break;
-                        }
-                    }
+                    filtered =
+                        _allCollections.Where(
+                            collection =>
+                                collection.Name.Contains(
+                                    filter,
+                                    StringComparison.OrdinalIgnoreCase)
+                                ||
+                                collection.CollectionId.Contains(
+                                    filter,
+                                    StringComparison.OrdinalIgnoreCase));
                 }
-            }
-            finally
-            {
-                _cmbCollection.EndUpdate();
-            }
 
-            UpdateCollectionButtons();
-        }
-
-        private void TxtCollectionFilter_TextChanged(
-            object? sender,
-            EventArgs e)
-        {
-            ApplyCollectionFilter();
-        }
-
-        private void CmbCollection_SelectedIndexChanged(
-            object? sender,
-            EventArgs e)
-        {
-            UpdateCollectionButtons();
-        }
-
-        private void UpdateCollectionButtons()
-        {
-            bool enabled =
-                _cmbCollection?.Enabled == true &&
-                _cmbCollection.SelectedItem != null;
-
-            _btnAddToCollection.Enabled =
-                enabled;
-
-            _btnRemoveFromCollection.Enabled =
-                enabled;
-        }
-
-        // =============================================================
-        // ADD TO COLLECTION
-        // =============================================================
-
-        private async void BtnAddToCollection_Click(
-            object? sender,
-            EventArgs e)
-        {
-            if (_cmbCollection.SelectedItem is not CollectionDisplayItem selected)
-                return;
-
-            string collectionName =
-                selected.Collection.Name;
-
-            string collectionId =
-                selected.Collection.CollectionId;
-
-            DialogResult confirmation =
-                MessageBox.Show(
-                    $"Add computer '{_currentComputerName}' to:" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    $"{collectionName}" +
-                    $"{Environment.NewLine}" +
-                    $"Collection ID: {collectionId}" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    "Continue?",
-                    "Confirm Collection Change",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-            if (confirmation !=
-                DialogResult.Yes)
-            {
-                return;
-            }
-
-            try
-            {
-                SetBusy(true);
-
-                WriteLog(
-                    $"Adding '{_currentComputerName}' to '{collectionName}'...");
-
-                var result =
-                    await _mecmManagementService
-                        .AddComputerToCollectionAsync(
-                            _currentComputerName,
-                            collectionId);
-
-                if (!result.Success)
+                foreach (CollectionItem collection
+                    in filtered)
                 {
-                    WriteLog(
-                        $"Add failed: {result.Error}");
+                    _cmbCollections.Items.Add(
+                        collection);
+                }
 
-                    MessageBox.Show(
-                        result.Error,
-                        "MECM",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                if (_cmbCollections.Items.Count == 0)
+                {
+                    _cmbCollections.Enabled = false;
+                    _btnAdd.Enabled = false;
+                    _btnRemove.Enabled = false;
 
                     return;
                 }
 
-                WriteLog(
-                    $"Successfully added '{_currentComputerName}' to '{collectionName}'.");
+                int selectedIndex =
+                    FindCollectionIndex(
+                        selectedCollection);
 
+                _cmbCollections.SelectedIndex =
+                    selectedIndex >= 0
+                        ? selectedIndex
+                        : 0;
+
+                bool computerLoaded =
+                    !string.IsNullOrWhiteSpace(
+                        _currentComputerName);
+
+                _cmbCollections.Enabled =
+                    computerLoaded;
+
+                _btnAdd.Enabled =
+                    computerLoaded;
+
+                _btnRemove.Enabled =
+                    computerLoaded;
+            }
+            finally
+            {
+                _cmbCollections.EndUpdate();
+            }
+        }
+
+        private int FindCollectionIndex(
+            CollectionItem? collection)
+        {
+            if (collection == null)
+            {
+                return -1;
+            }
+
+            for (int i = 0;
+                 i < _cmbCollections.Items.Count;
+                 i++)
+            {
+                if (_cmbCollections.Items[i]
+                    is CollectionItem item &&
+                    item.CollectionId ==
+                    collection.CollectionId)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        // ============================================================
+        // LOAD CURRENT COMPUTER MEMBERSHIPS
+        // ============================================================
+
+        private async Task
+            LoadCurrentCollectionsAsync()
+        {
+            _lstCurrentCollections.Items.Clear();
+
+            if (string.IsNullOrWhiteSpace(
+                    _currentResourceId))
+            {
+                return;
+            }
+
+            AppendActivity(
+                "Loading current collection memberships...");
+
+            MecmCollectionResult result =
+                await _mecmManagementService
+                    .GetComputerCollectionsAsync(
+                        _currentResourceId);
+
+            if (!result.Success)
+            {
+                AppendActivity(
+                    "Failed to load current collection memberships: " +
+                    result.Error);
+
+                _lstCurrentCollections.Items.Add(
+                    "Unable to load collection memberships.");
+
+                return;
+            }
+
+            if (result.Collections.Count == 0)
+            {
+                _lstCurrentCollections.Items.Add(
+                    "Computer is not currently a member of any collections.");
+
+                AppendActivity(
+                    "Computer is not currently a member of any MECM collections.");
+
+                return;
+            }
+
+            foreach (MecmCollection collection
+                in result.Collections)
+            {
+                _lstCurrentCollections.Items.Add(
+                    new CollectionMembershipItem
+                    {
+                        CollectionId =
+                            collection.CollectionId,
+
+                        Name =
+                            collection.Name
+                    });
+            }
+
+            AppendActivity(
+                $"Computer is currently a member of " +
+                $"{result.Collections.Count} MECM collection(s).");
+        }
+
+        // ============================================================
+        // ADD TO COLLECTION
+        // ============================================================
+
+        private async Task AddToCollectionAsync()
+        {
+            CollectionItem? collection =
+                _cmbCollections.SelectedItem
+                    as CollectionItem;
+
+            if (collection == null)
+            {
                 MessageBox.Show(
-                    $"Computer '{_currentComputerName}' was added to the collection.",
+                    "Select a collection.",
                     "MECM",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                WriteLog(
-                    $"Add error: {ex.Message}");
 
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    _currentComputerName))
+            {
                 MessageBox.Show(
-                    ex.Message,
+                    "Look up a computer first.",
                     "MECM",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            SetBusy(true);
+
+            try
+            {
+                AppendActivity(
+                    $"Adding '{_currentComputerName}' " +
+                    $"to '{collection.Name}' " +
+                    $"({collection.CollectionId})...");
+
+                MecmActionResult result =
+                    await _mecmManagementService
+                        .AddComputerToCollectionAsync(
+                            _currentComputerName,
+                            collection.CollectionId);
+
+                AppendActivity(
+                    result.Success
+                        ? result.Output
+                        : $"Add failed: {result.Error}");
+
+                MessageBox.Show(
+                    result.Success
+                        ? result.Output
+                        : result.Error,
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    result.Success
+                        ? MessageBoxIcon.Information
+                        : MessageBoxIcon.Error);
+
+                if (result.Success)
+                {
+                    await LoadCurrentCollectionsAsync();
+                }
             }
             finally
             {
@@ -954,35 +934,45 @@ namespace AdminTrayTool.Forms
             }
         }
 
-        // =============================================================
+        // ============================================================
         // REMOVE FROM COLLECTION
-        // =============================================================
+        // ============================================================
 
-        private async void BtnRemoveFromCollection_Click(
-            object? sender,
-            EventArgs e)
+        private async Task RemoveFromCollectionAsync()
         {
-            if (_cmbCollection.SelectedItem is not CollectionDisplayItem selected)
+            CollectionItem? collection =
+                _cmbCollections.SelectedItem
+                    as CollectionItem;
+
+            if (collection == null)
+            {
+                MessageBox.Show(
+                    "Select a collection.",
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
                 return;
+            }
 
-            string collectionName =
-                selected.Collection.Name;
+            if (string.IsNullOrWhiteSpace(
+                    _currentComputerName))
+            {
+                MessageBox.Show(
+                    "Look up a computer first.",
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
 
-            string collectionId =
-                selected.Collection.CollectionId;
+                return;
+            }
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Remove computer '{_currentComputerName}' from:" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    $"{collectionName}" +
-                    $"{Environment.NewLine}" +
-                    $"Collection ID: {collectionId}" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    "Continue?",
-                    "Confirm Collection Change",
+                    $"Remove '{_currentComputerName}' from " +
+                    $"the direct membership of " +
+                    $"'{collection.Name}'?",
+                    "Confirm Removal",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning);
 
@@ -992,52 +982,40 @@ namespace AdminTrayTool.Forms
                 return;
             }
 
+            SetBusy(true);
+
             try
             {
-                SetBusy(true);
+                AppendActivity(
+                    $"Removing '{_currentComputerName}' " +
+                    $"from '{collection.Name}' " +
+                    $"({collection.CollectionId})...");
 
-                WriteLog(
-                    $"Removing '{_currentComputerName}' from '{collectionName}'...");
-
-                var result =
+                MecmActionResult result =
                     await _mecmManagementService
                         .RemoveComputerFromCollectionAsync(
                             _currentComputerName,
-                            collectionId);
+                            collection.CollectionId);
 
-                if (!result.Success)
+                AppendActivity(
+                    result.Success
+                        ? result.Output
+                        : $"Remove failed: {result.Error}");
+
+                MessageBox.Show(
+                    result.Success
+                        ? result.Output
+                        : result.Error,
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    result.Success
+                        ? MessageBoxIcon.Information
+                        : MessageBoxIcon.Error);
+
+                if (result.Success)
                 {
-                    WriteLog(
-                        $"Remove failed: {result.Error}");
-
-                    MessageBox.Show(
-                        result.Error,
-                        "MECM",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-
-                    return;
+                    await LoadCurrentCollectionsAsync();
                 }
-
-                WriteLog(
-                    $"Successfully removed '{_currentComputerName}' from '{collectionName}'.");
-
-                MessageBox.Show(
-                    $"Computer '{_currentComputerName}' was removed from the collection.",
-                    "MECM",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            }
-            catch (Exception ex)
-            {
-                WriteLog(
-                    $"Remove error: {ex.Message}");
-
-                MessageBox.Show(
-                    ex.Message,
-                    "MECM",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
             }
             finally
             {
@@ -1045,269 +1023,178 @@ namespace AdminTrayTool.Forms
             }
         }
 
-        // =============================================================
-        // CLEAR COLLECTION CONTROLS
-        // =============================================================
+        // ============================================================
+        // CLEAR COMPUTER INFORMATION
+        // ============================================================
 
-        private void ClearCollectionControls()
+        private void ClearComputerInformation()
         {
-            _collections.Clear();
+            _currentComputerName =
+                string.Empty;
+
+            _currentResourceId =
+                string.Empty;
+
+            _lblComputerName.Text =
+                "Computer:";
+
+            _lblResourceId.Text =
+                "Resource ID:";
+
+            _lblClient.Text =
+                "Client:";
+
+            _lblClientVersion.Text =
+                "Client Version:";
+
+            _lblOperatingSystem.Text =
+                "Operating System:";
+
+            _lblManufacturer.Text =
+                "Manufacturer:";
+
+            _lblModel.Text =
+                "Model:";
+
+            _lblSerialNumber.Text =
+                "Serial Number:";
+
+            _lstCurrentCollections.Items.Clear();
+
+            _allCollections.Clear();
+
+            _cmbCollections.Items.Clear();
+
+            _cmbCollections.Enabled =
+                false;
 
             _txtCollectionFilter.Clear();
 
             _txtCollectionFilter.Enabled =
                 false;
 
-            _cmbCollection.Items.Clear();
-
-            _cmbCollection.SelectedIndex =
-                -1;
-
-            _cmbCollection.Enabled =
+            _btnAdd.Enabled =
                 false;
 
-            _btnAddToCollection.Enabled =
-                false;
-
-            _btnRemoveFromCollection.Enabled =
+            _btnRemove.Enabled =
                 false;
         }
 
-        // =============================================================
-        // CLEAR COMPUTER INFORMATION
-        // =============================================================
-
-        private void ClearComputerInformationOnly()
-        {
-            _lblComputerName.Text =
-                "Computer: —";
-
-            _lblResourceId.Text =
-                "Resource ID: —";
-
-            _lblClient.Text =
-                "MECM Client: —";
-
-            _lblClientVersion.Text =
-                "Client Version: —";
-
-            _lblOperatingSystem.Text =
-                "Operating System: —";
-        }
-
-        private void ClearComputerInformation()
-        {
-            ClearComputerInformationOnly();
-
-            _currentComputerName =
-                string.Empty;
-
-            ClearCollectionControls();
-        }
-
-        // =============================================================
+        // ============================================================
         // BUSY STATE
-        // =============================================================
+        // ============================================================
 
         private void SetBusy(bool busy)
         {
-            _btnLookup.Enabled =
-                !busy;
-
             _txtComputerName.Enabled =
                 !busy;
 
-            _txtCollectionFilter.Enabled =
-                !busy &&
-                _collections.Count > 0;
-
-            _cmbCollection.Enabled =
-                !busy &&
-                _cmbCollection.Items.Count > 0;
+            _btnLookup.Enabled =
+                !busy;
 
             if (busy)
             {
-                _btnAddToCollection.Enabled =
+                _txtCollectionFilter.Enabled =
                     false;
 
-                _btnRemoveFromCollection.Enabled =
+                _cmbCollections.Enabled =
                     false;
-            }
-            else
-            {
-                UpdateCollectionButtons();
+
+                _btnAdd.Enabled =
+                    false;
+
+                _btnRemove.Enabled =
+                    false;
+
+                _lstCurrentCollections.Enabled =
+                    false;
+
+                return;
             }
 
-            Cursor =
-                busy
-                    ? Cursors.WaitCursor
-                    : Cursors.Default;
+            bool computerLoaded =
+                !string.IsNullOrWhiteSpace(
+                    _currentComputerName);
+
+            bool collectionsLoaded =
+                _cmbCollections.Items.Count > 0;
+
+            _txtCollectionFilter.Enabled =
+                computerLoaded &&
+                _allCollections.Count > 0;
+
+            _cmbCollections.Enabled =
+                computerLoaded &&
+                collectionsLoaded;
+
+            _btnAdd.Enabled =
+                computerLoaded &&
+                collectionsLoaded;
+
+            _btnRemove.Enabled =
+                computerLoaded &&
+                collectionsLoaded;
+
+            _lstCurrentCollections.Enabled =
+                computerLoaded;
         }
 
-        // =============================================================
-        // ACTIVITY LOG
-        // =============================================================
+        // ============================================================
+        // ACTIVITY
+        // ============================================================
 
-        private void WriteLog(
+        private void AppendActivity(
             string message)
         {
-            if (_txtLog == null)
-                return;
-
-            if (string.IsNullOrWhiteSpace(message))
-                return;
-
-            _txtLog.AppendText(
-                $"[{DateTime.Now:HH:mm:ss}] {message}" +
+            _txtActivity.AppendText(
+                $"[{DateTime.Now:HH:mm:ss}] " +
+                message +
                 Environment.NewLine);
         }
 
-        // =============================================================
-        // UI HELPERS
-        // =============================================================
+        // ============================================================
+        // DISPLAY HELPERS
+        // ============================================================
 
-        private Panel CreatePanel(
-            Point location,
-            Size size)
+        private static string DisplayValue(
+            string? value)
         {
-            return new HudPanel
-            {
-                Location = location,
-                Size = size
-            };
+            return string.IsNullOrWhiteSpace(value)
+                ? "Not available"
+                : value;
         }
 
-        private Label CreateLabel(
-            string text,
-            Point location)
+        // ============================================================
+        // COLLECTION ITEM
+        // ============================================================
+
+        private sealed class CollectionItem
         {
-            return new Label
-            {
-                Text =
-                    text,
+            public string CollectionId { get; init; } =
+                string.Empty;
 
-                Location =
-                    location,
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.FromArgb(
-                        140,
-                        150,
-                        165)
-            };
-        }
-
-        private Label AddInfoRow(
-            Panel parent,
-            string name,
-            int y,
-            out Label valueLabel,
-            string defaultValue)
-        {
-            var nameLabel = new Label
-            {
-                Text =
-                    name.ToUpperInvariant(),
-
-                Location =
-                    new Point(
-                        20,
-                        y),
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150)
-            };
-
-            parent.Controls.Add(
-                nameLabel);
-
-            valueLabel = new Label
-            {
-                Text =
-                    $"{name}: {defaultValue}",
-
-                Location =
-                    new Point(
-                        170,
-                        y - 1),
-
-                AutoSize = true,
-
-                MaximumSize =
-                    new Size(
-                        620,
-                        0),
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                ForeColor =
-                    Color.White
-            };
-
-            parent.Controls.Add(
-                valueLabel);
-
-            return valueLabel;
-        }
-
-        private Button CreateButton(
-            string text,
-            Point location,
-            Size size)
-        {
-            return new HudButton
-            {
-                Text = text,
-                Location = location,
-                Size = size
-            };
-        }
-
-        // =============================================================
-        // COLLECTION DISPLAY ITEM
-        // =============================================================
-
-        private class CollectionDisplayItem
-        {
-            public MecmCollection Collection { get; }
-
-            private readonly string _displayText;
-
-            public CollectionDisplayItem(MecmCollection collection,
-                string displayText)
-            {
-                Collection =
-                    collection;
-
-                _displayText =
-                    displayText;
-            }
+            public string Name { get; init; } =
+                string.Empty;
 
             public override string ToString()
             {
-                return _displayText;
+                return
+                    $"{Name} ({CollectionId})";
+            }
+        }
+
+        private sealed class CollectionMembershipItem
+        {
+            public string CollectionId { get; init; } =
+                string.Empty;
+
+            public string Name { get; init; } =
+                string.Empty;
+
+            public override string ToString()
+            {
+                return
+                    $"{Name} ({CollectionId})";
             }
         }
     }

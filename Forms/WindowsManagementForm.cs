@@ -1,408 +1,216 @@
-﻿using AdminTrayTool.Services;
-using AdminTrayTool.Forms;
+﻿using AdminTrayTool.Forms;
+using AdminTrayTool.Models;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace AdminTrayTool
 {
     public class WindowsManagementForm : Form
     {
+        private readonly AppConfig _config;
+
         private Button _btnActiveDirectory = null!;
         private Button _btnMecm = null!;
+        private Button _btnClose = null!;
 
-        public WindowsManagementForm()
+        public WindowsManagementForm(AppConfig config)
         {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+
             InitializeForm();
             BuildInterface();
         }
 
-        // =============================================================
-        // FORM INITIALISATION
-        // =============================================================
-
         private void InitializeForm()
         {
             Text = "Windows Management";
+            StartPosition = FormStartPosition.CenterScreen;
+            ClientSize = new Size(890, 600);
+            MinimumSize = new Size(890, 600);
 
-            StartPosition =
-                FormStartPosition.CenterScreen;
-
-            ClientSize =
-                new Size(890, 600);
-
-            MinimumSize =
-                new Size(820, 550);
-
-            BackColor =
-                Color.FromArgb(
-                    10,
-                    15,
-                    25);
-
-            ForeColor =
-                Color.White;
-
-            Font =
-                new Font(
-                    "Segoe UI",
-                    10F,
-                    FontStyle.Regular);
-
-            FormBorderStyle =
-                FormBorderStyle.FixedSingle;
-
-            MaximizeBox = false;
+            BackColor = Color.FromArgb(10, 15, 25);
+            ForeColor = Color.White;
+            Font = new Font("Segoe UI", 10F, FontStyle.Regular);
         }
-
-        // =============================================================
-        // BUILD INTERFACE
-        // =============================================================
 
         private void BuildInterface()
         {
             var mainPanel = new Panel
             {
                 Dock = DockStyle.Fill,
-
-                Padding =
-                    new Padding(30),
-
-                BackColor =
-                    Color.FromArgb(
-                        10,
-                        15,
-                        25)
+                Padding = new Padding(25),
+                BackColor = Color.FromArgb(10, 15, 25)
             };
+
+            var headerLabel = new Label
+            {
+                Text = "WINDOWS MANAGEMENT",
+                Dock = DockStyle.Top,
+                Height = 45,
+                Font = new Font("Segoe UI", 18F, FontStyle.Bold),
+                ForeColor = Color.White,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            var descriptionLabel = new Label
+            {
+                Text = "Manage Windows computers using Active Directory and Microsoft Endpoint Configuration Manager.",
+                Dock = DockStyle.Top,
+                Height = 45,
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.LightGray,
+                TextAlign = ContentAlignment.MiddleLeft
+            };
+
+            var toolsPanel = new Panel
+            {
+                Dock = DockStyle.Fill,
+                Padding = new Padding(0, 20, 0, 20),
+                BackColor = Color.Transparent
+            };
+
+            var adPanel = new HudPanel
+            {
+                Location = new Point(0, 20),
+                Size = new Size(400, 250)
+            };
+
+            var adTitle = new Label
+            {
+                Text = "ACTIVE DIRECTORY",
+                Location = new Point(20, 20),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                ForeColor = Color.White
+            };
+
+            var adDescription = new Label
+            {
+                Text =
+                    "Look up Windows computers,\\n" +
+                    "view their details, and move\\n" +
+                    "computers between OUs.",
+                Location = new Point(20, 65),
+                Size = new Size(350, 75),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.LightGray
+            };
+
+            _btnActiveDirectory = new HudButton
+            {
+                Text = "OPEN ACTIVE DIRECTORY",
+                Location = new Point(20, 165),
+                Size = new Size(350, 45)
+            };
+
+            _btnActiveDirectory.Click += BtnActiveDirectory_Click;
+
+            adPanel.Controls.Add(adTitle);
+            adPanel.Controls.Add(adDescription);
+            adPanel.Controls.Add(_btnActiveDirectory);
+
+            var mecmPanel = new HudPanel
+            {
+                Location = new Point(420, 20),
+                Size = new Size(400, 250)
+            };
+
+            var mecmTitle = new Label
+            {
+                Text = "MECM",
+                Location = new Point(20, 20),
+                AutoSize = true,
+                Font = new Font("Segoe UI", 14F, FontStyle.Bold),
+                ForeColor = Color.White
+            };
+
+            var mecmDescription = new Label
+            {
+                Text =
+                    "Look up Windows devices,\\n" +
+                    "view collections, and manage\\n" +
+                    "direct collection membership.",
+                Location = new Point(20, 65),
+                Size = new Size(350, 75),
+                Font = new Font("Segoe UI", 10F),
+                ForeColor = Color.LightGray
+            };
+
+            _btnMecm = new HudButton
+            {
+                Text = "OPEN MECM",
+                Location = new Point(20, 165),
+                Size = new Size(350, 45)
+            };
+
+            _btnMecm.Click += BtnMecm_Click;
+
+            mecmPanel.Controls.Add(mecmTitle);
+            mecmPanel.Controls.Add(mecmDescription);
+            mecmPanel.Controls.Add(_btnMecm);
+
+            toolsPanel.Controls.Add(adPanel);
+            toolsPanel.Controls.Add(mecmPanel);
+
+            var actionsPanel = new Panel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 55,
+                BackColor = Color.Transparent
+            };
+
+            _btnClose = new HudButton
+            {
+                Text = "CLOSE",
+                Size = new Size(110, 38),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right
+            };
+
+            _btnClose.Location =
+                new Point(
+                    actionsPanel.Width - _btnClose.Width,
+                    5);
+
+            _btnClose.Click += (sender, e) =>
+            {
+                Close();
+            };
+
+            actionsPanel.Controls.Add(_btnClose);
+
+            actionsPanel.Resize += (sender, e) =>
+            {
+                _btnClose.Location =
+                    new Point(
+                        actionsPanel.Width - _btnClose.Width,
+                        5);
+            };
+
+            mainPanel.Controls.Add(toolsPanel);
+            mainPanel.Controls.Add(actionsPanel);
+            mainPanel.Controls.Add(descriptionLabel);
+            mainPanel.Controls.Add(headerLabel);
 
             Controls.Add(mainPanel);
 
-            // =========================================================
-            // HEADER
-            // =========================================================
-
-            var lblTitle = new Label
-            {
-                Text =
-                    "WINDOWS MANAGEMENT",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        20F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        30,
-                        25)
-            };
-
-            mainPanel.Controls.Add(lblTitle);
-
-            var lblSubtitle = new Label
-            {
-                Text =
-                    "Manage Windows computers, Active Directory and MECM",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175),
-
-                Location =
-                    new Point(
-                        33,
-                        62)
-            };
-
-            mainPanel.Controls.Add(lblSubtitle);
-
-            var headerLine = new Panel
-            {
-                Location =
-                    new Point(
-                        30,
-                        90),
-
-                Size =
-                    new Size(
-                        820,
-                        1),
-
-                BackColor =
-                    Color.FromArgb(
-                        45,
-                        55,
-                        70)
-            };
-
-            mainPanel.Controls.Add(headerLine);
-
-            // =========================================================
-            // ACTIVE DIRECTORY
-            // =========================================================
-
-            var adPanel = CreatePanel(
-                new Point(30, 105),
-                new Size(820, 145));
-
-            mainPanel.Controls.Add(adPanel);
-
-            var lblAdTitle = new Label
-            {
-                Text =
-                    "ACTIVE DIRECTORY",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        11F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        20,
-                        18)
-            };
-
-            adPanel.Controls.Add(lblAdTitle);
-
-            var lblAdDescription = new Label
-            {
-                Text =
-                    "Find Windows computers, view Active Directory information " +
-                    "and move computers between organisational units.",
-
-                Location =
-                    new Point(
-                        20,
-                        52),
-
-                Size =
-                    new Size(
-                        520,
-                        45),
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175)
-            };
-
-            adPanel.Controls.Add(lblAdDescription);
-
-            var lblAdFeatures = new Label
-            {
-                Text =
-                    "Computer search  •  AD information  •  OU management",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150),
-
-                Location =
-                    new Point(
-                        20,
-                        105)
-            };
-
-            adPanel.Controls.Add(lblAdFeatures);
-
-            _btnActiveDirectory = CreateButton(
-                "OPEN AD MANAGEMENT",
-                new Point(590, 52),
-                new Size(200, 36));
-
-            _btnActiveDirectory.Click +=
-                BtnActiveDirectory_Click;
-
-            adPanel.Controls.Add(
-                _btnActiveDirectory);
-
-            // =========================================================
-            // MECM / SCCM
-            // =========================================================
-
-            var mecmPanel = CreatePanel(
-                new Point(30, 265),
-                new Size(820, 145));
-
-            mainPanel.Controls.Add(mecmPanel);
-
-            var lblMecmTitle = new Label
-            {
-                Text =
-                    "MECM / SCCM",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        11F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.White,
-
-                Location =
-                    new Point(
-                        20,
-                        18)
-            };
-
-            mecmPanel.Controls.Add(lblMecmTitle);
-
-            var lblMecmDescription = new Label
-            {
-                Text =
-                    "Find Windows computers in Microsoft Endpoint Configuration " +
-                    "Manager and manage collection membership.",
-
-                Location =
-                    new Point(
-                        20,
-                        52),
-
-                Size =
-                    new Size(
-                        520,
-                        45),
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        9.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        150,
-                        160,
-                        175)
-            };
-
-            mecmPanel.Controls.Add(lblMecmDescription);
-
-            var lblMecmFeatures = new Label
-            {
-                Text =
-                    "Computer search  •  Device information  •  Collections",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F),
-
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150),
-
-                Location =
-                    new Point(
-                        20,
-                        105)
-            };
-
-            mecmPanel.Controls.Add(lblMecmFeatures);
-
-            _btnMecm = CreateButton(
-                "OPEN MECM MANAGEMENT",
-                new Point(570, 52),
-                new Size(220, 36));
-
-            _btnMecm.Click +=
-                BtnMecm_Click;
-
-            mecmPanel.Controls.Add(
-                _btnMecm);
-
-            // =========================================================
-            // FORM ACTIONS
-            // =========================================================
-
-            var actionPanel = CreatePanel(
-                new Point(30, 425),
-                new Size(820, 80));
-
-            mainPanel.Controls.Add(actionPanel);
-
-            var lblFormActions = new Label
-            {
-                Text =
-                    "FORM ACTIONS",
-
-                AutoSize = true,
-
-                Font =
-                    new Font(
-                        "Segoe UI",
-                        8.5F,
-                        FontStyle.Bold),
-
-                ForeColor =
-                    Color.FromArgb(
-                        120,
-                        135,
-                        150),
-
-                Location =
-                    new Point(
-                        20,
-                        10)
-            };
-
-            actionPanel.Controls.Add(lblFormActions);
-
-            var closeButton = CreateButton(
-                "CLOSE",
-                new Point(20, 32),
-                new Size(110, 34));
-
-            closeButton.Click +=
-                (_, _) => Close();
-
-            actionPanel.Controls.Add(
-                closeButton);
+            UpdateMecmButtonState();
         }
 
-        // =============================================================
-        // ACTIVE DIRECTORY
-        // =============================================================
+        private void UpdateMecmButtonState()
+        {
+            bool configured =
+                _config.Mecm != null &&
+                _config.Mecm.Enabled &&
+                !string.IsNullOrWhiteSpace(_config.Mecm.SiteCode) &&
+                !string.IsNullOrWhiteSpace(_config.Mecm.SmsProviderServer);
+
+            _btnMecm.Enabled = configured;
+
+            if (!configured)
+            {
+                _btnMecm.Text = "MECM NOT CONFIGURED";
+            }
+        }
 
         private void BtnActiveDirectory_Click(
             object? sender,
@@ -418,19 +226,12 @@ namespace AdminTrayTool
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Failed to open Active Directory Management:" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    ex.Message,
+                    $"Failed to open Active Directory Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
                     "Active Directory",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
-
-        // =============================================================
-        // MECM
-        // =============================================================
 
         private void BtnMecm_Click(
             object? sender,
@@ -438,47 +239,32 @@ namespace AdminTrayTool
         {
             try
             {
+                if (_config.Mecm == null ||
+                    !_config.Mecm.Enabled)
+                {
+                    MessageBox.Show(
+                        "MECM is not enabled in the AdminTrayTool configuration.",
+                        "MECM",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    return;
+                }
+
                 using var form =
-                    new MecmManagementForm();
+                    new MecmManagementForm(
+                        _config.Mecm);
 
                 form.ShowDialog(this);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Failed to open MECM Management:" +
-                    $"{Environment.NewLine}" +
-                    $"{Environment.NewLine}" +
-                    ex.Message,
+                    $"Failed to open MECM Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
                     "MECM",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
-
-        // =============================================================
-        // UI HELPERS
-        // =============================================================
-
-        private Panel CreatePanel(
-            Point location,
-            Size size)
-        {
-            return new HudPanel
-            {
-                Location = location,
-                Size = size
-            };
-        }
-
-        private Button CreateButton(
-            string text,
-            Point location,
-            Size size) => new HudButton
-            {
-                Text = text,
-                Location = location,
-                Size = size
-            };
     }
 }
