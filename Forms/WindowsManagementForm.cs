@@ -10,7 +10,6 @@ namespace AdminTrayTool.Forms
 
         private Button _btnActiveDirectory = null!;
         private Button _btnMecm = null!;
-        private Button _btnClose = null!;
 
         public WindowsManagementForm(AppConfig config)
         {
@@ -24,8 +23,8 @@ namespace AdminTrayTool.Forms
         {
             Text = "Windows Management";
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(890, 600);
-            MinimumSize = new Size(890, 600);
+            ClientSize = new Size(890, 480);
+            MinimumSize = new Size(890, 480);
 
             BackColor = Color.FromArgb(10, 15, 25);
             ForeColor = Color.White;
@@ -156,30 +155,6 @@ namespace AdminTrayTool.Forms
                 Dock = DockStyle.Bottom,
                 Height = 55,
                 BackColor = Color.Transparent
-            };
-
-            _btnClose = new HudButton
-            {
-                Text = "CLOSE",
-                Size = new Size(110, 38),
-                Anchor = AnchorStyles.Top | AnchorStyles.Right
-            };
-
-            _btnClose.Location =
-                new Point(
-                    actionsPanel.Width - _btnClose.Width,
-                    5);
-
-            _btnClose.Click += (sender, e) => Close();
-
-            actionsPanel.Controls.Add(_btnClose);
-
-            actionsPanel.Resize += (sender, e) =>
-            {
-                _btnClose.Location =
-                    new Point(
-                        actionsPanel.Width - _btnClose.Width,
-                        5);
             };
 
             mainPanel.Controls.Add(toolsPanel);

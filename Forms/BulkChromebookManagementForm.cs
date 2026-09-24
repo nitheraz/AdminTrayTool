@@ -15,7 +15,6 @@ namespace AdminTrayTool.Forms
         private Button _btnSelectAll = null!;
         private Button _btnSelectNone = null!;
         private Button _btnPerform = null!;
-        private Button _btnClose = null!;
         private Button _btnExport = null!;
 
         private DataGridView _gridDevices = null!;
@@ -52,13 +51,13 @@ namespace AdminTrayTool.Forms
                 FormStartPosition.CenterParent;
 
             ClientSize =
-                new Size(900, 790);
+                new Size(900, 750);
 
             MinimumSize =
-                new Size(900, 790);
+                new Size(900, 750);
 
             MaximumSize =
-                new Size(900, 790);
+                new Size(900, 750);
 
             BackColor =
                 Color.FromArgb(
@@ -637,23 +636,6 @@ namespace AdminTrayTool.Forms
 
             mainPanel.Controls.Add(
                 _btnExport);
-
-            // =========================================================
-            // CLOSE
-            // =========================================================
-
-            _btnClose = new HudButton
-            {
-                Text = "CLOSE",
-                Location = new Point(615, 630),
-                Size = new Size(150, 40)
-            };
-
-            _btnClose.Click +=
-                (s, e) => Close();
-
-            mainPanel.Controls.Add(
-                _btnClose);
 
             UpdateSelectionStatus();
             UpdatePerformButton();
@@ -1854,8 +1836,7 @@ namespace AdminTrayTool.Forms
                 _btnSelectNone == null ||
                 _btnPerform == null ||
                 _btnExport == null ||
-                _cmbBulkOrgUnit == null ||
-                _btnClose == null)
+                _cmbBulkOrgUnit == null)
             {
                 return;
             }
@@ -1896,9 +1877,6 @@ namespace AdminTrayTool.Forms
             _btnExport.Enabled =
                 enabled &&
                 hasDevices;
-
-            _btnClose.Enabled =
-                enabled;
 
             if (!enabled)
             {

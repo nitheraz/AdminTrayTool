@@ -36,7 +36,7 @@ namespace AdminTrayTool.Forms
             Text = "Active Directory Management";
             StartPosition = FormStartPosition.CenterScreen;
 
-            ClientSize = new Size(890, 800);
+            ClientSize = new Size(890, 740);
             MinimumSize = new Size(820, 700);
 
             BackColor = Color.FromArgb(10, 15, 25);
@@ -330,39 +330,6 @@ namespace AdminTrayTool.Forms
             };
 
             logPanel.Controls.Add(_txtLog);
-
-            var actionsPanel =
-            CreatePanel(
-                new Point(30, 715),
-                new Size(820, 70));
-
-            mainPanel.Controls.Add(actionsPanel);
-
-            var lblActionsTitle = new Label
-            {
-                Text = "FORM ACTIONS",
-                AutoSize = true,
-                Font = new Font(
-                    "Segoe UI",
-                    8.5F,
-                    FontStyle.Bold),
-                ForeColor = Color.FromArgb(140, 150, 165),
-                Location = new Point(20, 15)
-            };
-
-            actionsPanel.Controls.Add(lblActionsTitle);
-
-            var btnClose = new HudButton
-            {
-                Text = "CLOSE",
-                Location = new Point(650, 13),
-                Size = new Size(150, 32)
-            };
-
-            btnClose.Click +=
-                (_, _) => Close();
-
-            actionsPanel.Controls.Add(btnClose);
         }
 
 

@@ -55,7 +55,7 @@ namespace AdminTrayTool.Forms
                 FormStartPosition.CenterParent;
 
             ClientSize =
-                new Size(1000, 760);
+                new Size(980, 730);
 
             MinimumSize =
                 new Size(900, 650);

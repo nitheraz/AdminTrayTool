@@ -5,44 +5,128 @@ namespace AdminTrayTool
     public class HudButton : Button
     {
         private bool _isHovered;
+        private bool _isPressed;
 
         public HudButton()
         {
-            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(
+                ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.UserPaint |
+                ControlStyles.OptimizedDoubleBuffer |
+                ControlStyles.ResizeRedraw,
+                true);
+
             FlatStyle = FlatStyle.Flat;
             FlatAppearance.BorderSize = 0;
-            BackColor = Color.Transparent;
+
+            BackColor = HudTheme.GradientBottom;
             ForeColor = HudTheme.TextWhite;
-            Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+
+            Font = new Font(
+                "Segoe UI",
+                9F,
+                FontStyle.Bold);
+
             Cursor = Cursors.Hand;
 
-            MouseEnter += (s, e) => { _isHovered = true; Invalidate(); };
-            MouseLeave += (s, e) => { _isHovered = false; Invalidate(); };
+            MouseEnter += OnMouseEnterButton;
+            MouseLeave += OnMouseLeaveButton;
+            MouseDown += OnMouseDownButton;
+            MouseUp += OnMouseUpButton;
         }
 
-        protected override CreateParams CreateParams
+        private void OnMouseEnterButton(
+            object? sender,
+            EventArgs e)
         {
-            get
-            {
-                var cp = base.CreateParams;
-                cp.ExStyle |= 0x20; // WS_EX_TRANSPARENT - forces real background compositing
-                return cp;
-            }
+            if (!Enabled)
+                return;
+
+            _isHovered = true;
+            Invalidate();
         }
 
-        protected override void OnPaintBackground(PaintEventArgs pevent)
+        private void OnMouseLeaveButton(
+            object? sender,
+            EventArgs e)
         {
-            // Intentionally do nothing - prevents WinForms' default background
-            // fill from fighting with the transparent compositing above.
+            _isHovered = false;
+            _isPressed = false;
+            Invalidate();
         }
 
-        protected override void OnPaint(PaintEventArgs pevent)
+        private void OnMouseDownButton(
+            object? sender,
+            MouseEventArgs e)
         {
-            HudTheme.PaintButton(pevent.Graphics, ClientRectangle, _isHovered, false);
+            if (!Enabled || e.Button != MouseButtons.Left)
+                return;
+
+            _isPressed = true;
+            Invalidate();
+        }
+
+        private void OnMouseUpButton(
+            object? sender,
+            MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            _isPressed = false;
+            Invalidate();
+        }
+
+        protected override void OnEnabledChanged(
+            EventArgs e)
+        {
+            _isHovered = false;
+            _isPressed = false;
+
+            base.OnEnabledChanged(e);
+
+            Invalidate();
+        }
+
+        protected override void OnPaintBackground(
+            PaintEventArgs pevent)
+        {
+            using SolidBrush backgroundBrush =
+                new SolidBrush(HudTheme.GradientBottom);
+
+            pevent.Graphics.FillRectangle(
+                backgroundBrush,
+                ClientRectangle);
+        }
+
+        protected override void OnPaint(
+            PaintEventArgs pevent)
+        {
+            Rectangle bounds = ClientRectangle;
+
+            if (bounds.Width <= 2 || bounds.Height <= 2)
+                return;
+
+            HudTheme.PaintButton(
+                pevent.Graphics,
+                bounds,
+                _isHovered,
+                _isPressed,
+                Enabled);
+
+            Color textColor = Enabled
+                ? ForeColor
+                : Color.FromArgb(100, ForeColor);
 
             TextRenderer.DrawText(
-                pevent.Graphics, Text, Font, ClientRectangle, ForeColor,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+                pevent.Graphics,
+                Text,
+                Font,
+                bounds,
+                textColor,
+                TextFormatFlags.HorizontalCenter |
+                TextFormatFlags.VerticalCenter |
+                TextFormatFlags.NoPadding);
         }
     }
 }
