@@ -418,7 +418,7 @@ namespace AdminTrayTool
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Failed to open Active Directory Management:" +
+                    "Failed to open Active Directory Management:" +
                     $"{Environment.NewLine}" +
                     $"{Environment.NewLine}" +
                     ex.Message,
@@ -446,7 +446,7 @@ namespace AdminTrayTool
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Failed to open MECM Management:" +
+                    "Failed to open MECM Management:" +
                     $"{Environment.NewLine}" +
                     $"{Environment.NewLine}" +
                     ex.Message,

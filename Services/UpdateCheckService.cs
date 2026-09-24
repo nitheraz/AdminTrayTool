@@ -9,7 +9,8 @@ namespace AdminTrayTool.Services
         private const string LatestReleaseApiUrl =
             "https://api.github.com/repos/nitheraz/AdminTrayTool/releases/latest";
 
-        private const string UpdateCompletedArgument = "--update-complete";
+        private const string UpdateCompletedArgument =
+            "--update-complete";
 
         public static async Task CheckForUpdateAsync(
             string currentVersion,
@@ -17,7 +18,8 @@ namespace AdminTrayTool.Services
         {
             try
             {
-                using var client = CreateHttpClient();
+                using var client =
+                    CreateHttpClient();
 
                 string json =
                     await client.GetStringAsync(
@@ -40,11 +42,13 @@ namespace AdminTrayTool.Services
                     return;
 
                 string latestVersion =
-                    tagName.TrimStart('v', 'V');
+                    tagName.TrimStart(
+                        'v',
+                        'V');
 
                 if (!IsNewerVersion(
-                        latestVersion,
-                        currentVersion))
+                    latestVersion,
+                    currentVersion))
                 {
                     if (showUpToDateMessage)
                     {
@@ -127,7 +131,8 @@ namespace AdminTrayTool.Services
                 await DownloadAndInstallAsync(
                     client,
                     downloadUrl,
-                    assetName ?? $"AdminTrayTool-{latestVersion}.msi",
+                    assetName ??
+                        $"AdminTrayTool-{latestVersion}.msi",
                     digest,
                     latestVersion);
             }
@@ -146,7 +151,8 @@ namespace AdminTrayTool.Services
 
         private static HttpClient CreateHttpClient()
         {
-            var client = new HttpClient();
+            var client =
+                new HttpClient();
 
             client.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "AdminTrayTool");
@@ -159,8 +165,8 @@ namespace AdminTrayTool.Services
             string latestVersion)
         {
             if (!root.TryGetProperty(
-                    "assets",
-                    out var assets))
+                "assets",
+                out var assets))
             {
                 return null;
             }
@@ -168,11 +174,12 @@ namespace AdminTrayTool.Services
             string expectedName =
                 $"AdminTrayTool-{latestVersion}.msi";
 
-            foreach (JsonElement asset in assets.EnumerateArray())
+            foreach (JsonElement asset in
+                assets.EnumerateArray())
             {
                 if (!asset.TryGetProperty(
-                        "name",
-                        out var nameElement))
+                    "name",
+                    out var nameElement))
                 {
                     continue;
                 }
@@ -181,9 +188,9 @@ namespace AdminTrayTool.Services
                     nameElement.GetString();
 
                 if (string.Equals(
-                        name,
-                        expectedName,
-                        StringComparison.OrdinalIgnoreCase))
+                    name,
+                    expectedName,
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     return asset;
                 }
@@ -216,8 +223,10 @@ namespace AdminTrayTool.Services
             {
                 MessageBox.Show(
                     $"AdminTrayTool {latestVersion} will now be downloaded.\n\n" +
-                    "The application will close and Windows Installer " +
-                    "will complete the upgrade.",
+                    "The application will close while Windows Installer " +
+                    "installs the update.\n\n" +
+                    "AdminTrayTool will automatically restart when the update " +
+                    "has completed.",
                     "Installing Update",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
@@ -233,15 +242,16 @@ namespace AdminTrayTool.Services
                     await response.Content.ReadAsStreamAsync();
 
                 await using FileStream destination =
-                    new FileStream(
+                    new(
                         msiPath,
                         FileMode.Create,
                         FileAccess.Write,
                         FileShare.None);
 
-                await source.CopyToAsync(destination);
+                await source.CopyToAsync(
+                    destination);
 
-                destination.Close();
+                await destination.FlushAsync();
 
                 if (!string.IsNullOrWhiteSpace(digest))
                 {
@@ -252,7 +262,7 @@ namespace AdminTrayTool.Services
 
                     if (!verified)
                     {
-                        File.Delete(msiPath);
+                        TryDeleteFile(msiPath);
 
                         MessageBox.Show(
                             "The downloaded installer failed its " +
@@ -266,34 +276,88 @@ namespace AdminTrayTool.Services
                     }
                 }
 
-                var startInfo = new ProcessStartInfo
+                string applicationPath =
+                    Path.Combine(
+                        AppContext.BaseDirectory,
+                        "AdminTrayTool.exe");
+
+                if (!File.Exists(applicationPath))
                 {
-                    FileName = "msiexec.exe",
-                    Arguments =
-                        $"/i \"{msiPath}\" /passive /norestart",
-                    UseShellExecute = true
-                };
+                    throw new FileNotFoundException(
+                        "The AdminTrayTool executable could not be found.",
+                        applicationPath);
+                }
 
-                Process.Start(startInfo);
+                StartUpdateHelper(
+                    msiPath,
+                    applicationPath);
 
+                // The helper now owns the rest of the update process.
+                // It waits for MSI to finish and then launches the new
+                // AdminTrayTool instance with --update-complete.
                 Application.Exit();
             }
             catch
             {
-                if (File.Exists(msiPath))
-                {
-                    try
-                    {
-                        File.Delete(msiPath);
-                    }
-                    catch
-                    {
-                        // Ignore cleanup errors.
-                    }
-                }
-
+                TryDeleteFile(msiPath);
                 throw;
             }
+        }
+
+        private static void StartUpdateHelper(
+            string msiPath,
+            string applicationPath)
+        {
+            string escapedMsiPath =
+                EscapePowerShellString(
+                    msiPath);
+
+            string escapedApplicationPath =
+                EscapePowerShellString(
+                    applicationPath);
+
+            string command =
+                "$ErrorActionPreference='Stop'; " +
+                "$p=Start-Process " +
+                "-FilePath 'msiexec.exe' " +
+                $"-ArgumentList '/i \"{escapedMsiPath}\" /passive /norestart' " +
+                "-Wait -PassThru; " +
+                "if ($p.ExitCode -eq 0 -or $p.ExitCode -eq 3010) { " +
+                $"Start-Process -FilePath '{escapedApplicationPath}' " +
+                $"-ArgumentList '{UpdateCompletedArgument}' " +
+                "}";
+
+            var startInfo =
+                new ProcessStartInfo
+                {
+                    FileName =
+                        "powershell.exe",
+
+                    Arguments =
+                        "-NoProfile -NonInteractive " +
+                        "-ExecutionPolicy Bypass " +
+                        $"-WindowStyle Hidden -Command \"{command}\"",
+
+                    UseShellExecute = false,
+
+                    CreateNoWindow = true,
+
+                    WorkingDirectory =
+                        AppContext.BaseDirectory
+                };
+
+            Process process = Process.Start(startInfo) ?? throw new InvalidOperationException(
+                    "The update helper process could not be started.");
+            Process? helper =
+                process;
+        }
+
+        private static string EscapePowerShellString(
+            string value)
+        {
+            return value.Replace(
+                "'",
+                "''");
         }
 
         private static async Task<bool> VerifySha256Async(
@@ -304,8 +368,8 @@ namespace AdminTrayTool.Services
                 digest;
 
             if (expectedHash.StartsWith(
-                    "sha256:",
-                    StringComparison.OrdinalIgnoreCase))
+                "sha256:",
+                StringComparison.OrdinalIgnoreCase))
             {
                 expectedHash =
                     expectedHash[
@@ -319,10 +383,12 @@ namespace AdminTrayTool.Services
                 File.OpenRead(filePath);
 
             byte[] hash =
-                await SHA256.HashDataAsync(stream);
+                await SHA256.HashDataAsync(
+                    stream);
 
             string actualHash =
-                Convert.ToHexString(hash);
+                Convert.ToHexString(
+                    hash);
 
             return string.Equals(
                 actualHash,
@@ -335,20 +401,36 @@ namespace AdminTrayTool.Services
             string current)
         {
             if (!Version.TryParse(
-                    latest,
-                    out var latestVer))
+                latest,
+                out var latestVer))
             {
                 return false;
             }
 
             if (!Version.TryParse(
-                    current,
-                    out var currentVer))
+                current,
+                out var currentVer))
             {
                 return false;
             }
 
             return latestVer > currentVer;
+        }
+
+        private static void TryDeleteFile(
+            string filePath)
+        {
+            if (!File.Exists(filePath))
+                return;
+
+            try
+            {
+                File.Delete(filePath);
+            }
+            catch
+            {
+                // Ignore cleanup errors.
+            }
         }
     }
 }
