@@ -1,0 +1,17 @@
+﻿/* AdminTrayTool header logo */
+.md-header__button.md-logo {
+    padding: 0.15rem 0.4rem;
+    margin-right: 1rem;
+}
+
+    .md-header__button.md-logo img {
+        width: auto;
+        height: 48px;
+        max-width: 180px;
+    }
+
+/* Hide duplicate site name but preserve its space */
+.md-header__title {
+    visibility: hidden;
+    flex: 1;
+}
