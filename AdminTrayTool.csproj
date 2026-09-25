@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
@@ -23,19 +23,13 @@
 		<None Include=".github\workflows\docs.yml" />
 		<None Include=".editorconfig" />
 
-		<None Include="config.json"
-			  CopyToOutputDirectory="Always"
-			  CopyToPublishDirectory="Always" />
+		<None Include="config.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
 
 		<!-- Copy tray icon to output and publish folders -->
-		<None Update="adminTray.ico"
-			  CopyToOutputDirectory="PreserveNewest"
-			  CopyToPublishDirectory="Always" />
+		<None Update="adminTray.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
 
 		<!-- Bundled GAM7 runtime -->
-		<Content Include="GAM7\**\*"
-				 CopyToOutputDirectory="PreserveNewest"
-				 CopyToPublishDirectory="Always" />
+		<Content Include="GAM7\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="Always" />
 
 	</ItemGroup>
 

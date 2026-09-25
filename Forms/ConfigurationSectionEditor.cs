@@ -11,6 +11,7 @@ namespace AdminTrayTool.Forms
         private readonly SectionSchema _schema;
 
         private readonly Dictionary<string, Control> _controls = [];
+        private readonly Func<Task<bool>>? _testConnection;
 
         private Button _btnSave = null!;
 
@@ -26,11 +27,14 @@ namespace AdminTrayTool.Forms
         };
         public ConfigurationSectionEditor(
             SectionSchema schema,
-            string path)
+            string path,
+            Func<Task<bool>>? testConnection = null)
         {
             _schema = schema ?? throw new ArgumentNullException(nameof(schema));
             _path = path ?? throw new ArgumentNullException(nameof(path));
+            _testConnection = testConnection;
             _sectionKey = schema.SectionKey;
+            _testConnection = testConnection;
 
             Dock = DockStyle.Fill;
             BackColor = Color.FromArgb(10, 15, 25);
@@ -40,7 +44,7 @@ namespace AdminTrayTool.Forms
             BuildInterface();
             LoadValues();
         }
-
+    
         private void BuildInterface()
         {
             var mainPanel = new Panel
@@ -133,6 +137,32 @@ namespace AdminTrayTool.Forms
                 Anchor = AnchorStyles.Bottom | AnchorStyles.Right
             };
 
+            Button? btnTestConnection = null;
+
+            if (_testConnection != null)
+            {
+                btnTestConnection = new HudButton
+                {
+                    Text = "TEST CONNECTION",
+                    Size = new Size(170, 38),
+                    Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                };
+
+                btnTestConnection.Click += async (sender, e) =>
+                {
+                    btnTestConnection.Enabled = false;
+
+                    try
+                    {
+                        await _testConnection();
+                    }
+                    finally
+                    {
+                        btnTestConnection.Enabled = true;
+                    }
+                };
+            }
+
             var bottomPanel = new Panel
             {
                 Dock = DockStyle.Bottom,
@@ -142,18 +172,45 @@ namespace AdminTrayTool.Forms
 
             bottomPanel.Controls.Add(_btnSave);
 
+            if (btnTestConnection != null)
+            {
+                bottomPanel.Controls.Add(btnTestConnection);
+            }
+
             bottomPanel.Resize += (sender, e) =>
             {
                 _btnSave.Location =
                     new Point(
                         bottomPanel.Width - _btnSave.Width,
                         5);
+
+                if (btnTestConnection != null)
+                {
+                    btnTestConnection.Location =
+                        new Point(
+                            bottomPanel.Width -
+                            _btnSave.Width -
+                            btnTestConnection.Width -
+                            10,
+                            5);
+                }
             };
 
             _btnSave.Location =
                 new Point(
                     bottomPanel.Width - _btnSave.Width,
                     5);
+
+            if (btnTestConnection != null)
+            {
+                btnTestConnection.Location =
+                    new Point(
+                        bottomPanel.Width -
+                        _btnSave.Width -
+                        btnTestConnection.Width -
+                        10,
+                        5);
+            }
 
             _btnSave.Click += BtnSave_Click;
 

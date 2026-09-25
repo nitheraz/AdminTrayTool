@@ -316,14 +316,21 @@ namespace AdminTrayTool.Services
                 EscapePowerShellString(
                     applicationPath);
 
+            int currentProcessId =
+                Environment.ProcessId;
+
             string command =
                 "$ErrorActionPreference='Stop'; " +
+                $"$currentProcess = Get-Process -Id {currentProcessId} -ErrorAction SilentlyContinue; " +
+                "if ($null -ne $currentProcess) { " +
+                "    Wait-Process -Id $currentProcess.Id -ErrorAction SilentlyContinue; " +
+                "} " +
                 "$p=Start-Process " +
                 "-FilePath 'msiexec.exe' " +
                 $"-ArgumentList '/i \"{escapedMsiPath}\" /passive /norestart' " +
                 "-Wait -PassThru; " +
                 "if ($p.ExitCode -eq 0 -or $p.ExitCode -eq 3010) { " +
-                $"Start-Process -FilePath '{escapedApplicationPath}' " +
+                $"    Start-Process -FilePath '{escapedApplicationPath}' " +
                 $"-ArgumentList '{UpdateCompletedArgument}' " +
                 "}";
 
@@ -347,7 +354,8 @@ namespace AdminTrayTool.Services
                 };
 
             using Process? helper =
-                Process.Start(startInfo) ?? throw new InvalidOperationException(
+                Process.Start(startInfo)
+                ?? throw new InvalidOperationException(
                     "The update helper process could not be started.");
         }
 

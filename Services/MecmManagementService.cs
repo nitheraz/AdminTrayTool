@@ -53,6 +53,60 @@ namespace AdminTrayTool.Services
             };
         }
 
+        public async Task<MecmActionResult> TestConnectionAsync()
+        {
+            MecmActionResult validation =
+                ValidateConfiguration();
+
+            if (!validation.Success)
+            {
+                return validation;
+            }
+
+            string script = $$"""
+
+                $ErrorActionPreference = 'Stop'
+
+                $site = Get-CimInstance `
+                    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+                    -Namespace '{{EscapePowerShellString(Namespace)}}' `
+                    -ClassName SMS_Site `
+                    -ErrorAction Stop
+
+                if ($null -eq $site)
+                {
+                    throw "Unable to retrieve the MECM site information."
+                }
+
+                Write-Output "MECM connection successful."
+
+                """;
+
+            PowerShellResult result =
+                await RunPowerShellAsync(script);
+
+            if (!result.Success)
+            {
+                return new MecmActionResult
+                {
+                    Success = false,
+                    Error =
+                        string.IsNullOrWhiteSpace(result.Error)
+                            ? "Unable to connect to the MECM SMS Provider."
+                            : result.Error
+                };
+            }
+
+            return new MecmActionResult
+            {
+                Success = true,
+                Output =
+                    $"MECM connection successful.{Environment.NewLine}" +
+                    $"Site Code: {_config.SiteCode}{Environment.NewLine}" +
+                    $"SMS Provider: {_config.SmsProviderServer}"
+            };
+        }
+
         private MecmComputerResult ValidateComputerConfiguration()
         {
             MecmActionResult validation =

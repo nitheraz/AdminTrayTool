@@ -1,5 +1,7 @@
 using AdminTrayTool.Models;
 using AdminTrayTool.UI;
+using AdminTrayTool.Services;
+using System.Text.Json;
 
 namespace AdminTrayTool.Forms
 {
@@ -63,10 +65,21 @@ namespace AdminTrayTool.Forms
                             ForeColor = Color.White
                         };
 
+                    Func<Task<bool>>? testConnection = null;
+
+                    if (string.Equals(
+                            schema.SectionKey,
+                            "mecm",
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        testConnection = TestMecmConnectionAsync;
+                    }
+
                     var editor =
                         new ConfigurationSectionEditor(
                             schema,
-                            _path);
+                            _path,
+                            testConnection);
 
                     tabPage.Controls.Add(editor);
 
@@ -130,7 +143,73 @@ namespace AdminTrayTool.Forms
             Controls.Add(tabs);
             Controls.Add(bottomPanel);
         }
+        private async Task<bool> TestMecmConnectionAsync()
+        {
+            try
+            {
+                if (!File.Exists(_path))
+                {
+                    MessageBox.Show(
+                        this,
+                        "The application configuration file does not exist.",
+                        "MECM Connection Test",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
 
+                    return false;
+                }
+
+                string json =
+                    await File.ReadAllTextAsync(_path);
+
+                AppConfig config =
+                    JsonSerializer.Deserialize<AppConfig>(
+                        json,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        })
+                    ?? new AppConfig();
+
+                MecmManagementService service =
+                    new(config.Mecm);
+
+                MecmActionResult result =
+                    await service.TestConnectionAsync();
+
+                if (result.Success)
+                {
+                    MessageBox.Show(
+                        this,
+                        result.Output,
+                        "MECM Connection Test",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    return true;
+                }
+
+                MessageBox.Show(
+                    this,
+                    result.Error,
+                    "MECM Connection Test",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    $"Unable to test the MECM connection.{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "MECM Connection Test",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
         private static bool IsObjectConfigurationSchema(
             SectionSchema schema)
         {
