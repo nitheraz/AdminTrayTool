@@ -1,6 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<VersionFile>$(MSBuildProjectDirectory)\VERSION.txt</VersionFile>
+		<Version Condition="Exists('$(VersionFile)')">$([System.IO.File]::ReadAllText('$(VersionFile)').Trim())</Version>
+		<AssemblyVersion Condition="'$(Version)' != ''">$(Version).0</AssemblyVersion>
+		<FileVersion Condition="'$(Version)' != ''">$(Version).0</FileVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>
