@@ -1,0 +1,3023 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AdminTrayTool - IT Admin Quick Tools">
+      
+      
+      
+        <link rel="canonical" href="https://nitheraz.github.io/AdminTrayTool/guides/bulk-chromebook-management/">
+      
+      
+        <link rel="prev" href="../chromebook-management/">
+      
+      
+        <link rel="next" href="../windows-management-setup/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/adminTray.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Bulk Chromebook Management - AdminTrayTool</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bulk-chromebook-management" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AdminTrayTool" class="md-header__button md-logo" aria-label="AdminTrayTool" data-md-component="logo">
+      
+  <img src="../../assets/Admintraytool.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AdminTrayTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bulk Chromebook Management
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/nitheraz/AdminTrayTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nitheraz/AdminTrayTool
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../chromebook-management/" class="md-tabs__link">
+          
+  
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../gam-setup/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  GAM7 Setup & Troubleshooting
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../faq/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../about/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  About & Versioning
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AdminTrayTool" class="md-nav__button md-logo" aria-label="AdminTrayTool" data-md-component="logo">
+      
+  <img src="../../assets/Admintraytool.png" alt="logo">
+
+    </a>
+    AdminTrayTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nitheraz/AdminTrayTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nitheraz/AdminTrayTool
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chromebook-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chromebook Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bulk Chromebook Management
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bulk Chromebook Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-chromebook-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Chromebook Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-management-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Management Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bulk Management Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-select-an-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Select an Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-download-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Download the Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-prepare-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Prepare the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-import-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Import the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-select-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Select Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-optionally-check-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Optionally Check Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-review-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Review the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-execute-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Execute the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-export-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Export Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Download Template
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Download Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serial-number-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serial Number Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-asset-id-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-chromebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Importing Chromebooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing Chromebooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serial-number-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serial Number Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-asset-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#duplicate-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Duplicate Devices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checking-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Checking Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-is-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking is Optional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-large-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Large Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#device-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Selecting Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select All
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-a-bulk-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a Bulk Action
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Chromebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#re-enable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Re-enable Chromebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#move-to-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Move to OU
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Move to OU">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-the-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting the OU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#powerwash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Powerwash
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clear-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clear Profiles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-asset-id_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Asset ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-asset-id-is-not-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Asset ID Is Not Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-before-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Before Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review Before Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-does-not-require-device-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Does Not Require Device Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Processing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operation-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operation Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clearing-the-bulk-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clearing the Bulk List
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-bulk-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Bulk Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Bulk Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-select-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Select the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-download-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Download the Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-prepare-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Prepare the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-import-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Import the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-review-the-device-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Review the Device List
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-optionally-check-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6 — Optionally Check Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-select-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7 — Select Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-review-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8 — Review the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-execute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9 — Execute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-review-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10 — Review Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-11-export-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11 — Export Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bulk-asset-id-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Bulk Asset ID Update
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bulk-move-to-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Bulk Move to OU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#safety-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Safety Considerations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Management
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Windows Management
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windows-management-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Management Setup
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../windows-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Windows Management Guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../active-directory-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Active Directory Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mecm-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MECM / SCCM Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../group-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Group Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../config-settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Config Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gam-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GAM7 Setup & Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About & Versioning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-chromebook-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Chromebook Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-management-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Management Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bulk Management Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-select-an-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Select an Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-download-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Download the Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-prepare-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Prepare the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-import-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Import the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-select-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Select Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-optionally-check-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Optionally Check Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-review-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Review the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-execute-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Execute the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-export-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Export Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#download-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Download Template
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Download Template">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serial-number-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serial Number Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-asset-id-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-chromebooks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Importing Chromebooks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing Chromebooks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serial-number-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serial Number Actions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-asset-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#csv-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CSV Validation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#duplicate-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Duplicate Devices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checking-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Checking Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#checking-is-optional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking is Optional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-large-lists" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Checking Large Lists
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#device-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Device Status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting Devices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Selecting Devices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#select-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select All
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#select-none" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Select None
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#choosing-a-bulk-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing a Bulk Action
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Disable Chromebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#re-enable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Re-enable Chromebook
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#move-to-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Move to OU
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Move to OU">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selecting-the-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting the OU
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#powerwash" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Powerwash
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clear-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clear Profiles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#update-asset-id_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Asset ID
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Update Asset ID">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#current-asset-id-is-not-required" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Asset ID Is Not Required
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-before-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Before Processing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Review Before Processing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#review-does-not-require-device-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Review Does Not Require Device Validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-processing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bulk Processing
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operation-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operation Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results-table" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Results Table
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exporting-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exporting Results
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clearing-the-bulk-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clearing the Bulk List
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-bulk-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recommended Bulk Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Recommended Bulk Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-select-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — Select the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-download-the-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Download the Template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-prepare-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Prepare the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-import-the-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Import the CSV
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-review-the-device-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Review the Device List
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-optionally-check-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6 — Optionally Check Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-select-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7 — Select Devices
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-review-the-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8 — Review the Action
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-9-execute" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 9 — Execute
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-10-review-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 10 — Review Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-11-export-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 11 — Export Results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bulk-asset-id-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Bulk Asset ID Update
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-bulk-move-to-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Bulk Move to OU
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#safety-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Safety Considerations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Bulk Chromebook Management</h1>
+
+<h2 id="bulk-chromebook-management">Bulk Chromebook Management<a class="headerlink" href="#bulk-chromebook-management" title="Permanent link">&para;</a></h2>
+<p>AdminTrayTool includes a dedicated <strong>Bulk Chromebook Management</strong> tool for processing multiple Chromebooks in one operation.</p>
+<p>Access it through:</p>
+<p><strong>Tray icon → Chromebook Management → Bulk Management</strong></p>
+<p>Bulk Management allows supported Chromebook actions to be performed against multiple devices using CSV files.</p>
+<p>The bulk workflow is:</p>
+<p><strong>Select Action → Download Template → Import CSV → Select Devices → Review Action → Execute</strong></p>
+<p>Checking devices against Google Workspace is available as an optional step when current device information is required.</p>
+<hr />
+<h2 id="available-actions">Available Actions<a class="headerlink" href="#available-actions" title="Permanent link">&para;</a></h2>
+<p>Bulk Chromebook Management currently supports:</p>
+<ul>
+<li><strong>Disable Chromebook</strong></li>
+<li><strong>Re-enable Chromebook</strong></li>
+<li><strong>Move to OU</strong></li>
+<li><strong>Powerwash</strong></li>
+<li><strong>Clear Profiles</strong></li>
+<li><strong>Update Asset ID</strong></li>
+</ul>
+<p>The CSV requirements depend on the selected action.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Required CSV columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Disable Chromebook</strong></td>
+<td><code>serialNumber</code></td>
+</tr>
+<tr>
+<td><strong>Re-enable Chromebook</strong></td>
+<td><code>serialNumber</code></td>
+</tr>
+<tr>
+<td><strong>Move to OU</strong></td>
+<td><code>serialNumber</code></td>
+</tr>
+<tr>
+<td><strong>Powerwash</strong></td>
+<td><code>serialNumber</code></td>
+</tr>
+<tr>
+<td><strong>Clear Profiles</strong></td>
+<td><code>serialNumber</code></td>
+</tr>
+<tr>
+<td><strong>Update Asset ID</strong></td>
+<td><code>serialNumber</code>, <code>AssetId</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="bulk-management-workflow">Bulk Management Workflow<a class="headerlink" href="#bulk-management-workflow" title="Permanent link">&para;</a></h2>
+<p>The Bulk Chromebook Management window is designed around an action-first workflow.</p>
+<h3 id="1-select-an-action">1. Select an Action<a class="headerlink" href="#1-select-an-action" title="Permanent link">&para;</a></h3>
+<p>Use the <strong>Action</strong> dropdown to select the operation you want to perform.</p>
+<p>If <strong>Move to OU</strong> is selected, an <strong>Organisational Unit</strong> selector is also displayed.</p>
+<p>The selected action determines which CSV template is generated.</p>
+<h3 id="2-download-the-template">2. Download the Template<a class="headerlink" href="#2-download-the-template" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Download Template</strong> to generate a CSV template for the selected action.</p>
+<p>The template automatically contains the columns required for that operation.</p>
+<h3 id="3-prepare-the-csv">3. Prepare the CSV<a class="headerlink" href="#3-prepare-the-csv" title="Permanent link">&para;</a></h3>
+<p>Open the downloaded CSV and add the Chromebook information.</p>
+<p>For actions that only require serial numbers:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>For <strong>Update Asset ID</strong>:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+ABC123458,ASSET-10003
+</code></pre></div>
+<h3 id="4-import-the-csv">4. Import the CSV<a class="headerlink" href="#4-import-the-csv" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Import CSV</strong> and select the completed CSV file.</p>
+<p>AdminTrayTool performs local validation of the CSV before adding devices to the list.</p>
+<h3 id="5-select-devices">5. Select Devices<a class="headerlink" href="#5-select-devices" title="Permanent link">&para;</a></h3>
+<p>After the CSV has been imported successfully, the devices are available in the list for selection.</p>
+<p>Devices do <strong>not</strong> need to be checked against Google Workspace before they can be selected.</p>
+<h3 id="6-optionally-check-devices">6. Optionally Check Devices<a class="headerlink" href="#6-optionally-check-devices" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Check Devices</strong> if you want AdminTrayTool to look up the devices in Google Workspace using GAM7.</p>
+<p>This step is optional and can take time for larger lists.</p>
+<h3 id="7-review-the-action">7. Review the Action<a class="headerlink" href="#7-review-the-action" title="Permanent link">&para;</a></h3>
+<p>Select the devices to process and click <strong>Review Action</strong>.</p>
+<p>AdminTrayTool displays the operation that will be performed before any changes are made.</p>
+<h3 id="8-execute-the-action">8. Execute the Action<a class="headerlink" href="#8-execute-the-action" title="Permanent link">&para;</a></h3>
+<p>After confirming the review, AdminTrayTool processes the selected devices individually.</p>
+<p>Each device receives its own result.</p>
+<h3 id="9-export-results">9. Export Results<a class="headerlink" href="#9-export-results" title="Permanent link">&para;</a></h3>
+<p>Use <strong>Export Results</strong> to save the results of the bulk operation to a CSV file.</p>
+<hr />
+<h2 id="download-template">Download Template<a class="headerlink" href="#download-template" title="Permanent link">&para;</a></h2>
+<p>The <strong>Download Template</strong> button creates a CSV template based on the currently selected action.</p>
+<p>Templates are generated dynamically.</p>
+<h3 id="serial-number-template">Serial Number Template<a class="headerlink" href="#serial-number-template" title="Permanent link">&para;</a></h3>
+<p>The following actions use a template containing only:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+</code></pre></div>
+<ul>
+<li>Disable Chromebook</li>
+<li>Re-enable Chromebook</li>
+<li>Move to OU</li>
+<li>Powerwash</li>
+<li>Clear Profiles</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<h3 id="update-asset-id-template">Update Asset ID Template<a class="headerlink" href="#update-asset-id-template" title="Permanent link">&para;</a></h3>
+<p>The <strong>Update Asset ID</strong> action uses:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+ABC123458,ASSET-10003
+</code></pre></div>
+<p>Using the generated template is recommended because it ensures that the correct column names are used.</p>
+<hr />
+<h2 id="importing-chromebooks">Importing Chromebooks<a class="headerlink" href="#importing-chromebooks" title="Permanent link">&para;</a></h2>
+<p>Click <strong>Import CSV</strong> and select the CSV file containing the devices.</p>
+<p>AdminTrayTool checks the CSV locally before importing it into the device list.</p>
+<p>The required columns depend on the selected action.</p>
+<h3 id="serial-number-actions">Serial Number Actions<a class="headerlink" href="#serial-number-actions" title="Permanent link">&para;</a></h3>
+<p>For the following actions:</p>
+<ul>
+<li>Disable Chromebook</li>
+<li>Re-enable Chromebook</li>
+<li>Move to OU</li>
+<li>Powerwash</li>
+<li>Clear Profiles</li>
+</ul>
+<p>the CSV must contain:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+</code></pre></div>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<h3 id="update-asset-id">Update Asset ID<a class="headerlink" href="#update-asset-id" title="Permanent link">&para;</a></h3>
+<p>For <strong>Update Asset ID</strong>, the CSV must contain:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+</code></pre></div>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+ABC123458,ASSET-10003
+</code></pre></div>
+<p>The Asset ID supplied in the CSV becomes the requested new Asset ID for that device.</p>
+<hr />
+<h2 id="csv-validation">CSV Validation<a class="headerlink" href="#csv-validation" title="Permanent link">&para;</a></h2>
+<p>CSV validation occurs locally during import.</p>
+<p>This validation is separate from checking the devices against Google Workspace.</p>
+<p>AdminTrayTool verifies that the imported CSV contains the information required for the selected action.</p>
+<p>For example, an <strong>Update Asset ID</strong> import requires both:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+</code></pre></div>
+<p>A CSV containing only:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+</code></pre></div>
+<p>does not contain enough information for an Asset ID update.</p>
+<p>Using <strong>Download Template</strong> is the easiest way to ensure that the correct columns are present.</p>
+<hr />
+<h2 id="duplicate-devices">Duplicate Devices<a class="headerlink" href="#duplicate-devices" title="Permanent link">&para;</a></h2>
+<p>Duplicate serial numbers are detected during import.</p>
+<p>Only the first occurrence of a serial number is added to the device list.</p>
+<p>Duplicate entries are skipped and the number of duplicates skipped is reported in the import status.</p>
+<hr />
+<h2 id="checking-devices">Checking Devices<a class="headerlink" href="#checking-devices" title="Permanent link">&para;</a></h2>
+<p>The <strong>Check Devices</strong> function performs a lookup against Google Workspace using GAM7.</p>
+<p>It can be used when the technician wants to confirm the current state of the imported devices before processing them.</p>
+<p>Checking can provide information such as:</p>
+<ul>
+<li>Whether the Chromebook exists in Google Workspace.</li>
+<li>The current device status.</li>
+<li>The current Asset ID.</li>
+</ul>
+<h3 id="checking-is-optional">Checking is Optional<a class="headerlink" href="#checking-is-optional" title="Permanent link">&para;</a></h3>
+<p>A device does <strong>not</strong> need to be successfully checked before it can be reviewed or processed.</p>
+<p>This is an important part of the bulk workflow.</p>
+<p>For example, a technician can import:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+</code></pre></div>
+<p>and proceed directly to reviewing the operation without first checking the devices.</p>
+<p>If current device information has not been retrieved, the relevant information is displayed as:</p>
+<p><strong>Not checked</strong></p>
+<p>This is particularly useful for <strong>Update Asset ID</strong>, because the current Asset ID is not required to perform the update.</p>
+<h3 id="checking-large-lists">Checking Large Lists<a class="headerlink" href="#checking-large-lists" title="Permanent link">&para;</a></h3>
+<p>Checking devices can take time because AdminTrayTool performs Google Workspace/GAM7 lookups.</p>
+<p>For large CSV files, the technician can skip the check when current Google Workspace information is not required.</p>
+<hr />
+<h2 id="device-status">Device Status<a class="headerlink" href="#device-status" title="Permanent link">&para;</a></h2>
+<p>When devices are checked, the status column can provide information about the lookup.</p>
+<p>Typical statuses include:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NOT CHECKED</strong></td>
+<td>The device has not been checked against Google Workspace.</td>
+</tr>
+<tr>
+<td><strong>CHECKING...</strong></td>
+<td>The device is currently being checked.</td>
+</tr>
+<tr>
+<td><strong>FOUND</strong></td>
+<td>The Chromebook was found in Google Workspace.</td>
+</tr>
+<tr>
+<td><strong>NOT FOUND</strong></td>
+<td>No matching Chromebook was found.</td>
+</tr>
+<tr>
+<td><strong>ERROR</strong></td>
+<td>An error occurred while checking the device.</td>
+</tr>
+</tbody>
+</table>
+<p>A <strong>FOUND</strong> status confirms that the lookup found a matching Chromebook.</p>
+<p>However, <strong>FOUND is not a prerequisite for reviewing or executing a bulk action</strong>.</p>
+<p>The result of the actual bulk operation determines whether the operation succeeds or fails.</p>
+<hr />
+<h2 id="selecting-devices">Selecting Devices<a class="headerlink" href="#selecting-devices" title="Permanent link">&para;</a></h2>
+<p>Bulk Management provides controls for selecting devices from the imported list.</p>
+<h3 id="select-all">Select All<a class="headerlink" href="#select-all" title="Permanent link">&para;</a></h3>
+<p>Selects all devices in the list.</p>
+<h3 id="select-none">Select None<a class="headerlink" href="#select-none" title="Permanent link">&para;</a></h3>
+<p>Clears the current device selection.</p>
+<p>The interface displays the number of currently selected devices.</p>
+<p>Devices can be selected regardless of whether they have been checked against Google Workspace.</p>
+<hr />
+<h2 id="choosing-a-bulk-action">Choosing a Bulk Action<a class="headerlink" href="#choosing-a-bulk-action" title="Permanent link">&para;</a></h2>
+<p>Select the required operation from the <strong>Action</strong> dropdown.</p>
+<p>The available actions are described below.</p>
+<hr />
+<h2 id="disable-chromebook">Disable Chromebook<a class="headerlink" href="#disable-chromebook" title="Permanent link">&para;</a></h2>
+<p>Disables each selected Chromebook in Google Admin.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>Only the <code>serialNumber</code> column is required.</p>
+<hr />
+<h2 id="re-enable-chromebook">Re-enable Chromebook<a class="headerlink" href="#re-enable-chromebook" title="Permanent link">&para;</a></h2>
+<p>Re-enables each selected Chromebook in Google Admin.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>Only the <code>serialNumber</code> column is required.</p>
+<hr />
+<h2 id="move-to-ou">Move to OU<a class="headerlink" href="#move-to-ou" title="Permanent link">&para;</a></h2>
+<p>Moves each selected Chromebook to the selected Google Admin organisational unit.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>The destination OU is selected in AdminTrayTool rather than being included in the CSV.</p>
+<h3 id="selecting-the-ou">Selecting the OU<a class="headerlink" href="#selecting-the-ou" title="Permanent link">&para;</a></h3>
+<p>When <strong>Move to OU</strong> is selected:</p>
+<ol>
+<li>The <strong>Organisational Unit</strong> selector is displayed.</li>
+<li>Select the destination OU.</li>
+<li>Import the CSV.</li>
+<li>Select the devices.</li>
+<li>Review the action.</li>
+<li>Confirm the operation.</li>
+</ol>
+<p>The same CSV can therefore be reused for different destination OUs.</p>
+<hr />
+<h2 id="powerwash">Powerwash<a class="headerlink" href="#powerwash" title="Permanent link">&para;</a></h2>
+<p>Initiates a remote ChromeOS Powerwash for each selected Chromebook.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>Only the <code>serialNumber</code> column is required.</p>
+<p>Powerwash is a destructive operation that resets the selected Chromebook.</p>
+<p>Carefully review the selected devices before confirming the operation.</p>
+<hr />
+<h2 id="clear-profiles">Clear Profiles<a class="headerlink" href="#clear-profiles" title="Permanent link">&para;</a></h2>
+<p>Clears user profiles from each selected Chromebook.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<p>Only the <code>serialNumber</code> column is required.</p>
+<p>Carefully review the selected devices before confirming the operation.</p>
+<hr />
+<h2 id="update-asset-id_1">Update Asset ID<a class="headerlink" href="#update-asset-id_1" title="Permanent link">&para;</a></h2>
+<p>Updates the Google Admin <strong>Annotated Asset ID</strong> for each selected Chromebook.</p>
+<p>CSV format:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+ABC123458,ASSET-10003
+</code></pre></div>
+<p>Both columns are required.</p>
+<p>The <code>AssetId</code> value supplied in the CSV is used as the new Asset ID.</p>
+<h3 id="current-asset-id-is-not-required">Current Asset ID Is Not Required<a class="headerlink" href="#current-asset-id-is-not-required" title="Permanent link">&para;</a></h3>
+<p>The current Asset ID does not need to be retrieved before performing the update.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+</code></pre></div>
+<p>can be imported and processed without first running <strong>Check Devices</strong>.</p>
+<p>If the current Asset ID has not been retrieved, the device list displays:</p>
+<p><strong>Not checked</strong></p>
+<p>The requested new Asset ID is displayed separately so that the technician can verify what will be written to Google Admin.</p>
+<hr />
+<h2 id="review-before-processing">Review Before Processing<a class="headerlink" href="#review-before-processing" title="Permanent link">&para;</a></h2>
+<p>After selecting the devices and action, click <strong>Review Action</strong>.</p>
+<p>AdminTrayTool displays a confirmation showing the operation that will be performed.</p>
+<p>The review includes relevant information such as:</p>
+<ul>
+<li>The selected action.</li>
+<li>The number of selected devices.</li>
+<li>The selected serial numbers.</li>
+<li>The target organisational unit when using <strong>Move to OU</strong>.</li>
+<li>The requested Asset IDs when using <strong>Update Asset ID</strong>.</li>
+<li>Appropriate warnings for potentially destructive operations.</li>
+</ul>
+<p>No changes are made during the review.</p>
+<p>The action is only performed after the technician confirms the operation.</p>
+<h3 id="review-does-not-require-device-validation">Review Does Not Require Device Validation<a class="headerlink" href="#review-does-not-require-device-validation" title="Permanent link">&para;</a></h3>
+<p>A device does not have to have a <strong>FOUND</strong> status before it can be reviewed.</p>
+<p>This allows technicians to prepare bulk operations without waiting for a separate Google Workspace lookup.</p>
+<hr />
+<h2 id="bulk-processing">Bulk Processing<a class="headerlink" href="#bulk-processing" title="Permanent link">&para;</a></h2>
+<p>After confirmation, AdminTrayTool processes each selected Chromebook individually using GAM7.</p>
+<p>The interface displays:</p>
+<ul>
+<li>The current device being processed.</li>
+<li>The current device number.</li>
+<li>The total number of devices.</li>
+<li>A progress bar.</li>
+<li>The result for each device.</li>
+</ul>
+<p>Each device is processed independently.</p>
+<p>A failure affecting one device does not necessarily mean that the other selected devices will fail.</p>
+<hr />
+<h2 id="operation-results">Operation Results<a class="headerlink" href="#operation-results" title="Permanent link">&para;</a></h2>
+<p>The result of the actual GAM7 operation determines whether the device was successfully processed.</p>
+<p>Typical results include:</p>
+<table>
+<thead>
+<tr>
+<th>Result</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PROCESSING...</strong></td>
+<td>The operation is currently being performed.</td>
+</tr>
+<tr>
+<td><strong>SUCCESS</strong></td>
+<td>The GAM7 operation completed successfully.</td>
+</tr>
+<tr>
+<td><strong>FAILED</strong></td>
+<td>The operation failed.</td>
+</tr>
+</tbody>
+</table>
+<p>If an operation fails, the <strong>Error</strong> column contains the available error information returned by GAM7 or the application.</p>
+<p>The final summary displays the number of successful and failed operations.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>Bulk action complete.
+
+Successful: 18
+Failed: 2
+</code></pre></div>
+<p>The execution result is authoritative.</p>
+<p>A device does not need to have been successfully checked beforehand in order for the actual operation to succeed.</p>
+<hr />
+<h2 id="results-table">Results Table<a class="headerlink" href="#results-table" title="Permanent link">&para;</a></h2>
+<p>The device list contains the following information:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Serial Number</strong></td>
+<td>Chromebook serial number.</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td>Import or Google Workspace lookup status.</td>
+</tr>
+<tr>
+<td><strong>Current Asset ID</strong></td>
+<td>Current Asset ID retrieved during a device check, when available.</td>
+</tr>
+<tr>
+<td><strong>New Asset ID</strong></td>
+<td>Requested Asset ID supplied by the CSV for an Asset ID update.</td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td>Result of the actual bulk operation.</td>
+</tr>
+<tr>
+<td><strong>Error</strong></td>
+<td>Error information when an operation fails.</td>
+</tr>
+</tbody>
+</table>
+<p>When a device has not been checked, information that requires a Google Workspace lookup may display:</p>
+<p><strong>Not checked</strong></p>
+<hr />
+<h2 id="exporting-results">Exporting Results<a class="headerlink" href="#exporting-results" title="Permanent link">&para;</a></h2>
+<p>Use <strong>Export Results</strong> to save the current bulk operation results to a CSV file.</p>
+<p>The exported results include information such as:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SerialNumber</strong></td>
+<td>Chromebook serial number.</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td>Current import or lookup status.</td>
+</tr>
+<tr>
+<td><strong>CurrentAssetId</strong></td>
+<td>Current Asset ID when it has been retrieved.</td>
+</tr>
+<tr>
+<td><strong>NewAssetId</strong></td>
+<td>Requested new Asset ID when applicable.</td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td>Result of the bulk operation.</td>
+</tr>
+<tr>
+<td><strong>Error</strong></td>
+<td>Error information when an operation failed.</td>
+</tr>
+</tbody>
+</table>
+<p>The default filename includes the date and time of the export.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>Chromebook-Bulk-Results-20260923-103015.csv
+</code></pre></div>
+<p>Exported results can be retained for operational records or used to identify devices requiring further investigation.</p>
+<hr />
+<h2 id="clearing-the-bulk-list">Clearing the Bulk List<a class="headerlink" href="#clearing-the-bulk-list" title="Permanent link">&para;</a></h2>
+<p>Use <strong>Clear List</strong> to remove all imported devices and their associated status and action results from the Bulk Management window.</p>
+<p>This allows the technician to start a new bulk operation without closing the window.</p>
+<p>Clearing the list does <strong>not</strong> make any changes to Chromebooks in Google Workspace.</p>
+<hr />
+<h2 id="recommended-bulk-workflow">Recommended Bulk Workflow<a class="headerlink" href="#recommended-bulk-workflow" title="Permanent link">&para;</a></h2>
+<p>For a typical bulk operation:</p>
+<h3 id="step-1-select-the-action">Step 1 — Select the Action<a class="headerlink" href="#step-1-select-the-action" title="Permanent link">&para;</a></h3>
+<p>Select the required action from the <strong>Action</strong> dropdown.</p>
+<p>For example:</p>
+<p><strong>Update Asset ID</strong></p>
+<h3 id="step-2-download-the-template">Step 2 — Download the Template<a class="headerlink" href="#step-2-download-the-template" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Download Template</strong>.</p>
+<h3 id="step-3-prepare-the-csv">Step 3 — Prepare the CSV<a class="headerlink" href="#step-3-prepare-the-csv" title="Permanent link">&para;</a></h3>
+<p>Populate the generated template.</p>
+<p>For example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-10001
+ABC123457,ASSET-10002
+ABC123458,ASSET-10003
+</code></pre></div>
+<h3 id="step-4-import-the-csv">Step 4 — Import the CSV<a class="headerlink" href="#step-4-import-the-csv" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Import CSV</strong> and select the completed CSV.</p>
+<p>AdminTrayTool validates the CSV locally.</p>
+<h3 id="step-5-review-the-device-list">Step 5 — Review the Device List<a class="headerlink" href="#step-5-review-the-device-list" title="Permanent link">&para;</a></h3>
+<p>Confirm that the expected devices have been imported.</p>
+<h3 id="step-6-optionally-check-devices">Step 6 — Optionally Check Devices<a class="headerlink" href="#step-6-optionally-check-devices" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Check Devices</strong> if current Google Workspace information is required.</p>
+<p>This step can be skipped.</p>
+<h3 id="step-7-select-devices">Step 7 — Select Devices<a class="headerlink" href="#step-7-select-devices" title="Permanent link">&para;</a></h3>
+<p>Select the devices that should be processed.</p>
+<h3 id="step-8-review-the-action">Step 8 — Review the Action<a class="headerlink" href="#step-8-review-the-action" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Review Action</strong>.</p>
+<p>Confirm the:</p>
+<ul>
+<li>Action.</li>
+<li>Devices.</li>
+<li>Organisational Unit, if applicable.</li>
+<li>Requested Asset IDs, if applicable.</li>
+</ul>
+<h3 id="step-9-execute">Step 9 — Execute<a class="headerlink" href="#step-9-execute" title="Permanent link">&para;</a></h3>
+<p>Confirm the operation and allow AdminTrayTool to process the selected devices.</p>
+<h3 id="step-10-review-results">Step 10 — Review Results<a class="headerlink" href="#step-10-review-results" title="Permanent link">&para;</a></h3>
+<p>Check the <strong>Result</strong> and <strong>Error</strong> columns.</p>
+<h3 id="step-11-export-results">Step 11 — Export Results<a class="headerlink" href="#step-11-export-results" title="Permanent link">&para;</a></h3>
+<p>Use <strong>Export Results</strong> if a record of the operation is required.</p>
+<hr />
+<h2 id="example-bulk-asset-id-update">Example: Bulk Asset ID Update<a class="headerlink" href="#example-bulk-asset-id-update" title="Permanent link">&para;</a></h2>
+<p>A technician receives the following CSV:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+CROS001,CHROME-001
+CROS002,CHROME-002
+CROS003,CHROME-003
+</code></pre></div>
+<p>The technician:</p>
+<ol>
+<li>Selects <strong>Update Asset ID</strong>.</li>
+<li>Imports the CSV.</li>
+<li>Confirms that the three devices appear.</li>
+<li>Optionally runs <strong>Check Devices</strong>.</li>
+<li>Selects the devices to update.</li>
+<li>Clicks <strong>Review Action</strong>.</li>
+<li>Confirms the requested Asset IDs.</li>
+<li>Confirms the operation.</li>
+<li>Reviews the individual results.</li>
+<li>Exports the results if required.</li>
+</ol>
+<p>The current Asset ID does not need to be known before the update is executed.</p>
+<hr />
+<h2 id="example-bulk-move-to-ou">Example: Bulk Move to OU<a class="headerlink" href="#example-bulk-move-to-ou" title="Permanent link">&para;</a></h2>
+<p>CSV:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+CROS001
+CROS002
+CROS003
+</code></pre></div>
+<p>The technician:</p>
+<ol>
+<li>Selects <strong>Move to OU</strong>.</li>
+<li>Selects the destination OU from the <strong>Organisational Unit</strong> selector.</li>
+<li>Imports the CSV.</li>
+<li>Confirms the device list.</li>
+<li>Optionally runs <strong>Check Devices</strong>.</li>
+<li>Selects the devices.</li>
+<li>Clicks <strong>Review Action</strong>.</li>
+<li>Confirms the destination OU.</li>
+<li>Executes the operation.</li>
+<li>Reviews the results.</li>
+</ol>
+<p>The destination OU is selected in the application and is not required in the CSV.</p>
+<hr />
+<h2 id="safety-considerations">Safety Considerations<a class="headerlink" href="#safety-considerations" title="Permanent link">&para;</a></h2>
+<p>Bulk actions can affect multiple Chromebooks, so review the selected devices carefully before confirming an operation.</p>
+<p>In particular:</p>
+<ul>
+<li>Confirm that the correct action is selected.</li>
+<li>Confirm that the correct devices are selected.</li>
+<li>Verify the target organisational unit when using <strong>Move to OU</strong>.</li>
+<li>Verify the requested Asset IDs when using <strong>Update Asset ID</strong>.</li>
+<li>Carefully review the operation before using <strong>Powerwash</strong>.</li>
+<li>Carefully review the operation before using <strong>Clear Profiles</strong>.</li>
+<li>Use <strong>Check Devices</strong> when current Google Workspace information is required.</li>
+<li>Use <strong>Export Results</strong> when an operational record is required.</li>
+</ul>
+<p>Bulk operations require the appropriate Google Workspace permissions for the selected action.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      AdminTrayTool documentation
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/nitheraz/AdminTrayTool" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.instant", "navigation.tracking", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
