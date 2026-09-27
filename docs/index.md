@@ -1,10 +1,4 @@
-﻿<div align="center">
-
-<img src="assets/Admintraytool.png" alt="AdminTrayTool" width="180">
-
-# IT Admin Quick Tools
-
-</div>
+﻿# IT Admin Quick Tools
 
 **AdminTrayTool** is a lightweight Windows system-tray utility built for IT administrators who manage Google Workspace, Chromebooks, Windows computers, and everyday administrative tasks from a single application.
 

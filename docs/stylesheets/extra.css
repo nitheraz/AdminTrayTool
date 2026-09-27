@@ -1,17 +1,442 @@
-﻿/* AdminTrayTool header logo */
+﻿/* ============================================================
+   AdminTrayTool - Custom Documentation Theme
+   Dark Blue / Cyan IT Operations Style
+   ============================================================ */
+/* ============================================================
+   HEADER / LOGO
+   ============================================================ */
+.md-header {
+    min-height: 94px;
+    background: #0a1b31 !important;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.25);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.md-header__inner {
+    min-height: 94px;
+}
+
 .md-header__button.md-logo {
-    padding: 0.15rem 0.4rem;
+    padding: 0.15rem 0.5rem;
     margin-right: 1rem;
+    height: 94px !important;
+    width: auto !important;
+    display: flex;
+    align-items: center;
 }
 
     .md-header__button.md-logo img {
-        width: auto;
-        height: 48px;
-        max-width: 180px;
+        width: 252px !important;
+        height: 84px !important;
+        max-width: none !important;
+        object-fit: contain;
     }
 
-/* Hide duplicate site name but preserve its space */
+/* Hide duplicate site title */
 .md-header__title {
     visibility: hidden;
     flex: 1;
+}
+
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+
+.md-search__form {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    border-radius: 8px;
+}
+
+    .md-search__form:hover,
+    .md-search__form:focus-within {
+        border-color: rgba(0, 229, 255, 0.45);
+    }
+
+.md-search__input {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+    .md-search__input::placeholder {
+        color: rgba(255, 255, 255, 0.75) !important;
+        opacity: 1;
+    }
+
+.md-search__icon {
+    color: #ffffff !important;
+}
+
+
+/* ============================================================
+   PAGE BACKGROUND
+   ============================================================ */
+
+html,
+body {
+    background-image: url("../assets/page-background.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+.md-main {
+    background: transparent;
+}
+
+.md-content {
+    max-width: 1100px;
+}
+
+
+/* ============================================================
+   HEADINGS
+   ============================================================ */
+
+.md-typeset h1 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.md-typeset h2 {
+    font-weight: 650;
+    border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+    padding-bottom: 0.35rem;
+}
+
+.md-typeset h3 {
+    font-weight: 600;
+}
+
+.md-typeset h1,
+.md-typeset h2 {
+    color: var(--md-default-fg-color);
+}
+
+
+/* ============================================================
+   LINKS
+   ============================================================ */
+
+.md-typeset a {
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+}
+
+    .md-typeset a:hover {
+        color: #00e5ff;
+        text-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+    }
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.md-button {
+    border-radius: 7px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+    .md-button:hover {
+        transform: translateY(-2px);
+    }
+
+.md-button--primary {
+    background: #00a8c6;
+    border-color: #00a8c6;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 229, 255, 0.15);
+}
+
+    .md-button--primary:hover {
+        background: #00c8e8;
+        border-color: #00c8e8;
+        color: #ffffff;
+        box-shadow: 0 6px 20px rgba(0, 229, 255, 0.25);
+    }
+
+
+/* ============================================================
+   FEATURE CARDS
+   ============================================================ */
+
+.md-typeset .grid.cards {
+    margin-top: 1.5rem;
+}
+
+    .md-typeset .grid.cards > ul > li {
+        border: 1px solid rgba(0, 229, 255, 0.14);
+        border-radius: 10px;
+        background: linear-gradient( 145deg, rgba(13, 37, 63, 0.9), rgba(7, 20, 38, 0.9) );
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+        .md-typeset .grid.cards > ul > li:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 229, 255, 0.45);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28), 0 0 18px rgba(0, 229, 255, 0.06);
+        }
+
+    /* Card icons */
+    .md-typeset .grid.cards .lg {
+        color: #00e5ff;
+    }
+
+    .md-typeset .grid.cards .middle {
+        vertical-align: middle;
+    }
+
+
+/* ============================================================
+   ADMONITIONS
+   ============================================================ */
+
+.md-typeset .admonition,
+.md-typeset details {
+    border-radius: 8px;
+    border-width: 1px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+
+.md-typeset pre {
+    border: 1px solid rgba(0, 229, 255, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.md-typeset code {
+    border-radius: 4px;
+}
+
+
+/* ============================================================
+   CODE COPY BUTTON
+   ============================================================ */
+
+.md-clipboard {
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+    .md-clipboard:hover {
+        color: #00e5ff;
+    }
+
+
+/* ============================================================
+   TABLES
+   ============================================================ */
+
+.md-typeset table:not([class]) {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 229, 255, 0.12);
+}
+
+    .md-typeset table:not([class]) th {
+        background: #0b2038;
+        color: #ffffff;
+    }
+
+    .md-typeset table:not([class]) tr:hover {
+        background: rgba(0, 229, 255, 0.035);
+    }
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.md-sidebar {
+    background: transparent;
+}
+
+.md-nav__link {
+    border-radius: 6px;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+    .md-nav__link:hover {
+        color: #00e5ff;
+        background: rgba(0, 229, 255, 0.06);
+    }
+
+.md-nav__link--active {
+    color: #00e5ff !important;
+    font-weight: 600;
+    background: rgba(0, 229, 255, 0.08);
+    border-left: 2px solid #00e5ff;
+}
+
+
+/* ============================================================
+   TABLE OF CONTENTS
+   ============================================================ */
+
+.md-nav--secondary .md-nav__link--active {
+    border-left: 2px solid #00e5ff;
+    padding-left: 0.6rem;
+}
+
+
+/* ============================================================
+   HERO / HOMEPAGE
+   ============================================================ */
+
+.admintray-hero {
+    padding: 4rem 2rem;
+    margin: 0 0 2rem;
+    border: 1px solid rgba(0, 229, 255, 0.15);
+    border-radius: 14px;
+    background: radial-gradient( circle at 85% 20%, rgba(0, 229, 255, 0.12), transparent 35% ), linear-gradient( 135deg, #071426 0%, #0a1e35 55%, #08283b 100% );
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+    .admintray-hero h1 {
+        margin-bottom: 0.4rem;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        color: #ffffff;
+    }
+
+    .admintray-hero p {
+        max-width: 720px;
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 1.05rem;
+    }
+
+
+/* ============================================================
+   VERSION / STATUS PANEL
+   ============================================================ */
+
+.admintray-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.45rem 0.8rem;
+    border: 1px solid rgba(0, 229, 255, 0.25);
+    border-radius: 999px;
+    background: rgba(0, 229, 255, 0.06);
+    color: #00e5ff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+
+/* ============================================================
+   HORIZONTAL RULES
+   ============================================================ */
+
+.md-typeset hr {
+    border-bottom-color: rgba(0, 229, 255, 0.14);
+}
+
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+
+.md-footer {
+    background: #061120;
+    border-top: 1px solid rgba(0, 229, 255, 0.15);
+}
+
+.md-footer-meta {
+    background: #050d18;
+}
+
+
+/* ============================================================
+   SOCIAL ICONS
+   ============================================================ */
+
+.md-social__link {
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+    .md-social__link:hover {
+        color: #00e5ff;
+        transform: translateY(-2px);
+    }
+
+
+/* ============================================================
+   LOCK LEFT NAVIGATION PANEL
+   Keep documentation navigation visible while scrolling
+   ============================================================ */
+
+@media screen and (min-width: 76.25em) {
+
+    .md-sidebar--primary {
+        position: sticky;
+        top: 4.8rem;
+        height: calc(100vh - 4.8rem);
+        align-self: flex-start;
+    }
+
+        .md-sidebar--primary .md-sidebar__scrollwrap {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .md-sidebar--primary .md-nav {
+            padding-top: 0.5rem;
+        }
+
+    .md-nav__title {
+        color: #00e5ff;
+    }
+}
+
+
+/* ============================================================
+   MOBILE / RESPONSIVE
+   ============================================================ */
+
+@media screen and (max-width: 768px) {
+
+    .md-header {
+        min-height: 72px;
+    }
+
+    .md-header__inner {
+        min-height: 72px;
+    }
+
+    .md-header__button.md-logo {
+        height: 72px !important;
+        margin-right: 0.4rem;
+    }
+
+        .md-header__button.md-logo img {
+            width: 210px !important;
+            height: 70px !important;
+        }
+}
+
+
+/* ============================================================
+   REDUCE MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .md-button,
+    .md-typeset a,
+    .md-typeset .grid.cards > ul > li,
+    .md-nav__link,
+    .md-social__link {
+        transition: none;
+    }
 }

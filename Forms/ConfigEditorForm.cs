@@ -107,39 +107,6 @@ namespace AdminTrayTool.Forms
                     BackColor = Color.FromArgb(10, 15, 25)
                 };
 
-            var btnClose =
-                new HudButton
-                {
-                    Text = "CLOSE",
-                    Width = 100,
-                    Height = 32
-                };
-
-            btnClose.Click += (s, e) =>
-            {
-                DialogResult = DialogResult.OK;
-                Close();
-            };
-
-            bottomPanel.Controls.Add(btnClose);
-
-            bottomPanel.Resize += (s, e) =>
-            {
-                btnClose.Location =
-                    new Point(
-                        bottomPanel.Width -
-                        btnClose.Width -
-                        15,
-                        9);
-            };
-
-            btnClose.Location =
-                new Point(
-                    bottomPanel.Width -
-                    btnClose.Width -
-                    15,
-                    9);
-
             Controls.Add(tabs);
             Controls.Add(bottomPanel);
         }
@@ -177,26 +144,62 @@ namespace AdminTrayTool.Forms
                 MecmActionResult result =
                     await service.TestConnectionAsync();
 
-                if (result.Success)
+                if (!result.Success)
                 {
+                    string error = result.Error ?? string.Empty;
+
+                    string friendlyError;
+
+                    if (error.Contains(
+                            "WinRM client cannot process the request",
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        friendlyError =
+                                "The MECM SMS Provider could not be reached.\r\n\r\n" +
+                                "Please check:\r\n" +
+                                "• The SMS Provider server name is correct.\r\n" +
+                                "• You are connected to the school network.\r\n" +
+                                "• If you are working offsite, make sure you are connected to the organization VPN.\r\n" +
+                                "• Your account has permission to access the MECM SMS Provider.\r\n" +
+                                "• WinRM is configured correctly.";
+                    }
+                    else if (error.Contains(
+                                 "Access is denied",
+                                 StringComparison.OrdinalIgnoreCase))
+                    {
+                        friendlyError =
+                            "Access was denied when connecting to the MECM SMS Provider.\r\n\r\n" +
+                            "Please check that your account has permission to access the SMS Provider.";
+                    }
+                    else
+                    {
+                        friendlyError =
+                            "The MECM SMS Provider could not be reached.\r\n\r\n" +
+                            "Please check the server name, network connection, " +
+                            "WinRM configuration, and your MECM permissions.";
+                    }
+
                     MessageBox.Show(
                         this,
-                        result.Output,
+                        $"Unable to connect to the MECM SMS Provider.\r\n\r\n" +
+                        $"SMS Provider: {config.Mecm.SmsProviderServer}\r\n\r\n" +
+                        friendlyError,
                         "MECM Connection Test",
                         MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                        MessageBoxIcon.Warning);
 
-                    return true;
+                    return false;
                 }
 
                 MessageBox.Show(
                     this,
-                    result.Error,
+                    $"Successfully connected to the MECM SMS Provider.\r\n\r\n" +
+                    $"SMS Provider: {config.Mecm.SmsProviderServer}",
                     "MECM Connection Test",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                    MessageBoxIcon.Information);
 
-                return false;
+                return true;
             }
             catch (Exception ex)
             {

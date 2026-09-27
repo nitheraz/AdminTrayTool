@@ -56,4 +56,8 @@
 		<EditorConfigFiles Remove=".editorconfig" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="site\stylesheets\" />
+	</ItemGroup>
+
 </Project>
