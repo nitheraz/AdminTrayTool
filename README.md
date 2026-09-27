@@ -1,94 +1,151 @@
 # AdminTrayTool
 
-**AdminTrayTool** is a lightweight Windows system-tray utility designed for IT administrators.
+**A Windows system-tray toolkit for IT administrators.**
 
-It provides quick access to common IT administration tasks from a single application, including Google Workspace and Chromebook management, Windows administration, Active Directory, MECM/SCCM, Google Groups, Remote Desktop, and configurable administration tools.
+AdminTrayTool brings common administration tasks into one lightweight Windows application, providing quick access to **Chromebook, Google Workspace, Active Directory, MECM/SCCM, Remote Desktop, PowerShell, and other IT administration tools**.
 
-AdminTrayTool is designed to complement existing IT service-management platforms rather than replace them.
+Designed for IT administrators who need frequently used tools and management tasks available from a single place.
+
+[**⬇️ Download AdminTrayTool**](https://github.com/nitheraz/AdminTrayTool/releases/latest) · [**📖 Documentation**](https://nitheraz.github.io/AdminTrayTool/)
+
+![Windows](https://img.shields.io/badge/Windows-10%20%2B-blue)
+![.NET](https://img.shields.io/badge/.NET-10-512BD4)
+![Latest Release](https://img.shields.io/github/v/release/nitheraz/AdminTrayTool)
+![Downloads](https://img.shields.io/github/downloads/nitheraz/AdminTrayTool/total)
+
+> **AdminTrayTool is designed to complement existing IT service-management platforms rather than replace them.**
+
+## Why AdminTrayTool?
+
+IT administrators often switch between multiple management consoles, web portals, remote connections, scripts, and command-line tools throughout the day.
+
+AdminTrayTool provides a single system-tray interface for launching and performing many of these common tasks.
+
+**One application. Multiple administration tools.**
 
 ## Features
 
-### Chromebook Management
+### 🖥️ Windows Management
+
+Manage Windows computers through:
+
+* Active Directory Management
+* MECM / SCCM Management
+* Computer lookup
+* OU searching
+* Moving computers between organisational units
+* MECM collection membership management
+
+### 💻 Chromebook Management
 
 Manage individual Google Workspace Chromebooks using GAM7.
 
 Features include:
 
-- Search by Serial Number or Asset ID
-- View Chromebook information
-- View current Asset ID
-- Update Asset ID
-- Disable Chromebook
-- Re-enable Chromebook
-- Move Chromebook between organisational units
-- Clear Profiles
-- Powerwash Chromebook
+* Search by Serial Number or Asset ID
+* View Chromebook information
+* View current Asset ID
+* Update Asset ID
+* Disable Chromebook
+* Re-enable Chromebook
+* Move Chromebook between organisational units
+* Clear Profiles
+* Powerwash Chromebook
 
-### Bulk Chromebook Management
+### 📋 Bulk Chromebook Management
 
 Perform Chromebook operations against multiple devices using CSV files.
 
-Supported bulk actions include:
+Supported actions include:
 
-- Disable Chromebook
-- Re-enable Chromebook
-- Move to OU
-- Powerwash
-- Clear Profiles
-- Update Asset ID
+* Disable Chromebook
+* Re-enable Chromebook
+* Move to OU
+* Powerwash
+* Clear Profiles
+* Update Asset ID
 
 The bulk workflow is:
 
-**Select Action → Download Template → Import CSV → Check Devices (optional) → Select Devices → Review Action → Execute → Export Results**
+**Select Action → Import CSV → Select Devices → Review → Execute → Export Results**
 
-CSV files are validated locally before devices are processed.
+Device checking is optional, allowing valid imported CSV files to be executed without first checking every device against Google Workspace.
 
-The **Check Devices** step is optional. You can review and execute a valid imported CSV without first checking every device against Google Workspace.
-
-### Windows Management
-
-Windows administration features include:
-
-- Active Directory Management
-- MECM / SCCM Management
-
-Active Directory Management supports computer lookup, OU searching, and moving computers between organisational units.
-
-MECM / SCCM Management supports computer lookup and collection membership management.
-
-### Group Management
+### 👥 Google Group Management
 
 Use GAM7 to add staff members to Google Workspace Groups.
 
 Group templates can be configured for common staff roles, allowing multiple groups to be managed from a single operation.
 
-### Quick Launch
+### 🚀 Quick Launch
 
-Configure shortcuts for:
+Configure shortcuts for commonly used administration resources:
 
-- Administration web portals
-- Remote Desktop connections
-- Local administration tools
-- PuTTY
-- PowerShell
+* Administration web portals
+* Remote Desktop connections
+* Local administration tools
+* PuTTY
+* PowerShell
 
-### Configuration
+### ⚙️ Configuration
 
 AdminTrayTool includes an in-app configuration editor for:
 
-- Administration web portals
-- Remote Desktop connections
-- Local administration tools
-- Google Group templates
+* Administration web portals
+* Remote Desktop connections
+* Local administration tools
+* Google Group templates
 
 Application configuration is stored outside the installation directory so normal application upgrades do not replace it.
 
+## Screenshots
+
+### Main Menu
+
+AdminTrayTool runs from the Windows system tray, providing quick access
+to commonly used IT administration tools.
+
+![AdminTrayTool Main Menu](screenshots/main-menu.png)
+
+### Chromebook Management
+
+Manage individual Google Workspace Chromebooks using GAM7.
+
+![Chromebook Management](screenshots/chromebook-management.png)
+
+### Bulk Chromebook Management
+
+Perform Chromebook administration tasks against multiple devices using CSV files.
+
+![Bulk Chromebook Management](screenshots/bulk-chromebook-management.png)
+
+### Windows Management
+
+Access Active Directory and MECM/SCCM management tools from one interface.
+
+![Windows Management](screenshots/windows-management.png)
+
+## Download
+
+### Windows 10 / Windows 11
+
+Download the latest release:
+
+[**Download AdminTrayTool**](https://github.com/nitheraz/AdminTrayTool/releases/latest)
+
+The release includes:
+
+* **MSI installer** — recommended for normal installation
+* **Portable ZIP** — for users who prefer a portable installation
+
+AdminTrayTool supports **in-place upgrades**, so you can normally install a newer MSI over the existing installation without uninstalling the previous version.
+
 ## Requirements
 
-- Windows 10 or Windows 11
-- Appropriate Windows permissions for the administration features being used
-- Network access to the relevant management services
-- GAM7 for Google Workspace features
+* Windows 10 or Windows 11
+* Appropriate Windows permissions for the administration features being used
+* Network access to the relevant management services
+* GAM7 for Google Workspace features
 
 GAM7 is bundled with the AdminTrayTool installer.
 
@@ -114,19 +171,19 @@ See the full [GAM7 Setup & Troubleshooting guide](docs/gam-setup.md).
 
 ## Documentation
 
-Full documentation is available in the [`docs`](docs/) directory and through the project's documentation site.
+Full documentation is available through the project's documentation site.
 
 Useful guides include:
 
-- [Getting Started](docs/getting-started.md)
-- [Chromebook Management](docs/guides/chromebook-management.md)
-- [Bulk Chromebook Management](docs/guides/bulk-chromebook-management.md)
-- [Windows Management](docs/guides/windows-management.md)
-- [Active Directory Management](docs/guides/active-directory-management.md)
-- [MECM / SCCM Management](docs/guides/mecm-management.md)
-- [Group Management](docs/guides/group-management.md)
-- [Config Settings](docs/guides/config-settings.md)
-- [Frequently Asked Questions](docs/faq.md)
+* [Getting Started](docs/getting-started.md)
+* [Chromebook Management](docs/guides/chromebook-management.md)
+* [Bulk Chromebook Management](docs/guides/bulk-chromebook-management.md)
+* [Windows Management](docs/guides/windows-management.md)
+* [Active Directory Management](docs/guides/active-directory-management.md)
+* [MECM / SCCM Management](docs/guides/mecm-management.md)
+* [Group Management](docs/guides/group-management.md)
+* [Config Settings](docs/guides/config-settings.md)
+* [Frequently Asked Questions](docs/faq.md)
 
 ## Configuration Location
 
