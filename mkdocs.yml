@@ -19,7 +19,6 @@ theme:
 
   features:
     - navigation.sections
-    - navigation.expand
     - navigation.top
     - navigation.instant
     - navigation.tracking
@@ -51,29 +50,7 @@ nav:
 
   - Getting Started: getting-started.md
 
-  - Guides:
-      - Chromebook Management: guides/chromebook-management.md
-
-      - Bulk Chromebook Management:
-          guides/bulk-chromebook-management.md
-
-      - Windows Management:
-          - Windows Management Setup:
-              guides/windows-management-setup.md
-          - Windows Management Guide:
-              guides/windows-management.md
-
-      - Active Directory Management:
-          guides/active-directory-management.md
-
-      - MECM / SCCM Management:
-          guides/mecm-management.md
-
-      - Group Management:
-          guides/group-management.md
-
-      - Config Settings:
-          guides/config-settings.md
+  - Guides: guides/index.md
 
   - GAM7 Setup & Troubleshooting: gam-setup.md
 
