@@ -1,0 +1,1113 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for AdminTrayTool - IT Admin Quick Tools">
+      
+      
+      
+        <link rel="canonical" href="https://nitheraz.github.io/AdminTrayTool/guides/chromebook-management/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/adminTray.ico">
+      <meta name="generator" content="zensical-0.0.65">
+    
+    
+      
+        <title>Chromebook Management - AdminTrayTool</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.40d3fdbb.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.812a03bb.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chromebook-management" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="AdminTrayTool" class="md-header__button md-logo" aria-label="AdminTrayTool" data-md-component="logo">
+      
+  <img src="../../assets/Admintraytool.png" alt="AdminTrayTool">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AdminTrayTool
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chromebook Management
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+        <a href="https://github.com/nitheraz/AdminTrayTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nitheraz/AdminTrayTool
+  </div>
+</a>
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AdminTrayTool" class="md-nav__button md-logo" aria-label="AdminTrayTool" data-md-component="logo">
+      
+  <img src="../../assets/Admintraytool.png" alt="AdminTrayTool">
+
+    </a>
+    AdminTrayTool
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/nitheraz/AdminTrayTool" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    nitheraz/AdminTrayTool
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Home
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Getting Started
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Guides
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gam-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  GAM7 Setup & Troubleshooting
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  FAQ
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  About & Versioning
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#searching-for-a-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Searching for a Device
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Searching for a Device">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#serial-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Serial Number
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#asset-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Asset ID
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#device-information" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Device Information
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#individual-device-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Individual Device Actions
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Individual Device Actions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Refresh
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save-asset-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Save Asset ID
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disable Chromebook
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#re-enable-chromebook" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Re-enable Chromebook
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Move OU
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clear-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Clear Profiles
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#powerwash" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Powerwash
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bulk-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Bulk Management
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bulk Management">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bulk-management-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Bulk Management Workflow
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        CSV Templates
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CSV Templates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#disable-chromebook-re-enable-chromebook-powerwash-and-clear-profiles" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Disable Chromebook, Re-enable Chromebook, Powerwash and Clear Profiles
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#move-to-ou" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Move to OU
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#update-asset-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Update Asset ID
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#importing-a-csv" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Importing a CSV
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#checking-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Checking Devices
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selecting-devices" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Selecting Devices
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#available-bulk-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Available Bulk Actions
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#review-action" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Review Action
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bulk-operation-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Bulk Operation Progress
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exporting-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Exporting Results
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clearing-the-bulk-list" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Clearing the Bulk List
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clearing-the-form" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Clearing the Form
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gam-output" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GAM Output
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permissions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Permissions
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+  
+  
+
+
+<h1 id="chromebook-management">Chromebook Management<a class="headerlink" href="#chromebook-management" title="Permanent link">&para;</a></h1>
+<p>Access Chromebook Management through:</p>
+<p><strong>Tray icon → Chromebook Management</strong></p>
+<p>AdminTrayTool uses GAM7 to communicate with Google Workspace and manage ChromeOS devices.</p>
+<h2 id="searching-for-a-device">Searching for a Device<a class="headerlink" href="#searching-for-a-device" title="Permanent link">&para;</a></h2>
+<p>Use the <strong>Search By</strong> dropdown to choose how the device should be located.</p>
+<h3 id="serial-number">Serial Number<a class="headerlink" href="#serial-number" title="Permanent link">&para;</a></h3>
+<p>Searches directly for the Chromebook's hardware serial number.</p>
+<p>This is normally the fastest way to locate a specific device.</p>
+<h3 id="asset-id">Asset ID<a class="headerlink" href="#asset-id" title="Permanent link">&para;</a></h3>
+<p>Searches your Google Workspace ChromeOS device inventory for a matching Asset ID.</p>
+<p>The first Asset ID search may take several seconds on larger Google Workspace domains.</p>
+<p>Search results are cached locally for approximately <strong>4 hours</strong>, making repeat searches significantly faster.</p>
+<p>Enter the value and click <strong>Look Up</strong>, or press <strong>Enter</strong>.</p>
+<h2 id="device-information">Device Information<a class="headerlink" href="#device-information" title="Permanent link">&para;</a></h2>
+<p>When a Chromebook is found, AdminTrayTool displays information about the device.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Serial Number</strong></td>
+<td>The Chromebook's hardware serial number.</td>
+</tr>
+<tr>
+<td><strong>Asset ID</strong></td>
+<td>The device's Google Admin asset identifier. This can be edited and saved.</td>
+</tr>
+<tr>
+<td><strong>Google Device ID</strong></td>
+<td>The unique device ID assigned by Google Admin.</td>
+</tr>
+<tr>
+<td><strong>Model</strong></td>
+<td>The Chromebook model. AdminTrayTool normalizes common model naming variations where possible.</td>
+</tr>
+<tr>
+<td><strong>Wi-Fi MAC</strong></td>
+<td>The device's Wi-Fi MAC address. Use <strong>Copy</strong> to copy it to the clipboard.</td>
+</tr>
+<tr>
+<td><strong>Organisation Unit</strong></td>
+<td>The device's current Google Admin organizational unit.</td>
+</tr>
+<tr>
+<td><strong>Recent User</strong></td>
+<td>The most recent user associated with the Chromebook, when available.</td>
+</tr>
+<tr>
+<td><strong>Last Sync</strong></td>
+<td>The last time the Chromebook synchronized with Google Admin.</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td>The current device status reported by Google Admin.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="individual-device-actions">Individual Device Actions<a class="headerlink" href="#individual-device-actions" title="Permanent link">&para;</a></h2>
+<p>After locating a Chromebook, the available management actions are shown in the action area.</p>
+<p>Some actions may require specific Google Workspace administrator permissions.</p>
+<h3 id="refresh">Refresh<a class="headerlink" href="#refresh" title="Permanent link">&para;</a></h3>
+<p>Re-fetches the latest device information from Google Workspace.</p>
+<p>Use <strong>Refresh</strong> after making a change or when you want to confirm the current device state.</p>
+<h3 id="save-asset-id">Save Asset ID<a class="headerlink" href="#save-asset-id" title="Permanent link">&para;</a></h3>
+<p>After changing the Asset ID, click <strong>Save</strong> to submit the change to Google Workspace.</p>
+<h3 id="disable-chromebook">Disable Chromebook<a class="headerlink" href="#disable-chromebook" title="Permanent link">&para;</a></h3>
+<p>Disables the Chromebook in Google Admin.</p>
+<p>A confirmation is required before the action is performed.</p>
+<h3 id="re-enable-chromebook">Re-enable Chromebook<a class="headerlink" href="#re-enable-chromebook" title="Permanent link">&para;</a></h3>
+<p>Re-enables a previously disabled Chromebook.</p>
+<p>A confirmation is required before the action is performed.</p>
+<h3 id="move-ou">Move OU<a class="headerlink" href="#move-ou" title="Permanent link">&para;</a></h3>
+<p>Moves the Chromebook to a different Google Admin organizational unit.</p>
+<p>Select the target OU and confirm the operation before the device is moved.</p>
+<p>This can be useful when preparing devices for different schools, year levels, deployment groups, or management policies.</p>
+<h3 id="clear-profiles">Clear Profiles<a class="headerlink" href="#clear-profiles" title="Permanent link">&para;</a></h3>
+<p>Clears locally stored user profiles from the Chromebook.</p>
+<p>Use this when a Chromebook needs its existing user profile data removed before being reassigned or returned to service.</p>
+<p>A confirmation is required before the action is performed.</p>
+<blockquote>
+<p><strong>Important:</strong> Clearing profiles affects user data stored locally on the Chromebook. Ensure any required user data has been synchronized or otherwise preserved before performing the action.</p>
+</blockquote>
+<h3 id="powerwash">Powerwash<a class="headerlink" href="#powerwash" title="Permanent link">&para;</a></h3>
+<p>Initiates a ChromeOS Powerwash on the Chromebook.</p>
+<p>Powerwashing resets the device and removes locally stored user data and settings.</p>
+<p>A confirmation is required before the action is performed.</p>
+<blockquote>
+<p><strong>Important:</strong> Powerwash is a destructive operation. Verify that the correct Chromebook has been located before confirming the action.</p>
+</blockquote>
+<h2 id="bulk-management">Bulk Management<a class="headerlink" href="#bulk-management" title="Permanent link">&para;</a></h2>
+<p><strong>Bulk Management</strong> allows administrators to perform supported Chromebook management actions against multiple devices instead of processing each device individually.</p>
+<p>Access it through:</p>
+<p><strong>Tray icon → Chromebook Management → Bulk Management</strong></p>
+<p>Bulk Management uses action-specific CSV templates so that the information required for each operation is clear.</p>
+<h3 id="bulk-management-workflow">Bulk Management Workflow<a class="headerlink" href="#bulk-management-workflow" title="Permanent link">&para;</a></h3>
+<p>The general workflow is:</p>
+<ol>
+<li><strong>Select Action</strong></li>
+<li><strong>Download Template</strong> if required</li>
+<li><strong>Import CSV</strong></li>
+<li><strong>Review imported devices</strong></li>
+<li><strong>Check Devices</strong> if Google Workspace validation is required</li>
+<li><strong>Select Devices</strong></li>
+<li><strong>Review Action</strong></li>
+<li><strong>Confirm and Execute</strong></li>
+<li><strong>Export Results</strong> if required</li>
+</ol>
+<p><strong>Check Devices</strong> is optional. It performs Google Workspace lookups using GAM7 and can take some time when processing a large list.</p>
+<p>A valid CSV import can be reviewed without first checking every device against Google Workspace.</p>
+<h3 id="csv-templates">CSV Templates<a class="headerlink" href="#csv-templates" title="Permanent link">&para;</a></h3>
+<p>The required CSV columns depend on the selected action.</p>
+<h4 id="disable-chromebook-re-enable-chromebook-powerwash-and-clear-profiles">Disable Chromebook, Re-enable Chromebook, Powerwash and Clear Profiles<a class="headerlink" href="#disable-chromebook-re-enable-chromebook-powerwash-and-clear-profiles" title="Permanent link">&para;</a></h4>
+<p>These actions require:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+ABC123456
+ABC123457
+ABC123458
+</code></pre></div>
+<h4 id="move-to-ou">Move to OU<a class="headerlink" href="#move-to-ou" title="Permanent link">&para;</a></h4>
+<p>Move to OU uses:</p>
+<div class="highlight"><pre><span></span><code>serialNumber
+</code></pre></div>
+<p>The target organizational unit is selected separately in the Bulk Management window.</p>
+<h4 id="update-asset-id">Update Asset ID<a class="headerlink" href="#update-asset-id" title="Permanent link">&para;</a></h4>
+<p>Update Asset ID requires:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code>serialNumber,AssetId
+ABC123456,ASSET-1001
+ABC123457,ASSET-1002
+ABC123458,ASSET-1003
+</code></pre></div>
+<p>Use <strong>Download Template</strong> after selecting an action to generate the appropriate CSV template.</p>
+<h3 id="importing-a-csv">Importing a CSV<a class="headerlink" href="#importing-a-csv" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Import CSV</strong> and select the prepared CSV file.</p>
+<p>AdminTrayTool validates the CSV locally before adding devices to the list.</p>
+<p>This validation checks that:</p>
+<ul>
+<li>The required columns are present.</li>
+<li>Required values are provided.</li>
+<li>Serial numbers are valid for import.</li>
+<li>Duplicate serial numbers are identified.</li>
+</ul>
+<p>Invalid rows are not treated as valid devices for processing.</p>
+<p>Duplicate serial numbers are automatically detected so that the same device is not added multiple times.</p>
+<h3 id="checking-devices">Checking Devices<a class="headerlink" href="#checking-devices" title="Permanent link">&para;</a></h3>
+<p>Click <strong>Check Devices</strong> when you want to verify the imported serial numbers against Google Workspace.</p>
+<p>AdminTrayTool uses GAM7 to check the devices and can retrieve information such as the current Asset ID.</p>
+<p>Checking devices is particularly useful when you want to confirm that the serial numbers exist in Google Workspace before performing an operation.</p>
+<p>For <strong>Update Asset ID</strong>, the current Asset ID does not need to be checked before the action can be executed. The new Asset ID is supplied by the CSV.</p>
+<p>If the current Asset ID has not been checked, it may be displayed as <strong>Not checked</strong>.</p>
+<h3 id="selecting-devices">Selecting Devices<a class="headerlink" href="#selecting-devices" title="Permanent link">&para;</a></h3>
+<p>Use the selection controls in the Bulk Management window to select the devices that should be processed.</p>
+<p>Review the device list carefully before continuing.</p>
+<p>The Bulk Management window displays information including:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Serial Number</strong></td>
+<td>Chromebook serial number.</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td>Current validation/check status.</td>
+</tr>
+<tr>
+<td><strong>Current Asset ID</strong></td>
+<td>Current Asset ID when available.</td>
+</tr>
+<tr>
+<td><strong>New Asset ID</strong></td>
+<td>Asset ID requested by an Update Asset ID action.</td>
+</tr>
+<tr>
+<td><strong>Result</strong></td>
+<td>Result of the bulk operation.</td>
+</tr>
+<tr>
+<td><strong>Error</strong></td>
+<td>Error information when an operation fails.</td>
+</tr>
+</tbody>
+</table>
+<p>A device does not necessarily need to have been checked against Google Workspace before it can be included in the review.</p>
+<p>The actual bulk operation determines whether the requested action succeeds for each device.</p>
+<h3 id="available-bulk-actions">Available Bulk Actions<a class="headerlink" href="#available-bulk-actions" title="Permanent link">&para;</a></h3>
+<p>The available actions are:</p>
+<ul>
+<li><strong>Disable Chromebook</strong> — disable selected Chromebooks.</li>
+<li><strong>Re-enable Chromebook</strong> — re-enable selected Chromebooks.</li>
+<li><strong>Move to OU</strong> — move selected Chromebooks to the organizational unit selected in the interface.</li>
+<li><strong>Powerwash</strong> — initiate a ChromeOS Powerwash on selected Chromebooks.</li>
+<li><strong>Clear Profiles</strong> — clear user profiles from selected Chromebooks.</li>
+<li><strong>Update Asset ID</strong> — update the Google Admin Asset ID for selected Chromebooks using the Asset ID supplied in the CSV.</li>
+</ul>
+<h3 id="review-action">Review Action<a class="headerlink" href="#review-action" title="Permanent link">&para;</a></h3>
+<p>After selecting the devices and action, click <strong>Review Action</strong>.</p>
+<p>AdminTrayTool displays a summary of the operation before any changes are made.</p>
+<p>The review includes information such as:</p>
+<ul>
+<li>The selected action</li>
+<li>The number of selected devices</li>
+<li>The selected serial numbers</li>
+<li>The target organizational unit when using <strong>Move to OU</strong></li>
+<li>The requested Asset IDs when using <strong>Update Asset ID</strong></li>
+<li>Additional warnings for destructive actions such as <strong>Powerwash</strong> and <strong>Clear Profiles</strong></li>
+</ul>
+<p>No changes are made until the operation is confirmed.</p>
+<h3 id="bulk-operation-progress">Bulk Operation Progress<a class="headerlink" href="#bulk-operation-progress" title="Permanent link">&para;</a></h3>
+<p>After confirmation, AdminTrayTool processes the selected devices individually.</p>
+<p>The interface reports the current progress and the result for each device.</p>
+<p>Each device receives a result indicating whether the operation succeeded or failed.</p>
+<p>If an individual device fails, the error information is displayed in the <strong>Error</strong> column.</p>
+<p>A failure on one device does not necessarily prevent the remaining selected devices from being processed.</p>
+<h3 id="exporting-results">Exporting Results<a class="headerlink" href="#exporting-results" title="Permanent link">&para;</a></h3>
+<p>Use <strong>Export Results</strong> to save the current operation results to a CSV file.</p>
+<p>Exported results can be retained for operational records or used to identify devices that require further investigation.</p>
+<p>The exported results include information such as:</p>
+<ul>
+<li>Serial number</li>
+<li>Status</li>
+<li>Current Asset ID</li>
+<li>New Asset ID when applicable</li>
+<li>Operation result</li>
+<li>Error information</li>
+</ul>
+<h3 id="clearing-the-bulk-list">Clearing the Bulk List<a class="headerlink" href="#clearing-the-bulk-list" title="Permanent link">&para;</a></h3>
+<p>Use <strong>Clear List</strong> to remove the imported devices and their current results from the Bulk Management window.</p>
+<p>This does not make any changes to the Chromebooks in Google Workspace.</p>
+<h2 id="clearing-the-form">Clearing the Form<a class="headerlink" href="#clearing-the-form" title="Permanent link">&para;</a></h2>
+<p>Use <strong>Clear Form</strong> to remove the current device information and return the individual Chromebook Management form to its initial state.</p>
+<p>This does not make any changes to the Chromebook in Google Workspace.</p>
+<h2 id="gam-output">GAM Output<a class="headerlink" href="#gam-output" title="Permanent link">&para;</a></h2>
+<p>All GAM7 operations are displayed in the <strong>GAM Output</strong> panel at the bottom of the window.</p>
+<p>This output is useful when troubleshooting failed commands, authentication problems, individual device actions, or bulk operations.</p>
+<p>The output may contain technical information returned directly by GAM7 and Google Workspace.</p>
+<h2 id="permissions">Permissions<a class="headerlink" href="#permissions" title="Permanent link">&para;</a></h2>
+<p>Chromebook management actions depend on the Google Workspace administrator permissions available to the authenticated GAM7 account.</p>
+<p>Bulk operations use the same underlying Google Workspace permissions as the corresponding individual actions.</p>
+<p>If an action fails, check the <strong>GAM Output</strong> panel for the GAM7 or Google Workspace error message.</p>
+<p>For GAM7 project configuration and authentication troubleshooting, see <a href="../../gam-setup/">GAM7 Setup &amp; Troubleshooting</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      AdminTrayTool documentation
+
+    </div>
+  
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/nitheraz/AdminTrayTool" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2026 Fonticons, Inc.--><path fill="currentColor" d="M216.5 362.5c-66-8-112.5-55.5-112.5-117 0-25 9-52 24-70-6.5-16.5-5.5-51.5 2-66 20-2.5 47 8 63 22.5 19-6 39-9 63.5-9s44.5 3 62.5 8.5c15.5-14 43-24.5 63-22 7 13.5 8 48.5 1.5 65.5 16 19 24.5 44.5 24.5 70.5 0 61.5-46.5 108-113.5 116.5 17 11 28.5 35 28.5 62.5v52c0 15 12.5 23.5 27.5 17.5C441 459.5 512 369 512 257 512 115.5 397 0 255.5 0S0 115.5 0 257c0 111 70.5 203 165.5 237.5 13.5 5 26.5-4 26.5-17.5v-40c-7 3-16 5-24 5-33 0-52.5-18-66.5-51.5-5.5-13.5-11.5-21.5-23-23-6-.5-8-3-8-6 0-6 10-10.5 20-10.5 14.5 0 27 9 40 27.5 10 14.5 20.5 21 33 21s20.5-4.5 32-16c8.5-8.5 15-16 21-21"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      
+      
+        
+        
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["navigation.sections","navigation.top","navigation.instant","navigation.tracking","search.suggest","search.highlight","search.share","content.code.copy","content.code.annotate"],"redirect":null,"search":"../../assets/javascripts/workers/search.7d14d953.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c04ba553.min.js"></script>
+      
+    
+  </body>
+</html>
