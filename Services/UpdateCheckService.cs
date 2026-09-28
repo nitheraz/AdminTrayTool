@@ -238,20 +238,19 @@ namespace AdminTrayTool.Services
 
                 response.EnsureSuccessStatusCode();
 
-                await using Stream source =
-                    await response.Content.ReadAsStreamAsync();
+                await using (Stream source =
+                    await response.Content.ReadAsStreamAsync())
+                {
+                    await using FileStream destination =
+                        new(
+                            msiPath,
+                            FileMode.Create,
+                            FileAccess.Write,
+                            FileShare.None);
 
-                await using FileStream destination =
-                    new(
-                        msiPath,
-                        FileMode.Create,
-                        FileAccess.Write,
-                        FileShare.None);
-
-                await source.CopyToAsync(
-                    destination);
-
-                await destination.FlushAsync();
+                    await source.CopyToAsync(destination);
+                    await destination.FlushAsync();
+                }
 
                 if (!string.IsNullOrWhiteSpace(digest))
                 {
@@ -304,59 +303,42 @@ namespace AdminTrayTool.Services
             }
         }
 
-        private static void StartUpdateHelper(
-            string msiPath,
-            string applicationPath)
+        private static void StartUpdateHelper(string msiPath, string applicationPath)
         {
-            string escapedMsiPath =
-                EscapePowerShellString(
-                    msiPath);
-
-            string escapedApplicationPath =
-                EscapePowerShellString(
-                    applicationPath);
-
-            int currentProcessId =
-                Environment.ProcessId;
+            string escapedMsiPath = msiPath.Replace("'", "''");
+            string escapedApplicationPath = applicationPath.Replace("'", "''");
+            int currentProcessId = Environment.ProcessId;
 
             string command =
                 "$ErrorActionPreference='Stop'; " +
+
+                // Wait for the current AdminTrayTool process to exit.
                 $"$currentProcess = Get-Process -Id {currentProcessId} -ErrorAction SilentlyContinue; " +
                 "if ($null -ne $currentProcess) { " +
                 "    Wait-Process -Id $currentProcess.Id -ErrorAction SilentlyContinue; " +
                 "} " +
-                "$p=Start-Process " +
-                "-FilePath 'msiexec.exe' " +
+
+                // Start the MSI and wait for it to finish.
+                $"$p=Start-Process -FilePath 'msiexec.exe' " +
                 $"-ArgumentList '/i \"{escapedMsiPath}\" /passive /norestart' " +
                 "-Wait -PassThru; " +
+
+                // Restart AdminTrayTool after a successful MSI installation.
                 "if ($p.ExitCode -eq 0 -or $p.ExitCode -eq 3010) { " +
                 $"    Start-Process -FilePath '{escapedApplicationPath}' " +
                 $"-ArgumentList '{UpdateCompletedArgument}' " +
                 "}";
 
-            var startInfo =
-                new ProcessStartInfo
-                {
-                    FileName =
-                        "powershell.exe",
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = $"-NoProfile -ExecutionPolicy Bypass -Command \"{command.Replace("\"", "\\\"")}\"",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-                    Arguments =
-                        "-NoProfile -NonInteractive " +
-                        "-ExecutionPolicy Bypass " +
-                        $"-WindowStyle Hidden -Command \"{command}\"",
-
-                    UseShellExecute = false,
-
-                    CreateNoWindow = true,
-
-                    WorkingDirectory =
-                        AppContext.BaseDirectory
-                };
-
-            using Process? helper =
-                Process.Start(startInfo)
-                ?? throw new InvalidOperationException(
-                    "The update helper process could not be started.");
+            Process.Start(startInfo);
         }
 
         private static string EscapePowerShellString(
