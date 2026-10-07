@@ -1934,6 +1934,11 @@ namespace AdminTrayTool.Forms
                 device.Error;
 
             _gridDevices.InvalidateRow(index);
+
+            if (index >= 0 && index < _gridDevices.RowCount)
+            {
+                _gridDevices.FirstDisplayedScrollingRowIndex = index;
+            }
         }
 
         // =============================================================
