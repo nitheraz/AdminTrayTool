@@ -692,7 +692,7 @@ namespace AdminTrayTool.Forms
 
             DialogResult confirmation =
                 MessageBox.Show(
-                    $"Are you sure you want to delete " +
+                    "Are you sure you want to delete " +
                     $"'{_currentComputerName}' from MECM?" +
                     Environment.NewLine +
                     Environment.NewLine +
@@ -717,7 +717,7 @@ namespace AdminTrayTool.Forms
             {
                 AppendActivity(
                     $"Deleting '{_currentComputerName}' " +
-                    $"from MECM...");
+                    "from MECM...");
 
                 MecmActionResult result =
                     await _mecmManagementService
