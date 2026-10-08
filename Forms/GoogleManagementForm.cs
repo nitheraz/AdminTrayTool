@@ -1,28 +1,23 @@
-﻿using AdminTrayTool.Models;
-using AdminTrayTool.UI;
+﻿using AdminTrayTool.UI;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace AdminTrayTool.Forms
 {
-    public class WindowsManagementForm : Form
+    public class GoogleManagementForm : Form
     {
-        private readonly AppConfig _config;
+        private Button _btnChromebookManagement = null!;
+        private Button _btnGroupManagement = null!;
 
-        private Button _btnActiveDirectory = null!;
-        private Button _btnMecm = null!;
-
-        public WindowsManagementForm(AppConfig config)
+        public GoogleManagementForm()
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
-
             InitializeForm();
             BuildInterface();
         }
 
         private void InitializeForm()
         {
-            Text = "Windows Management";
+            Text = "Google Management";
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(890, 480);
             MinimumSize = new Size(890, 480);
@@ -43,7 +38,7 @@ namespace AdminTrayTool.Forms
 
             var headerLabel = new Label
             {
-                Text = "WINDOWS MANAGEMENT",
+                Text = "GOOGLE MANAGEMENT",
                 Dock = DockStyle.Top,
                 Height = 45,
                 Font = new Font("Segoe UI", 18F, FontStyle.Bold),
@@ -53,7 +48,7 @@ namespace AdminTrayTool.Forms
 
             var descriptionLabel = new Label
             {
-                Text = "Manage Windows computers using Active Directory and Microsoft Endpoint Configuration Manager.",
+                Text = "Manage Google Workspace Chromebooks and Google Groups.",
                 Dock = DockStyle.Top,
                 Height = 45,
                 Font = new Font("Segoe UI", 10F),
@@ -68,88 +63,98 @@ namespace AdminTrayTool.Forms
                 BackColor = Color.Transparent
             };
 
-            var adPanel = new HudPanel
+            // =========================================================
+            // CHROMEBOOK MANAGEMENT
+            // =========================================================
+
+            var chromebookPanel = new HudPanel
             {
                 Location = new Point(0, 20),
                 Size = new Size(400, 250)
             };
 
-            var adTitle = new Label
+            var chromebookTitle = new Label
             {
-                Text = "ACTIVE DIRECTORY",
+                Text = "CHROMEBOOK MANAGEMENT",
                 Location = new Point(20, 20),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14F, FontStyle.Bold),
                 ForeColor = Color.White
             };
 
-            var adDescription = new Label
+            var chromebookDescription = new Label
             {
                 Text =
-                    "Look up Windows computers,\\n" +
-                    "view their details, and move\\n" +
-                    "computers between OUs.",
+                    "Look up Chromebooks, view device\\n" +
+                    "details, manage users and OUs,\\n" +
+                    "and perform device actions.",
                 Location = new Point(20, 65),
                 Size = new Size(350, 75),
                 Font = new Font("Segoe UI", 10F),
                 ForeColor = Color.LightGray
             };
 
-            _btnActiveDirectory = new HudButton
+            _btnChromebookManagement = new HudButton
             {
-                Text = "Active Directory Management",
+                Text = "Chromebook Management",
                 Location = new Point(20, 165),
                 Size = new Size(350, 45)
             };
 
-            _btnActiveDirectory.Click += BtnActiveDirectory_Click;
+            _btnChromebookManagement.Click +=
+                BtnChromebookManagement_Click;
 
-            adPanel.Controls.Add(adTitle);
-            adPanel.Controls.Add(adDescription);
-            adPanel.Controls.Add(_btnActiveDirectory);
+            chromebookPanel.Controls.Add(chromebookTitle);
+            chromebookPanel.Controls.Add(chromebookDescription);
+            chromebookPanel.Controls.Add(_btnChromebookManagement);
 
-            var mecmPanel = new HudPanel
+            // =========================================================
+            // GOOGLE GROUP MANAGEMENT
+            // =========================================================
+
+            var groupPanel = new HudPanel
             {
                 Location = new Point(420, 20),
                 Size = new Size(400, 250)
             };
 
-            var mecmTitle = new Label
+            var groupTitle = new Label
             {
-                Text = "MECM",
+                Text = "GOOGLE GROUPS",
                 Location = new Point(20, 20),
                 AutoSize = true,
                 Font = new Font("Segoe UI", 14F, FontStyle.Bold),
                 ForeColor = Color.White
             };
 
-            var mecmDescription = new Label
+            var groupDescription = new Label
             {
                 Text =
-                    "Look up Windows devices,\\n" +
-                    "view collections, and manage\\n" +
-                    "direct collection membership.",
+                    "Manage Google Groups, view group\\n" +
+                    "members, and add or remove\\n" +
+                    "members using bulk operations.",
                 Location = new Point(20, 65),
                 Size = new Size(350, 75),
                 Font = new Font("Segoe UI", 10F),
                 ForeColor = Color.LightGray
             };
 
-            _btnMecm = new HudButton
+            _btnGroupManagement = new HudButton
             {
-                Text = "MECM Management",
+                Text = "Google Group Management",
                 Location = new Point(20, 165),
                 Size = new Size(350, 45)
             };
 
-            _btnMecm.Click += BtnMecm_Click;
+            _btnGroupManagement.Click +=
+                BtnGroupManagement_Click;
 
-            mecmPanel.Controls.Add(mecmTitle);
-            mecmPanel.Controls.Add(mecmDescription);
-            mecmPanel.Controls.Add(_btnMecm);
+            groupPanel.Controls.Add(groupTitle);
+            groupPanel.Controls.Add(groupDescription);
+            groupPanel.Controls.Add(_btnGroupManagement);
 
-            toolsPanel.Controls.Add(adPanel);
-            toolsPanel.Controls.Add(mecmPanel);
+            toolsPanel.Controls.Add(chromebookPanel);
+            toolsPanel.Controls.Add(groupPanel);
 
             var actionsPanel = new Panel
             {
@@ -164,74 +169,45 @@ namespace AdminTrayTool.Forms
             mainPanel.Controls.Add(headerLabel);
 
             Controls.Add(mainPanel);
-
-            UpdateMecmButtonState();
         }
 
-        private void UpdateMecmButtonState()
-        {
-            bool configured =
-                _config.Mecm?.Enabled == true &&
-                !string.IsNullOrWhiteSpace(_config.Mecm.SiteCode) &&
-                !string.IsNullOrWhiteSpace(_config.Mecm.SmsProviderServer);
-
-            _btnMecm.Enabled = configured;
-
-            if (!configured)
-            {
-                _btnMecm.Text = "MECM NOT CONFIGURED";
-            }
-        }
-
-        private void BtnActiveDirectory_Click(
+        private void BtnChromebookManagement_Click(
             object? sender,
             EventArgs e)
         {
             try
             {
                 using var form =
-                    new ActiveDirectoryManagementForm();
+                    new ChromebookManagementForm();
 
                 form.ShowDialog(this);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Failed to open Active Directory Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
-                    "Active Directory",
+                    $"Failed to open Chromebook Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "Chromebook Management",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
-        private void BtnMecm_Click(
+        private void BtnGroupManagement_Click(
             object? sender,
             EventArgs e)
         {
             try
             {
-                if (_config.Mecm?.Enabled != true)
-                {
-                    MessageBox.Show(
-                        "MECM is not enabled in the AdminTrayTool configuration.",
-                        "MECM",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-
-                    return;
-                }
-
                 using var form =
-                    new MecmManagementForm(
-                        _config.Mecm);
+                    new GroupManagementForm();
 
                 form.ShowDialog(this);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Failed to open MECM Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
-                    "MECM",
+                    $"Failed to open Google Group Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "Google Group Management",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }

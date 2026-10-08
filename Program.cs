@@ -523,18 +523,10 @@ namespace AdminTrayTool
             AppConfig cfg)
         {
             menu.Items.Add(
-                "Chromebook Management",
+                "Google Management",
                 null,
                 (s, e) =>
-                    OpenManagementForm<ChromebookManagementForm>(
-                        "Chromebook Management"));
-
-            menu.Items.Add(
-                "Group Management",
-                null,
-                (s, e) =>
-                    OpenManagementForm<GroupManagementForm>(
-                        "Group Management"));
+                    OpenGoogleManagementForm());
 
             menu.Items.Add(
                 "Windows Management",
@@ -563,6 +555,24 @@ namespace AdminTrayTool
                 MessageBox.Show(
                     $"Failed to open Windows Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
                     "Windows Management",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+        private static void OpenGoogleManagementForm()
+        {
+            try
+            {
+                using var form =
+                    new GoogleManagementForm();
+
+                form.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Failed to open Google Management:{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "Google Management",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
