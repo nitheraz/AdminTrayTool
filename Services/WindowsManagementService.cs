@@ -552,7 +552,7 @@ namespace AdminTrayTool.Services
                     };
 
                 using Process process =
-                    new()
+                    new Process
                     {
                         StartInfo = startInfo
                     };

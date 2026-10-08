@@ -807,6 +807,109 @@ Write-Output 'Direct membership rule deleted.'
         }
 
         // =============================================================
+        // DELETE COMPUTER
+        // =============================================================
+
+        public async Task<MecmActionResult>
+            DeleteComputerAsync(
+                string computerName,
+                string resourceId)
+        {
+            MecmActionResult validation =
+                ValidateConfiguration();
+
+            if (!validation.Success)
+            {
+                return validation;
+            }
+
+            if (string.IsNullOrWhiteSpace(computerName))
+            {
+                return new MecmActionResult
+                {
+                    Success = false,
+                    Error = "Computer name is required."
+                };
+            }
+
+            if (string.IsNullOrWhiteSpace(resourceId))
+            {
+                return new MecmActionResult
+                {
+                    Success = false,
+                    Error = "MECM Resource ID is required."
+                };
+            }
+
+            computerName =
+                computerName.Trim();
+
+            resourceId =
+                resourceId.Trim();
+
+            if (!int.TryParse(
+                    resourceId,
+                    out int parsedResourceId))
+            {
+                return new MecmActionResult
+                {
+                    Success = false,
+                    Error =
+                        $"Invalid MECM Resource ID '{resourceId}' " +
+                        $"for computer '{computerName}'."
+                };
+            }
+
+            string script = $$"""
+
+$ErrorActionPreference = 'Stop'
+
+$computer = Get-CimInstance `
+    -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
+    -Namespace '{{EscapePowerShellString(Namespace)}}' `
+    -ClassName SMS_R_System `
+    -Filter "ResourceID = {{parsedResourceId}}" `
+    -ErrorAction Stop
+
+if ($null -eq $computer)
+{
+    throw "Computer '{{EscapePowerShellString(computerName)}}' was not found in MECM."
+}
+
+Remove-CimInstance `
+    -InputObject $computer `
+    -ErrorAction Stop
+
+Write-Output "Computer '{{EscapePowerShellString(computerName)}}' was deleted from MECM."
+
+""";
+
+            PowerShellResult result =
+                await RunPowerShellAsync(
+                    script);
+
+            if (!result.Success)
+            {
+                return new MecmActionResult
+                {
+                    Success = false,
+                    Output = result.Output,
+                    Error =
+                        GetFriendlyMecmComputerError(
+                            computerName,
+                            result.Error)
+                };
+            }
+
+            return new MecmActionResult
+            {
+                Success = true,
+                Output =
+                    $"Computer '{computerName}' was successfully deleted from MECM."
+            };
+        }
+
+        // =============================================================
         // MECM ERROR MESSAGES
         // =============================================================
 

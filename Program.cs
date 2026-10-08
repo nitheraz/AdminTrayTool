@@ -578,7 +578,7 @@ namespace AdminTrayTool
             }
         }
 
-        private static void OpenManagementForm<TForm>(
+        /*private static void OpenManagementForm<TForm>(
             string formName)
             where TForm : Form, new()
         {
@@ -597,7 +597,7 @@ namespace AdminTrayTool
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
-        }
+        }*/
 
         // ============================================================
         // CONFIGURATION SETTINGS

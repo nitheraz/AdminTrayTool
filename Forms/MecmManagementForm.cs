@@ -11,7 +11,7 @@ namespace AdminTrayTool.Forms
 
         private TextBox _txtComputerName = null!;
         private Button _btnLookup = null!;
-
+        private Button _btnDelete = null!;
         private Label _lblComputerName = null!;
         private Label _lblResourceId = null!;
         private Label _lblClient = null!;
@@ -27,7 +27,6 @@ namespace AdminTrayTool.Forms
         private ComboBox _cmbCollections = null!;
         private Button _btnAdd = null!;
         private Button _btnRemove = null!;
-
         private TextBox _txtActivity = null!;
 
         private readonly List<CollectionItem> _allCollections = [];
@@ -152,9 +151,24 @@ namespace AdminTrayTool.Forms
                     Height = 34
                 };
 
+            _btnDelete =
+                new HudButton
+                {
+                    Text = "DELETE",
+                    Left = 650,
+                    Top = 16,
+                    Width = 120,
+                    Height = 34,
+                    Enabled = false
+                };
+
             _btnLookup.Click +=
                 async (s, e) =>
                     await LookupComputerAsync();
+
+            _btnDelete.Click +=
+                async (s, e) =>
+                    await DeleteComputerAsync();
 
             lookupPanel.Controls.Add(
                 lblComputer);
@@ -164,6 +178,9 @@ namespace AdminTrayTool.Forms
 
             lookupPanel.Controls.Add(
                 _btnLookup);
+
+            lookupPanel.Controls.Add(
+                _btnDelete);
 
             mainPanel.Controls.Add(
                 lookupPanel);
@@ -500,6 +517,7 @@ namespace AdminTrayTool.Forms
 
             _btnAdd.Enabled = false;
             _btnRemove.Enabled = false;
+            _btnDelete.Enabled = false;
             _cmbCollections.Enabled = false;
             _txtCollectionFilter.Enabled = false;
             _lstCurrentCollections.Enabled = false;
@@ -622,6 +640,12 @@ namespace AdminTrayTool.Forms
                 _lblSerialNumber.Text =
                     $"Serial Number: {DisplayValue(result.SerialNumber)}";
 
+                _btnDelete.Enabled =
+                    !string.IsNullOrWhiteSpace(
+                        _currentComputerName) &&
+                    !string.IsNullOrWhiteSpace(
+                        _currentResourceId);
+
                 AppendActivity(
                     $"Computer '{result.Name}' found. " +
                     $"Resource ID: {result.ResourceId}");
@@ -629,6 +653,107 @@ namespace AdminTrayTool.Forms
                 await LoadCollectionsAsync();
 
                 await LoadCurrentCollectionsAsync();
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
+        // ============================================================
+        // DELETE COMPUTER
+        // ============================================================
+
+        private async Task DeleteComputerAsync()
+        {
+            if (string.IsNullOrWhiteSpace(
+                    _currentComputerName))
+            {
+                MessageBox.Show(
+                    "Look up a computer first.",
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    _currentResourceId))
+            {
+                MessageBox.Show(
+                    "The MECM Resource ID is not available.",
+                    "MECM",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    $"Are you sure you want to delete " +
+                    $"'{_currentComputerName}' from MECM?" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Resource ID: {_currentResourceId}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "This action cannot be undone.",
+                    "Confirm MECM Computer Deletion",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+            if (confirmation !=
+                DialogResult.Yes)
+            {
+                return;
+            }
+
+            SetBusy(true);
+
+            try
+            {
+                AppendActivity(
+                    $"Deleting '{_currentComputerName}' " +
+                    $"from MECM...");
+
+                MecmActionResult result =
+                    await _mecmManagementService
+                        .DeleteComputerAsync(
+                            _currentComputerName,
+                            _currentResourceId);
+
+                if (result.Success)
+                {
+                    AppendActivity(
+                        result.Output);
+
+                    MessageBox.Show(
+                        result.Output,
+                        "MECM",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    ClearComputerInformation();
+
+                    _txtComputerName.Clear();
+
+                    AppendActivity(
+                        "MECM computer information cleared.");
+                }
+                else
+                {
+                    AppendActivity(
+                        $"Delete failed: {result.Error}");
+
+                    MessageBox.Show(
+                        result.Error,
+                        "MECM Delete",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
             }
             finally
             {
@@ -1071,6 +1196,9 @@ namespace AdminTrayTool.Forms
 
             _btnRemove.Enabled =
                 false;
+
+            _btnDelete.Enabled =
+                false;
         }
 
         // ============================================================
@@ -1097,6 +1225,9 @@ namespace AdminTrayTool.Forms
                     false;
 
                 _btnRemove.Enabled =
+                    false;
+
+                _btnDelete.Enabled =
                     false;
 
                 _lstCurrentCollections.Enabled =
@@ -1127,6 +1258,11 @@ namespace AdminTrayTool.Forms
             _btnRemove.Enabled =
                 computerLoaded &&
                 collectionsLoaded;
+
+            _btnDelete.Enabled =
+                computerLoaded &&
+                !string.IsNullOrWhiteSpace(
+                    _currentResourceId);
 
             _lstCurrentCollections.Enabled =
                 computerLoaded;
