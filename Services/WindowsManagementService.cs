@@ -24,12 +24,31 @@ namespace AdminTrayTool.Services
             computerName = computerName.Trim();
 
             string script =
-                "$computer = Get-ADComputer " +
+                "$ErrorActionPreference = 'Stop';" +
+                Environment.NewLine +
+                "try {" +
+                Environment.NewLine +
+                "    $computer = Get-ADComputer " +
                 "-Identity " +
                 $"'{EscapePowerShellString(computerName)}' " +
-                "-Properties DistinguishedName,Name,OperatingSystem;" +
+                "-Properties DistinguishedName,Name,OperatingSystem " +
+                "-ErrorAction Stop;" +
                 Environment.NewLine +
-                "if ($null -eq $computer) { exit 1 };" +
+                "}" +
+                Environment.NewLine +
+                "catch {" +
+                Environment.NewLine +
+                "    if ($_.CategoryInfo.Category -eq 'ObjectNotFound') {" +
+                Environment.NewLine +
+                "        exit 2;" +
+                Environment.NewLine +
+                "    }" +
+                Environment.NewLine +
+                "    throw;" +
+                Environment.NewLine +
+                "}" +
+                Environment.NewLine +
+                "if ($null -eq $computer) { exit 2 };" +
                 Environment.NewLine +
                 "[PSCustomObject]@{" +
                 "Name=$computer.Name;" +
@@ -40,14 +59,31 @@ namespace AdminTrayTool.Services
             PowerShellResult result =
                 await RunPowerShellAsync(script);
 
+            if (result.ExitCode == 2)
+            {
+                return new WindowsComputerResult
+                {
+                    Success = false,
+                    Error =
+                        "Computer not found in Active Directory." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        $"The computer '{computerName}' could not be found in Active Directory." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "Please check the computer name and make sure the device has an Active Directory computer account."
+                };
+            }
+
             if (!result.Success)
             {
                 return new WindowsComputerResult
                 {
                     Success = false,
-                    Error = string.IsNullOrWhiteSpace(result.Error)
-                        ? $"Computer '{computerName}' was not found in Active Directory."
-                        : result.Error
+                    Error =
+                        GetFriendlyActiveDirectoryError(
+                            computerName,
+                            result.Error)
                 };
             }
 
@@ -104,7 +140,7 @@ namespace AdminTrayTool.Services
         public async Task<(bool Success, List<string> OrganizationalUnits, string Error)>
             GetOrganizationalUnitsAsync()
         {
-            string script =
+            const string script =
                 "Get-ADOrganizationalUnit -Filter * " +
                 "-Properties DistinguishedName | " +
                 "Select-Object -ExpandProperty DistinguishedName";
@@ -127,7 +163,7 @@ namespace AdminTrayTool.Services
 
             string[] lines =
                 result.Output.Split(
-                    new[] { '\r', '\n' },
+                    ['\r', '\n'],
                     StringSplitOptions.RemoveEmptyEntries);
 
             foreach (string line in lines)
@@ -183,13 +219,30 @@ namespace AdminTrayTool.Services
                 targetOrganizationalUnit.Trim();
 
             string script =
-                "$computer = Get-ADComputer " +
-                "-Identity " +
-                $"'{EscapePowerShellString(computerName)}';" +
+                "$ErrorActionPreference = 'Stop';" +
                 Environment.NewLine +
-                "if ($null -eq $computer) { " +
-                "throw 'Computer was not found in Active Directory.' " +
-                "};" +
+                "try {" +
+                Environment.NewLine +
+                "    $computer = Get-ADComputer " +
+                "-Identity " +
+                $"'{EscapePowerShellString(computerName)}' " +
+                "-ErrorAction Stop;" +
+                Environment.NewLine +
+                "}" +
+                Environment.NewLine +
+                "catch {" +
+                Environment.NewLine +
+                "    if ($_.CategoryInfo.Category -eq 'ObjectNotFound') {" +
+                Environment.NewLine +
+                "        exit 2;" +
+                Environment.NewLine +
+                "    }" +
+                Environment.NewLine +
+                "    throw;" +
+                Environment.NewLine +
+                "}" +
+                Environment.NewLine +
+                "if ($null -eq $computer) { exit 2 };" +
                 Environment.NewLine +
                 "Move-ADObject " +
                 "-Identity $computer.DistinguishedName " +
@@ -199,12 +252,269 @@ namespace AdminTrayTool.Services
             PowerShellResult result =
                 await RunPowerShellAsync(script);
 
+            if (result.ExitCode == 2)
+            {
+                return new WindowsActionResult
+                {
+                    Success = false,
+                    Output = result.Output,
+                    Error =
+                        "Computer not found in Active Directory." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        $"The computer '{computerName}' could not be found in Active Directory."
+                };
+            }
+
             return new WindowsActionResult
             {
                 Success = result.Success,
                 Output = result.Output,
-                Error = result.Error
+                Error = result.Success
+                    ? string.Empty
+                    : GetFriendlyActiveDirectoryActionError(
+                        result.Error)
             };
+        }
+
+        // =============================================================
+        // DELETE COMPUTER
+        // =============================================================
+
+        public async Task<WindowsActionResult> DeleteComputerAsync(
+            string distinguishedName)
+        {
+            if (string.IsNullOrWhiteSpace(distinguishedName))
+            {
+                return new WindowsActionResult
+                {
+                    Success = false,
+                    Error = "Computer distinguished name is required."
+                };
+            }
+
+            distinguishedName =
+                distinguishedName.Trim();
+
+            string script =
+                "$ErrorActionPreference = 'Stop';" +
+                Environment.NewLine +
+                "try {" +
+                Environment.NewLine +
+                "    $computer = Get-ADComputer " +
+                "-Identity " +
+                $"'{EscapePowerShellString(distinguishedName)}' " +
+                "-ErrorAction Stop;" +
+                Environment.NewLine +
+                "}" +
+                Environment.NewLine +
+                "catch {" +
+                Environment.NewLine +
+                "    if ($_.CategoryInfo.Category -eq 'ObjectNotFound') {" +
+                Environment.NewLine +
+                "        exit 2;" +
+                Environment.NewLine +
+                "    }" +
+                Environment.NewLine +
+                "    throw;" +
+                Environment.NewLine +
+                "}" +
+                Environment.NewLine +
+                "if ($null -eq $computer) { exit 2 };" +
+                Environment.NewLine +
+                "Remove-ADComputer " +
+                "-Identity $computer.DistinguishedName " +
+                "-Confirm:$false;";
+
+            PowerShellResult result =
+                await RunPowerShellAsync(script);
+
+            if (result.ExitCode == 2)
+            {
+                return new WindowsActionResult
+                {
+                    Success = false,
+                    Output = result.Output,
+                    Error =
+                        "Computer not found in Active Directory." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "The computer account could no longer be found in Active Directory."
+                };
+            }
+
+            return new WindowsActionResult
+            {
+                Success = result.Success,
+                Output = result.Output,
+                Error =
+                    result.Success
+                        ? string.Empty
+                        : GetFriendlyActiveDirectoryActionError(
+                            result.Error)
+            };
+        }
+
+        // =============================================================
+        // ACTIVE DIRECTORY ERROR MESSAGES
+        // =============================================================
+
+        private static string GetFriendlyActiveDirectoryError(
+            string computerName,
+            string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                return
+                    $"Unable to look up computer '{computerName}' in Active Directory.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Access is denied",
+                    "UnauthorizedAccessException",
+                    "permission",
+                    "not authorized"))
+            {
+                return
+                    "Access denied." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "You do not have permission to query Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your Active Directory permissions and make sure you are connected to the school domain.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Get-ADComputer",
+                    "is not recognized",
+                    "CommandNotFoundException",
+                    "ActiveDirectory module"))
+            {
+                return
+                    "Active Directory PowerShell module unavailable." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "The Active Directory PowerShell module could not be loaded on this computer." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please make sure the Active Directory management tools are installed." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "server is not operational",
+                    "Unable to contact the server",
+                    "RPC server is unavailable",
+                    "network path",
+                    "network",
+                    "connection",
+                    "cannot contact",
+                    "specified domain",
+                    "domain does not exist",
+                    "logon failure"))
+            {
+                return
+                    "Unable to connect to Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "AdminTrayTool could not connect to or query Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your network connection, domain/VPN connection, and permissions." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            return
+                "Unable to query Active Directory." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"AdminTrayTool could not complete the lookup for computer '{computerName}'." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"Details: {error}";
+        }
+
+        private static string GetFriendlyActiveDirectoryActionError(
+            string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                return
+                    "The Active Directory operation could not be completed.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Access is denied",
+                    "UnauthorizedAccessException",
+                    "permission",
+                    "not authorized"))
+            {
+                return
+                    "Access denied." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "You do not have permission to modify this computer account in Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your Active Directory permissions.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "server is not operational",
+                    "Unable to contact the server",
+                    "RPC server is unavailable",
+                    "network path",
+                    "network",
+                    "connection",
+                    "cannot contact",
+                    "specified domain",
+                    "domain does not exist"))
+            {
+                return
+                    "Unable to connect to Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "AdminTrayTool could not communicate with Active Directory." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your network connection, domain/VPN connection, and permissions." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            return
+                "Active Directory operation failed." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"Details: {error}";
+        }
+
+        private static bool ContainsAny(
+            string value,
+            params string[] searchTerms)
+        {
+            foreach (string searchTerm in searchTerms)
+            {
+                if (value.Contains(
+                        searchTerm,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // =============================================================
@@ -242,7 +552,7 @@ namespace AdminTrayTool.Services
                     };
 
                 using Process process =
-                    new Process
+                    new()
                     {
                         StartInfo = startInfo
                     };
@@ -267,6 +577,8 @@ namespace AdminTrayTool.Services
                 {
                     Success = process.ExitCode == 0,
 
+                    ExitCode = process.ExitCode,
+
                     Output = output.Trim(),
 
                     Error = error.Trim()
@@ -277,6 +589,9 @@ namespace AdminTrayTool.Services
                 return new PowerShellResult
                 {
                     Success = false,
+
+                    ExitCode = -1,
+
                     Error = ex.Message
                 };
             }
@@ -346,6 +661,8 @@ namespace AdminTrayTool.Services
         private class PowerShellResult
         {
             public bool Success { get; set; }
+
+            public int ExitCode { get; set; }
 
             public string Output { get; set; } =
                 string.Empty;

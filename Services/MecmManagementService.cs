@@ -1,8 +1,6 @@
 ﻿using AdminTrayTool.Models;
 using System.Diagnostics;
-using System.Security.Policy;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AdminTrayTool.Services
 {
@@ -91,9 +89,8 @@ namespace AdminTrayTool.Services
                 {
                     Success = false,
                     Error =
-                        string.IsNullOrWhiteSpace(result.Error)
-                            ? "Unable to connect to the MECM SMS Provider."
-                            : result.Error
+                        GetFriendlyMecmConnectionError(
+                            result.Error)
                 };
             }
 
@@ -164,11 +161,12 @@ $computer = Get-CimInstance `
     -ComputerName '{{EscapePowerShellString(_config.SmsProviderServer)}}' `
     -Namespace '{{EscapePowerShellString(Namespace)}}' `
     -ClassName SMS_R_System `
-    -Filter "Name = '{{escapedName}}'"
+    -Filter "Name = '{{escapedName}}'" `
+    -ErrorAction Stop
 
 if ($null -eq $computer)
 {
-    throw "Computer '{{EscapePowerShellString(computerName)}}' was not found in MECM."
+    exit 2
 }
 
 [PSCustomObject]@{
@@ -188,15 +186,31 @@ if ($null -eq $computer)
             PowerShellResult result =
                 await RunPowerShellAsync(script);
 
+            if (result.ExitCode == 2)
+            {
+                return new MecmComputerResult
+                {
+                    Success = false,
+                    Error =
+                        "Computer not found in MECM." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        $"The computer '{computerName}' could not be found in MECM." +
+                        Environment.NewLine +
+                        Environment.NewLine +
+                        "The device may not have been discovered yet, may have been removed from MECM, or the computer name may be incorrect."
+                };
+            }
+
             if (!result.Success)
             {
                 return new MecmComputerResult
                 {
                     Success = false,
                     Error =
-                        string.IsNullOrWhiteSpace(result.Error)
-                            ? $"Computer '{computerName}' was not found in MECM."
-                            : result.Error
+                        GetFriendlyMecmComputerError(
+                            computerName,
+                            result.Error)
                 };
             }
 
@@ -793,6 +807,219 @@ Write-Output 'Direct membership rule deleted.'
         }
 
         // =============================================================
+        // MECM ERROR MESSAGES
+        // =============================================================
+
+        private string GetFriendlyMecmComputerError(
+            string computerName,
+            string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                return
+                    $"Unable to look up computer '{computerName}' in MECM.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Access is denied",
+                    "UnauthorizedAccessException",
+                    "permission",
+                    "not authorized",
+                    "AccessDenied"))
+            {
+                return
+                    "Access denied." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "You do not have permission to query the MECM SMS Provider." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your MECM permissions and make sure your account can access the SMS Provider." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "RPC server is unavailable",
+                    "network path",
+                    "network",
+                    "connection",
+                    "WinRM",
+                    "WSMan",
+                    "server is not operational",
+                    "cannot connect",
+                    "failed to connect",
+                    "CimException",
+                    "The RPC server"))
+            {
+                return
+                    "Unable to connect to MECM." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "AdminTrayTool could not connect to the MECM SMS Provider." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"SMS Provider: {_config.SmsProviderServer}" +
+                    Environment.NewLine +
+                    $"Site Code: {_config.SiteCode}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your network/VPN connection, the SMS Provider server, the site code, and your permissions." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Invalid namespace",
+                    "WBEM_E_INVALID_NAMESPACE",
+                    "Invalid class",
+                    "WBEM_E_INVALID_CLASS"))
+            {
+                return
+                    "MECM SMS Provider configuration error." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "The configured MECM namespace or SMS Provider could not be found." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Site Code: {_config.SiteCode}" +
+                    Environment.NewLine +
+                    $"SMS Provider: {_config.SmsProviderServer}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            return
+                "Unable to query MECM." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"AdminTrayTool could not complete the lookup for computer '{computerName}'." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"Details: {error}";
+        }
+
+        private string GetFriendlyMecmConnectionError(
+            string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+            {
+                return
+                    "Unable to connect to MECM." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "AdminTrayTool could not communicate with the MECM SMS Provider.";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Access is denied",
+                    "UnauthorizedAccessException",
+                    "permission",
+                    "not authorized",
+                    "AccessDenied"))
+            {
+                return
+                    "Access denied." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "You do not have permission to access the MECM SMS Provider." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your MECM permissions." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "Invalid namespace",
+                    "WBEM_E_INVALID_NAMESPACE",
+                    "Invalid class",
+                    "WBEM_E_INVALID_CLASS"))
+            {
+                return
+                    "MECM SMS Provider configuration error." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "The configured MECM namespace or SMS Provider could not be found." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Site Code: {_config.SiteCode}" +
+                    Environment.NewLine +
+                    $"SMS Provider: {_config.SmsProviderServer}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            if (ContainsAny(
+                    error,
+                    "RPC server is unavailable",
+                    "network path",
+                    "network",
+                    "connection",
+                    "WinRM",
+                    "WSMan",
+                    "server is not operational",
+                    "cannot connect",
+                    "failed to connect",
+                    "CimException",
+                    "The RPC server"))
+            {
+                return
+                    "Unable to connect to MECM." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "AdminTrayTool could not connect to the MECM SMS Provider." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"SMS Provider: {_config.SmsProviderServer}" +
+                    Environment.NewLine +
+                    $"Site Code: {_config.SiteCode}" +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    "Please check your network/VPN connection, the SMS Provider server, and your permissions." +
+                    Environment.NewLine +
+                    Environment.NewLine +
+                    $"Details: {error}";
+            }
+
+            return
+                "Unable to connect to MECM." +
+                Environment.NewLine +
+                Environment.NewLine +
+                "AdminTrayTool could not communicate with the MECM SMS Provider." +
+                Environment.NewLine +
+                Environment.NewLine +
+                $"Details: {error}";
+        }
+
+        private static bool ContainsAny(
+            string value,
+            params string[] searchTerms)
+        {
+            foreach (string searchTerm in searchTerms)
+            {
+                if (value.Contains(
+                        searchTerm,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // =============================================================
         // JSON HELPERS
         // =============================================================
 
@@ -904,6 +1131,9 @@ Write-Output 'Direct membership rule deleted.'
                     Success =
                         process.ExitCode == 0,
 
+                    ExitCode =
+                        process.ExitCode,
+
                     Output =
                         output.Trim(),
 
@@ -916,6 +1146,9 @@ Write-Output 'Direct membership rule deleted.'
                 return new PowerShellResult
                 {
                     Success = false,
+
+                    ExitCode = -1,
+
                     Error = ex.Message
                 };
             }
@@ -946,6 +1179,8 @@ Write-Output 'Direct membership rule deleted.'
         private sealed class PowerShellResult
         {
             public bool Success { get; set; }
+
+            public int ExitCode { get; set; }
 
             public string Output { get; set; } =
                 string.Empty;

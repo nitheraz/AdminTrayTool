@@ -1,5 +1,7 @@
 ﻿using AdminTrayTool.Services;
 using AdminTrayTool.UI;
+using System.Diagnostics;
+using System.Text;
 
 namespace AdminTrayTool.Forms
 {
@@ -9,6 +11,7 @@ namespace AdminTrayTool.Forms
 
         private TextBox _txtComputerName = null!;
         private Button _btnLookup = null!;
+        private Button _btnDelete = null!;
 
         private Label _lblComputerName = null!;
         private Label _lblOperatingSystem = null!;
@@ -291,6 +294,23 @@ namespace AdminTrayTool.Forms
             adPanel.Controls.Add(_btnMove);
 
             // ---------------------------------------------------------
+            // DELETE COMPUTER
+            // ---------------------------------------------------------
+
+            _btnDelete = new HudButton
+            {
+                Text = "DELETE COMPUTER",
+                Location = new Point(630, 28),
+                Size = new Size(160, 32),
+                Enabled = false
+            };
+
+            _btnDelete.Click +=
+                BtnDelete_Click;
+
+            adPanel.Controls.Add(_btnDelete);
+
+            // ---------------------------------------------------------
             // ACTIVITY LOG
             // ---------------------------------------------------------
 
@@ -332,7 +352,6 @@ namespace AdminTrayTool.Forms
 
             logPanel.Controls.Add(_txtLog);
         }
-
 
         private static Label CreateLabel(
             string text,
@@ -471,6 +490,10 @@ namespace AdminTrayTool.Forms
                 _lblDistinguishedName.Text =
                     result.DistinguishedName;
 
+                _btnDelete.Enabled =
+                    !string.IsNullOrWhiteSpace(
+                        result.DistinguishedName);
+
                 WriteLog(
                     $"Computer found: {result.Name}");
 
@@ -581,7 +604,9 @@ namespace AdminTrayTool.Forms
                 return;
 
             _btnMove.Enabled =
-                _cmbTargetOu.SelectedItem != null;
+                _cmbTargetOu.SelectedItem != null &&
+                !string.IsNullOrWhiteSpace(
+                    _lblComputerName.Text);
         }
 
         private async void BtnMove_Click(
@@ -676,6 +701,96 @@ namespace AdminTrayTool.Forms
             }
         }
 
+        private async void BtnDelete_Click(
+            object? sender,
+            EventArgs e)
+        {
+            string computerName =
+                _lblComputerName.Text.Trim();
+
+            string distinguishedName =
+                _lblDistinguishedName.Text.Trim();
+
+            string organizationalUnit =
+                _lblCurrentOu.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(computerName) ||
+                string.IsNullOrWhiteSpace(distinguishedName))
+            {
+                MessageBox.Show(
+                    "Look up a computer before attempting to delete it.",
+                    "Active Directory",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            DialogResult confirmation =
+                MessageBox.Show(
+                    "WARNING: This will permanently delete the Active Directory computer account." +
+                    Environment.NewLine + Environment.NewLine +
+                    $"Computer: {computerName}" +
+                    $"{Environment.NewLine}" +
+                    $"Current OU: {organizationalUnit}" +
+                    Environment.NewLine + Environment.NewLine +
+                    "This action cannot be undone." +
+                    Environment.NewLine + Environment.NewLine +
+                    "Are you sure you want to delete this computer?",
+                    "Confirm Computer Deletion",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2);
+
+            if (confirmation !=
+                DialogResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                SetBusy(true);
+
+                WriteLog(
+                    $"Deleting computer '{computerName}' from Active Directory...");
+
+                var result =
+                    await _windowsManagementService
+                        .DeleteComputerAsync(
+                            distinguishedName);
+
+                if (!result.Success)
+                {
+                    WriteLog(
+                        $"Delete failed: {result.Error}");
+
+                    MessageBox.Show(
+                        result.Error,
+                        "Active Directory Delete",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+
+                    return;
+                }
+
+                WriteLog(
+                    $"Successfully deleted '{computerName}' from Active Directory.");
+
+                MessageBox.Show(
+                    $"Computer '{computerName}' was successfully deleted from Active Directory.",
+                    "Active Directory",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                ClearComputerInformation();
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
+
         private void ClearComputerInformation()
         {
             _lblComputerName.Text =
@@ -695,6 +810,7 @@ namespace AdminTrayTool.Forms
             _cmbTargetOu.Items.Clear();
 
             _btnMove.Enabled = false;
+            _btnDelete.Enabled = false;
         }
 
         private void SetBusy(bool busy)
@@ -706,7 +822,16 @@ namespace AdminTrayTool.Forms
 
             _btnMove.Enabled =
                 !busy &&
-                _cmbTargetOu.SelectedItem != null;
+                _cmbTargetOu.SelectedItem != null &&
+                !string.IsNullOrWhiteSpace(
+                    _lblComputerName.Text);
+
+            _btnDelete.Enabled =
+                !busy &&
+                !string.IsNullOrWhiteSpace(
+                    _lblComputerName.Text) &&
+                !string.IsNullOrWhiteSpace(
+                    _lblDistinguishedName.Text);
 
             Cursor = busy
                 ? Cursors.WaitCursor
