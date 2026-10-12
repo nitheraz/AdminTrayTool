@@ -6,6 +6,41 @@ namespace AdminTrayTool.Services
     public class WindowsManagementService
     {
         // =============================================================
+        // TEST ACTIVE DIRECTORY CONNECTION
+        // =============================================================
+
+        public async Task<WindowsActionResult> TestConnectionAsync()
+        {
+            string script =
+                "$ErrorActionPreference = 'Stop';" +
+                Environment.NewLine +
+                "Import-Module ActiveDirectory -ErrorAction Stop;" +
+                Environment.NewLine +
+                "$null = Get-ADRootDSE -ErrorAction Stop;" +
+                Environment.NewLine +
+                "'Active Directory connection successful.'";
+
+            PowerShellResult result =
+                await RunPowerShellAsync(script);
+
+            if (!result.Success)
+            {
+                return new WindowsActionResult
+                {
+                    Success = false,
+                    Error = GetFriendlyActiveDirectoryActionError(
+                        result.Error)
+                };
+            }
+
+            return new WindowsActionResult
+            {
+                Success = true,
+                Output = "Active Directory connection successful."
+            };
+        }
+
+        // =============================================================
         // FIND COMPUTER
         // =============================================================
 

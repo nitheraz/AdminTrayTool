@@ -790,7 +790,39 @@ namespace AdminTrayTool.Forms
                 SetBusy(false);
             }
         }
+        private async Task CheckActiveDirectoryConnectionAsync()
+        {
+            SetBusy(true);
 
+            try
+            {
+                WindowsActionResult result =
+                    await _windowsManagementService.TestConnectionAsync();
+
+                if (!result.Success)
+                {
+                    MessageBox.Show(
+                        this,
+                        result.Error,
+                        "Active Directory Connection Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    $"Unable to test the Active Directory connection.{Environment.NewLine}{Environment.NewLine}{ex.Message}",
+                    "Active Directory Connection Failed",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            finally
+            {
+                SetBusy(false);
+            }
+        }
         private void ClearComputerInformation()
         {
             _lblComputerName.Text =
