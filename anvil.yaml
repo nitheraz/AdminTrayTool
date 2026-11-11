@@ -7,4 +7,10 @@ native_deps:
 runtime_options:
   client_version: '2'
   server_spec: {}
+  server_version: python3-sandbox
   version: 2
+services:
+- client_config: {enable_v2: true}
+  server_config: {}
+  source: /runtime/services/tables.yml
+startup_form: Form1
