@@ -343,7 +343,7 @@ namespace AdminTrayTool.Forms
                 SectionKey = "adminTools",
                 DedupeKey = "exe",
                 InstructionText =
-                    "Enter admin tools: Name | Exe | Args | Elevated",
+                    "Enter admin tools: Name | Exe | Args",
                 Columns =
                 [
                     new()
@@ -374,17 +374,6 @@ namespace AdminTrayTool.Forms
                         ToolTip =
                             "Command-line arguments (optional)"
                     },
-
-                    new()
-                    {
-                        Name = "elevated",
-                        DisplayName = "Elevated",
-                        FieldType = typeof(bool),
-                        Placeholder =
-                            "Run this application as administrator",
-                        ToolTip =
-                            "Launch the application using UAC elevation"
-                    }
                 ]
             };
         }
